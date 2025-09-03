@@ -102,12 +102,6 @@ VISH.Viewer = (function(V,$,undefined){
 
 		var timeToLoadObjects = 500;
 
-		if(!isSubslide){
-			V.ViewerAdapter.decideIfPageSwitcher();
-		} else {
-			timeToLoadObjects = 1000;
-		}
-
 		setTimeout(function(){
 			if(!isSubslide){
 				if(cSlideNumber!==V.Slides.getCurrentSlideNumber()){
@@ -158,20 +152,6 @@ VISH.Viewer = (function(V,$,undefined){
 		}
 	};
 	
-	/**
-	 * function to update the number that indicates what slide is diplayed
-	 * with this format: 1/12 2/12
-	 */
-	var updateSlideCounter = function(){
-		var number_of_slides = V.Slides.getSlides().length;
-		var slide_number = V.Slides.getCurrentSlideNumber();
-		if(number_of_slides===0){
-			slide_number = 0;
-		}
-		$("#slide-counter-input").val(slide_number);
-		$("#slide-counter-span").html("/" + number_of_slides);
-	};
-	
 	var getCurrentPresentation = function(){
 		return current_presentation;
 	};
@@ -179,7 +159,6 @@ VISH.Viewer = (function(V,$,undefined){
 	return {
 		init 						: init, 
 		getOptions					: getOptions,
-		updateSlideCounter			: updateSlideCounter,
 		getCurrentPresentation		: getCurrentPresentation,
 		onSlideEnterViewer			: onSlideEnterViewer,
 		onSlideLeaveViewer			: onSlideLeaveViewer

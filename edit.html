@@ -50,8 +50,6 @@
 	<script type="text/javascript" src="/js/VISH.Audio.js"></script>
 	<script type="text/javascript" src="/js/VISH.Audio.HTML5.js"></script>
 	<script type="text/javascript" src="/js/VISH.Events.js"></script>
-	<script type="text/javascript" src="/js/VISH.Events.Mobile.js"></script>
-	<script type="text/javascript" src="/js/VISH.Events.Touchable.js"></script>
 	<script type="text/javascript" src="/js/VISH.EventsNotifier.js"></script>
 	<script type="text/javascript" src="/js/VISH.Viewer.js"></script>
 	<script type="text/javascript" src="/js/VISH.Debugging.js"></script>
@@ -681,7 +679,7 @@
 								<option value="none" i18n-key="i.Unspecified">Undefined</option>
 								<option value="goToScreen" i18n-key="i.HotspotActionTypeGoToScreen">Go to screen</option>
 								<option value="openView" i18n-key="i.HotspotActionTypeOpenView">Open view</option>
-								<option value="changeScreenImage" i18n-key="i.HotspotActionTypeChangeScreenImage">Change screen background</option>
+								<option value="changeScreen" i18n-key="i.HotspotActionTypeChangeScreen">Change screen</option>
 								<option value="removeElement" i18n-key="i.HotspotActionTypeRemoveElement">Remove hotspot or zone</option>
 								<option value="solvePuzzle" i18n-key="i.HotspotActionTypeSolvePuzzle">Solve escape room puzzle</option>
 							</select>
@@ -690,13 +688,13 @@
 							<label i18n-key="i.HotspotActionParamsScreen">Screen:</label>
 							<select></select>
 						</div>
+						<div class="hotspot_settings_element_wrapper hotspotActionParamsScreenReplacement" style='display:none'>
+							<label i18n-key="i.HotspotActionParamsScreenReplacement">Replace with:</label>
+							<select></select>
+						</div>
 						<div class="hotspot_settings_element_wrapper hotspotActionParamsView" style='display:none'>
 							<label i18n-key="i.HotspotActionParamsView">View:</label>
 							<select></select>
-						</div>
-						<div class="hotspot_settings_element_wrapper hotspotActionParamsURL" style='display:none'>
-							<label i18n-key="i.HotspotActionParamsURL">Image URL:</label>
-							<input type="text">
 						</div>
 						<div class="hotspot_settings_element_wrapper hotspotActionParamsElementId" style='display:none'>
 							<label i18n-key="i.HotspotActionParamsElementId">Element ID:</label>

@@ -326,17 +326,6 @@ VISH.Status = (function(V,$,undefined){
 	};
 
 	var setSlaveMode = function(slaveMode){
-		if(slaveMode!==_isSlave){
-			if(slaveMode===true){
-				V.Events.unbindViewerEventListeners();
-				V.Video.HTML5.showControls(false);
-				_isSlave=true;
-			} else {
-				V.Events.bindViewerEventListeners();
-				V.Video.HTML5.showControls(true);
-				_isSlave=false;
-			}
-		}
 	};
 
 	var isPreventDefaultMode = function(){

@@ -381,6 +381,15 @@ VISH.Editor.Screen = (function(V,$,undefined){
 			});
 		});
 
+		$("div.hotspotActionParamsScreenReplacement select").each(function() {
+			var $select = $(this);
+			$select.empty();
+			$select.append($('<option>', { value: "none", text: V.I18n.getTrans("i.Unspecified") }))
+			$.each(currentOptionsScreens, function(_, opt) {
+				$select.append($("<option>", { value: opt.value, text: opt.text }));
+			});
+		});
+
 		//Fill action template with current views
 		var currentOptionsViews = [];
 		$(V.Slides.getCurrentSlide()).children("article").each(function() {
@@ -432,13 +441,13 @@ VISH.Editor.Screen = (function(V,$,undefined){
 							var $actionParamsScreenSelect = $actionWrapper.find("div.hotspotActionParamsScreen select");
 							$actionParamsScreenSelect.val(hotspotAction.actionParams.screen);
 						}
+						if(typeof hotspotAction.actionParams.screenReplacement === "string"){
+							var $actionParamsScreenSelectReplacement = $actionWrapper.find("div.hotspotActionParamsScreenReplacement select");
+							$actionParamsScreenSelectReplacement.val(hotspotAction.actionParams.screenReplacement);
+						}
 						if(typeof hotspotAction.actionParams.view === "string"){
 							var $actionParamsViewSelect = $actionWrapper.find("div.hotspotActionParamsView select");
 							$actionParamsViewSelect.val(hotspotAction.actionParams.view);
-						}
-						if(typeof hotspotAction.actionParams.url === "string"){
-							var $actionParamsURLInput = $actionWrapper.find("div.hotspotActionParamsURL input");
-							$actionParamsURLInput.val(hotspotAction.actionParams.url);
 						}
 						if(typeof hotspotAction.actionParams.elementId === "string"){
 							var $actionParamsElementIdSelect = $actionWrapper.find("div.hotspotActionParamsElementId select");
@@ -516,32 +525,32 @@ VISH.Editor.Screen = (function(V,$,undefined){
 		var $actionWrapperDiv = $(event.target).closest("div.hotspotActionWrapper");
 		var $selectScreenWrapper = $actionWrapperDiv.find("div.hotspotActionParamsScreen");
 		var $selectScreen = $selectScreenWrapper.find("select");
+		var $selectScreenReplacementWrapper = $actionWrapperDiv.find("div.hotspotActionParamsScreenReplacement");
+		var $selectScreenReplacement = $selectScreenReplacementWrapper.find("select");
 		var $selectViewWrapper = $actionWrapperDiv.find("div.hotspotActionParamsView");
 		var $selectView = $selectViewWrapper.find("select");
-		var $inputURLWrapper = $actionWrapperDiv.find("div.hotspotActionParamsURL");
-		var $inputURL = $inputURLWrapper.find("input");
 		var $selectElementIdWrapper = $actionWrapperDiv.find("div.hotspotActionParamsElementId");
 		var $selectElementId = $selectElementIdWrapper.find("select");
 		var $selectPuzzleWrapper = $actionWrapperDiv.find("div.hotspotActionParamsPuzzle");
 		var $selectPuzzle = $selectPuzzleWrapper.find("select");
 		
-		if((option === "goToScreen")||(option === "changeScreenImage")){
+		if((option === "goToScreen")||(option === "changeScreen")){
 			$selectScreen.prop("selectedIndex", 0);
 			$selectScreenWrapper.show();
 		} else {
 			$selectScreenWrapper.hide();
+		}
+		if(option === "changeScreen"){
+			$selectScreenReplacement.prop("selectedIndex", 0);
+			$selectScreenReplacementWrapper.show();
+		} else {
+			$selectScreenReplacementWrapper.hide();
 		}
 		if(option === "openView"){
 			$selectView.prop("selectedIndex", 0);
 			$selectViewWrapper.show();
 		} else {
 			$selectViewWrapper.hide();
-		}
-		if(option === "changeScreenImage"){
-			$inputURL.val("");
-			$inputURLWrapper.show();
-		} else {
-			$inputURLWrapper.hide();
 		}
 		if(option === "removeElement"){
 			$selectElementId.prop("selectedIndex", 0);
@@ -613,13 +622,13 @@ VISH.Editor.Screen = (function(V,$,undefined){
 				if($actionParamsScreenSelect.is(":visible")){
 					action.actionParams.screen = $actionParamsScreenSelect.val();
 				}
+				var $actionParamsScreenReplacementSelect = $actionWrapper.find("div.hotspotActionParamsScreenReplacement select");
+				if($actionParamsScreenReplacementSelect.is(":visible")){
+					action.actionParams.screenReplacement = $actionParamsScreenReplacementSelect.val();
+				}
 				var $actionParamsViewSelect = $actionWrapper.find("div.hotspotActionParamsView select");
 				if($actionParamsViewSelect.is(":visible")){
 					action.actionParams.view = $actionParamsViewSelect.val();
-				}
-				var $actionParamsURLInput = $actionWrapper.find("div.hotspotActionParamsURL input");
-				if($actionParamsURLInput.is(":visible")){
-					action.actionParams.url = $actionParamsURLInput.val();
 				}
 				var $actionParamsElementIdSelect = $actionWrapper.find("div.hotspotActionParamsElementId select");
 				if($actionParamsElementIdSelect.is(":visible")){

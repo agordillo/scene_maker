@@ -76,7 +76,6 @@ VISH.Constant.Clipboard.LocalStorageStack = "VishEditorClipboardStack";
 
 //Events
 VISH.Constant.Event = {};
-VISH.Constant.Event.onSendIframeMessage = "onSendIframeMessage";
 VISH.Constant.Event.onGoToSlide = "onGoToSlide";
 VISH.Constant.Event.onEnterSlide = "onEnterSlide";
 VISH.Constant.Event.onPlayVideo = "onPlayVideo";
@@ -87,29 +86,11 @@ VISH.Constant.Event.onPauseAudio = "onPauseAudio";
 VISH.Constant.Event.onSeekAudio = "onSeekAudio";
 VISH.Constant.Event.onSubslideOpen = "onSubslideOpen";
 VISH.Constant.Event.onSubslideClosed = "onSubslideClosed";
-VISH.Constant.Event.onAnswerQuiz = "onAnswerQuiz";
-VISH.Constant.Event.onSetSlave = "onSetSlave";
 VISH.Constant.Event.allowExitWithoutConfirmation = "allowExitWithoutConfirmation";
 VISH.Constant.Event.exit = "exit";
 VISH.Constant.Event.onSelectedSlides = "onSelectedSlides";
 VISH.Constant.Event.onVEFocusChange = "onVEFocusChange";
-VISH.Constant.Event.onShowRecommendations = "onShowRecommendations";
-VISH.Constant.Event.onHideRecommendations = "onHideRecommendations";
-VISH.Constant.Event.onAcceptRecommendation = "onAcceptRecommendation";
-VISH.Constant.Event.onEvaluate = "onEvaluate";
-VISH.Constant.Event.onEvaluateCompletion = "onEvaluateCompletion";
 VISH.Constant.Event.onViewportResize = "onViewportResize";
-VISH.Constant.Event.onProgressObjectiveUpdated = "onProgressObjectiveUpdated";
-VISH.Constant.Event.onNewObjectiveScore = "onNewObjectiveScore";
-VISH.Constant.Event.onTrackedAction = "onTrackedAction";
-
-//Touchable Events
-VISH.Constant.Event.Touchable = {};
-VISH.Constant.Event.Touchable.onSimpleClick = "onSimpleClick";
-VISH.Constant.Event.Touchable.onLongClick = "onLongClick";
-VISH.Constant.Event.Touchable.onUnknownTouchMovement = "onUnknownTouchMovement";
-VISH.Constant.Event.Touchable.onShiftRight = "onShiftRight";
-VISH.Constant.Event.Touchable.onShiftLeft = "onShiftLeft";
 
 //Storage
 VISH.Constant.Storage = {};

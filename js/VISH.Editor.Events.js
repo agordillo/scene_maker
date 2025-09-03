@@ -6,13 +6,8 @@ VISH.Editor.Events = (function(V,$,undefined){
 	var _bindedEditorEventListeners = false;
 	var _confirmOnExit;
 	var _isCtrlKeyPressed = false;
-	var _mobile;
 
 	var init = function(){
-		_mobile = (!V.Status.getDevice().desktop);
-		if(_mobile){
-			V.Editor.Events.Mobile.init();
-		}
 		bindEditorEventListeners();
 	};
 
@@ -51,6 +46,10 @@ VISH.Editor.Events = (function(V,$,undefined){
 			$(document).on('click',"#waiting_overlay", function(event){
 				event.stopPropagation();
 				event.preventDefault();
+			});
+
+			$(window).on('orientationchange',function(){
+				$(window).trigger('resize');
 			});
 
 			//Focus
@@ -181,21 +180,6 @@ VISH.Editor.Events = (function(V,$,undefined){
 			window.onbeforeunload = _exitConfirmation;
 			_confirmOnExit = true;
 
-			//Allow keyboard events with the first click
-			$(window.document).on('click', function(ev){
-				if(V.Status.getDevice().browser.name === V.Constant.IE){
-					//Prevent inputs to lose the focus when IE
-					if((ev.target)&&($(ev.target).is(":input"))){
-						return;
-					}
-				}
-				window.focus();
-			});
-
-			if(_mobile){
-				V.Editor.Events.Mobile.bindEditorMobileEventListeners();
-			}
-
 			_bindedEditorEventListeners = true;
 		}
 	};
@@ -245,20 +229,6 @@ VISH.Editor.Events = (function(V,$,undefined){
 				V.Editor.Utils.loadTab(V.Editor.Video.getDefaultTab());
 			}
 		});
-
-		//Fancybox to create a new quiz
-		$(container).find("a.addQuiz").fancybox({
-			'autoDimensions' : false,
-			'width': 800,
-			'scrolling': 'no',
-			'height': 600,
-			'padding' : 0,
-			"onStart"  : function(data) {
-				var clickedZoneId = $(data).attr("zone");
-				V.Editor.setCurrentArea($("#" + clickedZoneId));
-				V.Editor.Utils.loadTab('tab_quizzes');
-			}
-		});
 	};
 
 
@@ -274,7 +244,7 @@ VISH.Editor.Events = (function(V,$,undefined){
 		switch (event.keyCode) {
 		case 39: // right arrow
 			if(V.Editor.Slides.isSlideFocused()){
-				if(V.Editor.Screen.isSlideset(V.Slides.getCurrentSlide())){
+				if(V.Slideset.isSlideset(V.Slides.getCurrentSlide())){
 					V.Editor.Slides.forwardOneSubslide();
 				}
 				event.preventDefault();
@@ -282,17 +252,13 @@ VISH.Editor.Events = (function(V,$,undefined){
 			break;
 		case 40: //down arrow	    
 			if(V.Editor.Slides.isSlideFocused()){
-				if(!_isCtrlKeyPressed){
-					V.Slides.forwardOneSlide();
-				} else {
-					V.Slides.moveSlides(10);
-				}
+				V.Slides.forwardOneSlide();
 				event.preventDefault();
 			}
 			break;
 		case 37: // left arrow
 			if(V.Editor.Slides.isSlideFocused()){
-				if(V.Editor.Screen.isSlideset(V.Slides.getCurrentSlide())){
+				if(V.Slideset.isSlideset(V.Slides.getCurrentSlide())){
 					V.Editor.Slides.backwardOneSubslide();
 				}
 				event.preventDefault();
@@ -300,11 +266,7 @@ VISH.Editor.Events = (function(V,$,undefined){
 			break;
 		case 38: //up arrow	
 			if(V.Editor.Slides.isSlideFocused()){
-				if(!_isCtrlKeyPressed){
-					V.Slides.backwardOneSlide();
-				} else {
-					V.Slides.moveSlides(-10);
-				}
+				V.Slides.backwardOneSlide();
 				event.preventDefault();    		
 			}
 			break;
@@ -357,33 +319,9 @@ VISH.Editor.Events = (function(V,$,undefined){
 		_confirmOnExit = false;
 	};
 
-
-	////////////////
-	// Unbind events
-	////////////////
-
-	var unbindEditorEventListeners = function(){
-		if(_bindedEditorEventListeners){
-			$(document).unbind('keydown', handleBodyKeyDown);
-			$(document).unbind('keyup', handleBodyKeyUp);
-
-			$(window.document).off('click', function(){
-				window.focus();
-			});
-
-			if (_mobile){
-				V.Editor.Events.Mobile.unbindEditorMobileEventListeners();
-			}
-
-			_bindedEditorEventListeners = false;
-		}
-	};
-	
-
 	return {
 			init 							: init,
 			bindEditorEventListeners		: bindEditorEventListeners,
-			unbindEditorEventListeners		: unbindEditorEventListeners,
 			addZoneThumbsEvents				: addZoneThumbsEvents,
 			allowExitWithoutConfirmation 	: allowExitWithoutConfirmation
 	};

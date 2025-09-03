@@ -88,7 +88,6 @@ VISH.Editor = (function(V,$,undefined){
 		V.Object.init();
 		V.Editor.Dummies.init();
 		V.EventsNotifier.init();
-		V.Flashcard.init();
 		V.Slideset.init();
 		V.Editor.Screen.init();
 		V.Renderer.init();

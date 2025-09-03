@@ -2,8 +2,6 @@ VISH.ViewerAdapter = (function(V,$,undefined){
 
 	//Viewbar
 	var _showViewbar;
-	//Arrows
-	var _showArrows;
 
 	//Full Screen
 	var _fsButton;
@@ -31,31 +29,11 @@ VISH.ViewerAdapter = (function(V,$,undefined){
 		_lastWidth = -1;
 		_lastHeight = -1;
 
-		_showViewbar = _defaultViewbar();
-		_showArrows = true;
+		_showViewbar = true;
 		_fsButton = V.FullScreen.canFullScreen();
 
 		//Close button false by default
 		_closeButton = false;
-
-		//Mobiles
-		if(V.Status.getDevice().mobile){
-			if(!V.Status.isEmbed()){
-				_closeButton = (options)&&(options["comeBackUrl"]);
-			}
-		}
-
-		//Mobile and Tablets
-		if(!V.Status.getDevice().desktop){
-			_showArrows = false;
-		}
-
-		//Uniq mode
-		if(V.Status.getIsUniqMode()){
-			_showViewbar = false;
-			_showArrows = false;
-		}
-
 
 		//////////////
 		//Restrictions
@@ -64,23 +42,12 @@ VISH.ViewerAdapter = (function(V,$,undefined){
 		//No fs for preview
 		_fsButton = _fsButton && (!V.Status.isPreview());
 
-
 		////////////////
 		//Init interface
 		///////////////
 
-		if(_showViewbar){
-			V.Viewer.updateSlideCounter();
-			$("#viewbar").show();
-		} else {
-			$("#viewbar").hide();
-		}
-
-		if(!_showArrows){
-			$("#back_arrow").hide();
-			$("#forward_arrow").hide();
-		};
-
+		$("#viewbar").show();
+		
 		if(V.Status.isPreview()){
 			$("div#viewerpreview").show();
 		}
@@ -118,61 +85,9 @@ VISH.ViewerAdapter = (function(V,$,undefined){
 	};
 
 
-	///////////////
-	// PAGER
-	//////////////
-
-	/**
-	 * Function to hide/show the page-switchers buttons and arrows
-	 * hide the left one if on first slide
-	 * hide the right one if on last slide -> always show it, it will show the recommendations if on last slide
-	 * show both otherwise
-	 */
-	var decideIfPageSwitcher = function(){
-		//Arrows
-		if(_showArrows){
-			if (V.Slides.getCurrentSubslide()!==null){
-				//Subslide active
-				$("#forward_arrow").hide();
-				$("#back_arrow").hide();
-			} else {
-				//No subslide
-				if(V.Slides.isCurrentFirstSlide()){
-					$("#back_arrow").hide();
-				} else {
-					$("#back_arrow").show();
-				} 
-				//Always show
-				$("#forward_arrow").show();
-			} 
-		}
-
-		// Pager
-		if(V.Slides.isCurrentFirstSlide()){
-			$("#page-switcher-start").addClass("disabledarrow");
-		} else {
-			$("#page-switcher-start").removeClass("disabledarrow");
-		}
-		if(V.Slides.isCurrentLastSlide()){
-			$("#page-switcher-end").addClass("disabledarrow");
-		} else {
-			$("#page-switcher-end").removeClass("disabledarrow");
-		}
-		
-	};
-
-
 	///////////
 	// ViewBar
 	///////////
-
-	var _decideIfViewBarShow = function(){
-		if(_showViewbar){
-			$("#viewbar").show();
-		} else {
-			$("#viewbar").hide();
-		}
-	};
 
 	var _defaultViewbar = function(){
 		return true;
@@ -198,22 +113,9 @@ VISH.ViewerAdapter = (function(V,$,undefined){
 	 * Function to adapt the slides to the screen size
 	 */
 	var _setupSize = function(){
-		var viewbarHeight;
+		var viewbarHeight = _getDesiredVieweBarHeight(_lastHeight);
 		var min_margin_height = 25;
 		var min_margin_width = 60;
-
-		if(!_showViewbar){
-			//Cases without viewbar (quiz_simple , etc)
-			viewbarHeight = 0;
-			min_margin_height = 0;
-			min_margin_width = 0;
-		} else if(V.Status.isPreviewInsertMode()){
-			//Preview with insert images
-			viewbarHeight = 120; //Constant because is displayed from ViSH Editor
-		} else {
-			viewbarHeight = _getDesiredVieweBarHeight(_lastHeight);
-		}
-		
 		var height = _lastHeight - viewbarHeight;
 		var width = _lastWidth;
 		var finalW = 800;
@@ -249,10 +151,8 @@ VISH.ViewerAdapter = (function(V,$,undefined){
 		$(".vish_arrow").width(finalWidthMargin/2*0.9);
 
 		//Viewbar
-		if((_showViewbar)&&(!V.Status.isPreviewInsertMode())){
-			$("#viewbar").height(viewbarHeight);
-		}
-
+		$("#viewbar").height(viewbarHeight);
+		
 		//resize slides
 		var topSlides = $(".slides > article");
 		var subSlides = $(".slides > article > article");
@@ -291,36 +191,8 @@ VISH.ViewerAdapter = (function(V,$,undefined){
 		$("div.close_subslide").css("width",_closeButtonDimension+"px");
 		$("div.close_subslide").css("height",_closeButtonDimension+"px");
 
-		//Viewbar resizing
-		if(_showViewbar){
-			//Page switchers
-			$("#page-switcher-start").width($("#page-switcher-start").height());
-			$("#page-switcher-end").width($("#page-switcher-end").height());
-
-			//Fs button
-			$("#page-fullscreen").width($("#page-fullscreen").height());
-
-			if(V.Status.isPreviewInsertMode()){
-				//Get the real viewbar height in insert mode
-				viewbarHeight = $("#viewbar").height();
-			}
-
-			//Slide counter
-			//Font size related to menubar
-			var menubarIncreaseFactor = viewbarHeight/40;
-			var slideCounterFontSizeMain = 18*getPonderatedIncrease(menubarIncreaseFactor,0.5);
-			var slideCounterFontSize = 14*getPonderatedIncrease(menubarIncreaseFactor,0.5);
-			$("#slide-counter-input").css("font-size",slideCounterFontSizeMain+"px");
-			$("#slide-counter-span").css("font-size",slideCounterFontSize+"px");
-			$("#slide-counter-input").width(24*getPonderatedIncrease(menubarIncreaseFactor,1));
-			var slideCounterMarginTop = (viewbarHeight - $("#slide-counter-div").height())/2;
-			$("#slide-counter-div").css("margin-top",slideCounterMarginTop+"px");
-
-			//Watermark
-			$("#embedWatermark").width($("#embedWatermark").height()*2.7);
-		}
-
-		decideIfPageSwitcher();
+		//Fs button
+		$("#page-fullscreen").width($("#page-fullscreen").height());
 
 		updateFancyboxAfterSetupSize(increase,increaseW);
 
@@ -388,15 +260,6 @@ VISH.ViewerAdapter = (function(V,$,undefined){
 		$(fccontentDivs).height("100%");
 	};
 
-	/*
-	 * Show close button if is appropiate
-	 */
-	var decideIfCloseButton = function(){
-		if(_closeButton){
-			$("#closeButton").show();
-		}
-	};
-
 	var getDimensionsForResizedButton = function(increase,originalWidth,aspectRatio){
 		var originalWidth = originalWidth || 23;
 		var aspectRatio = aspectRatio || 1;
@@ -423,8 +286,6 @@ VISH.ViewerAdapter = (function(V,$,undefined){
 	return {
 		init 							: init,
 		updateInterface 				: updateInterface,
-		decideIfPageSwitcher			: decideIfPageSwitcher,
-		decideIfCloseButton				: decideIfCloseButton,
 		updateFancyboxAfterSetupSize	: updateFancyboxAfterSetupSize,
 		getDimensionsForResizedButton	: getDimensionsForResizedButton,
 		getPonderatedIncrease 			: getPonderatedIncrease,

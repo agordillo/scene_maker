@@ -333,10 +333,6 @@ VISH.Slides = (function(V,$,undefined){
 
 		_goToSlide(no);
 
-		if(!V.Editing){
-			V.Viewer.updateSlideCounter();
-		}
-
 		var params = {};
 		params.slideNumber = no;
 		V.EventsNotifier.notifyEvent(V.Constant.Event.onGoToSlide,params,triggeredByUser);
@@ -436,20 +432,10 @@ VISH.Slides = (function(V,$,undefined){
 	var _onOpenSubslide = function(subSlideId){
 		curSubSlideId = subSlideId;
 		$("#closeButton").hide();
-		//Open subslide will call V.ViewerAdapter.decideIfPageSwitcher();
 	};
 
 	var _onCloseSubslide = function(){
 		curSubSlideId = null;
-		if(V.Status.getDevice().mobile){
-			//Timeout to prevent undesired actions in Mobile Phones
-			setTimeout(function(){
-				V.ViewerAdapter.decideIfCloseButton();
-				V.ViewerAdapter.decideIfPageSwitcher();
-			},800);
-		} else {
-			V.ViewerAdapter.decideIfPageSwitcher();
-		}
 	};
 
 	return {	

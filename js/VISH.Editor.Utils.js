@@ -262,7 +262,7 @@ VISH.Editor.Utils = (function(V,$,undefined){
 			slideId = V.Utils.getId("article");
 		}
 		
-		if(V.Slideset.isSlideset(slideType)){
+		if(V.Screen.isScreen(slideType)){
 			slide = _replaceIdsForSlidesetJSON(slide,slideId);
 		} else {
 			slide = _replaceIdsForStandardSlideJSON(slide,slideId);

@@ -198,7 +198,7 @@ VISH.Editor.Screen = (function(V,$,undefined){
 
 	var _drawHotspot = function(screenId,hotspotId,x,y,imgURL,lockAspectRatio,width,height,rotationAngle){
 		if(typeof imgURL !== "string"){
-			imgURL = V.Slideset.getDefaultHotspotImg();
+			imgURL = V.Screen.getDefaultHotspotImg();
 		}
 		if(typeof lockAspectRatio !== "boolean"){
 			lockAspectRatio = true;
@@ -588,7 +588,7 @@ VISH.Editor.Screen = (function(V,$,undefined){
 				break;
 		}
 		if(typeof hotspotImg !== "string"){
-			hotspotImg = V.Slideset.getDefaultHotspotImg();
+			hotspotImg = V.Screen.getDefaultHotspotImg();
 		}
 		$hotspot.attr("src", hotspotImg);
 

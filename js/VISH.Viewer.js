@@ -50,7 +50,7 @@ VISH.Viewer = (function(V,$,undefined){
 		V.Utils.Loader.loadLanguageCSS();
 		V.EventsNotifier.init();
 		V.Object.init();
-		V.Slideset.init();
+		V.Screen.init();
 		V.Slides.init();
 		V.I18n.translateUI();
 		V.User.init(options);
@@ -94,7 +94,7 @@ VISH.Viewer = (function(V,$,undefined){
 		var slide = e.target;
 		var cSlideNumber = V.Slides.getCurrentSlideNumber();
 		var isSubslide = V.Slides.isSubslide(slide);
-		var isSlideset = ((!isSubslide)&&(V.Slideset.isSlideset(slide)));
+		var isSlideset = ((!isSubslide)&&(V.Screen.isScreen(slide)));
 
 		//Prevent parent to trigger onSlideEnterViewer
 		//Use to prevent slidesets to be called when enter in one of their subslides
@@ -124,7 +124,7 @@ VISH.Viewer = (function(V,$,undefined){
 		}
 
 		if(isSlideset){
-			V.Slideset.onEnterSlideset(slide);
+			V.Screen.onEnterSlideset(slide);
 		}
 
 		V.EventsNotifier.notifyEvent(V.Constant.Event.onEnterSlide,{"id": slide.id, "slideNumber": cSlideNumber},false);
@@ -136,7 +136,7 @@ VISH.Viewer = (function(V,$,undefined){
 	var onSlideLeaveViewer = function(e){
 		var slide = e.target;
 		var isSubslide = V.Slides.isSubslide(slide);
-		var isSlideset = ((!isSubslide)&&(V.Slideset.isSlideset(slide)));
+		var isSlideset = ((!isSubslide)&&(V.Screen.isScreen(slide)));
 
 		e.stopPropagation();
 
@@ -148,7 +148,7 @@ VISH.Viewer = (function(V,$,undefined){
 			}
 			V.Video.HTML5.stopMultimedia(slide);
 		} else {
-			V.Slideset.onLeaveSlideset(slide);
+			V.Screen.onLeaveSlideset(slide);
 		}
 	};
 	

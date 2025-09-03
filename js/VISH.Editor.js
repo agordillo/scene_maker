@@ -88,7 +88,7 @@ VISH.Editor = (function(V,$,undefined){
 		V.Object.init();
 		V.Editor.Dummies.init();
 		V.EventsNotifier.init();
-		V.Slideset.init();
+		V.Screen.init();
 		V.Editor.Screen.init();
 		V.Renderer.init();
 		V.Slides.init();
@@ -220,7 +220,7 @@ VISH.Editor = (function(V,$,undefined){
 			var slideset = V.Slides.getCurrentSlide();
 
 			//Add a subslide (slide[type='standard']) to a slideset
-			if((type === V.Constant.STANDARD)&&(V.Slideset.isSlideset(slideset))){
+			if((type === V.Constant.STANDARD)&&(V.Screen.isScreen(slideset))){
 				var options = {};
 				options.subslide = true;
 				options.template = $(slideThumb).attr('template');
@@ -419,7 +419,7 @@ VISH.Editor = (function(V,$,undefined){
 		//Use to prevent slidesets to be called when enter in one of their subslides
 		e.stopPropagation();
 
-		if(V.Slideset.isSlideset(slide)){
+		if(V.Screen.isScreen(slide)){
 			V.Editor.Screen.onEnterSlideset(slide);
 		} else {
 			//Standard slide
@@ -443,7 +443,7 @@ VISH.Editor = (function(V,$,undefined){
 
 		e.stopPropagation();
 
-		if(V.Slideset.isSlideset(slide)){
+		if(V.Screen.isScreen(slide)){
 			V.Editor.Screen.onLeaveSlideset(slide);
 		} else {
 			//Standard slide
@@ -480,7 +480,7 @@ VISH.Editor = (function(V,$,undefined){
 		$('section.slides > article').each(function(index,slideDOM){
 			var slide = {};
 
-			if(!V.Slideset.isSlideset(slideDOM)){
+			if(!V.Screen.isScreen(slideDOM)){
 				slide = _saveStandardSlide(slideDOM,presentation,false);
 			} else {
 				V.Utils.addTempShown(slideDOM);

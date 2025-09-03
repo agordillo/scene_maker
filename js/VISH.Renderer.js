@@ -14,7 +14,7 @@ VISH.Renderer = (function(V,$,undefined){
 			var extra_buttons = "";
 		}
 
-		var isSlideset = V.Slideset.isSlideset(slide.type);
+		var isSlideset = V.Screen.isScreen(slide.type);
 
 		if(isSlideset){
 			article = _renderSlideset(slide);
@@ -27,7 +27,7 @@ VISH.Renderer = (function(V,$,undefined){
 
 			//For slidesets, we have to draw it after render its scaffolding
 			if(isSlideset){
-				V.Slideset.draw(slide);
+				V.Screen.draw(slide);
 			}
 		}
 	};

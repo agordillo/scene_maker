@@ -68,7 +68,7 @@ VISH.Editor.Slides = (function(V,$,undefined){
 	*/
 	var moveSubslides = function(n){
 		var cSlide = V.Slides.getCurrentSlide();
-		if(!V.Slideset.isSlideset(cSlide)){
+		if(!V.Screen.isScreen(cSlide)){
 			return;
 		}
 		var cSubslideNumber = V.Slides.getCurrentSubslideNumber();
@@ -162,7 +162,7 @@ VISH.Editor.Slides = (function(V,$,undefined){
 		V.Utils.addTempShown(article_to_move);
 
 		//Refresh Draggable Objects
-		if(V.Slideset.isSlideset(article_to_move)){
+		if(V.Screen.isScreen(article_to_move)){
 			V.Editor.Screen.refreshDraggables(article_to_move);
 		}
 		
@@ -247,7 +247,7 @@ VISH.Editor.Slides = (function(V,$,undefined){
 		var slideCopied = $("#"+newId);
 
 		//Restore draggables
-		if(V.Slideset.isSlideset(slideCopied)){
+		if(V.Screen.isScreen(slideCopied)){
 			V.Editor.Screen.refreshDraggables(slideCopied);
 		}
 		
@@ -363,7 +363,7 @@ VISH.Editor.Slides = (function(V,$,undefined){
 		V.Slides.updateSlides();
 		V.Slides.triggerEnterEvent(V.Slides.getCurrentSlideNumber());
 
-		if(V.Slideset.isSlideset(slideType)){
+		if(V.Screen.isScreen(slideType)){
 			// Create/Load dummy slideset
 			V.Editor.Screen.draw(null,slide);
 		}
@@ -433,7 +433,7 @@ VISH.Editor.Slides = (function(V,$,undefined){
 			return;
 		}
 
-		if(V.Slideset.isSlideset(slide)){
+		if(V.Screen.isScreen(slide)){
 			V.Editor.Screen.beforeRemoveSlideset(slide);
 		}
 
@@ -528,7 +528,7 @@ VISH.Editor.Slides = (function(V,$,undefined){
 	};
 
 	var _updateThumbnail = function(slide,slideThumbnail,thumbnailURL){
-		if(V.Slideset.isSlideset(slide)){
+		if(V.Screen.isScreen(slide)){
 			$("#slideset_selected > img").attr("src",thumbnailURL);
 		}
 		$(slideThumbnail).attr("src",thumbnailURL);

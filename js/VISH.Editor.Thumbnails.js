@@ -51,7 +51,7 @@ VISH.Editor.Thumbnails = (function(V,$,undefined){
 	var _onImageError = function(image){
 		var slideNumber = $(image).attr("slidenumber");
 		var slide = V.Slides.getSlideWithNumber(slideNumber);
-		var isSlideset = V.Slideset.isSlideset(slide);
+		var isSlideset = V.Screen.isScreen(slide);
 		if(isSlideset){
 			V.Editor.Screen.onThumbnailLoadFail(slide);
 		}
@@ -191,7 +191,7 @@ VISH.Editor.Thumbnails = (function(V,$,undefined){
 	var getThumbnailURL = function(slide){
 		var thumbnailURL;
 		var slideType = $(slide).attr('type');
-		var isSlideset = V.Slideset.isSlideset(slideType);
+		var isSlideset = V.Screen.isScreen(slideType);
 
 		if(isSlideset){
 			thumbnailURL = V.Editor.Screen.getThumbnailURL(slide);
@@ -216,7 +216,7 @@ VISH.Editor.Thumbnails = (function(V,$,undefined){
 		var slideType = $(slide).attr('type');
 		if(slideType==V.Constant.STANDARD){
 			return _getDefaultThumbnailURLForStandardSlide(slide);
-		} else if(V.Slideset.isSlideset(slideType)){
+		} else if(V.Screen.isScreen(slideType)){
 			return V.Editor.Screen.getDefaultThumbnailURL(slide);
 		}
 	};

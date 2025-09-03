@@ -244,7 +244,7 @@ VISH.Editor.Events = (function(V,$,undefined){
 		switch (event.keyCode) {
 		case 39: // right arrow
 			if(V.Editor.Slides.isSlideFocused()){
-				if(V.Slideset.isSlideset(V.Slides.getCurrentSlide())){
+				if(V.Screen.isScreen(V.Slides.getCurrentSlide())){
 					V.Editor.Slides.forwardOneSubslide();
 				}
 				event.preventDefault();
@@ -258,7 +258,7 @@ VISH.Editor.Events = (function(V,$,undefined){
 			break;
 		case 37: // left arrow
 			if(V.Editor.Slides.isSlideFocused()){
-				if(V.Slideset.isSlideset(V.Slides.getCurrentSlide())){
+				if(V.Screen.isScreen(V.Slides.getCurrentSlide())){
 					V.Editor.Slides.backwardOneSubslide();
 				}
 				event.preventDefault();

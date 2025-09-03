@@ -36,7 +36,7 @@ VISH.Editor.Dummies = (function(V,undefined){
 	 * Function to get the dummy of a new slide
 	 */
 	var getDummy = function(slideType, options){
-		var isSlideset = V.Slideset.isSlideset(slideType);
+		var isSlideset = V.Screen.isScreen(slideType);
 		if(isSlideset){
 			var slidesetId = V.Utils.getId("article");
 			return V.Editor.Screen.getDummy(slidesetId, options);
@@ -75,7 +75,7 @@ VISH.Editor.Dummies = (function(V,undefined){
 
 	var getScaffoldForSlide = function(slide,options){
 		var slideType = V.Slides.getSlideType(slide);
-		var isSlideset = V.Slideset.isSlideset(slideType);
+		var isSlideset = V.Screen.isScreen(slideType);
 		if(isSlideset){
 			var dummy = V.Editor.Screen.getDummy(slide.id, options);
 			if(dummy){

@@ -203,7 +203,7 @@ VISH.ViewerAdapter = (function(V,$,undefined){
 		V.ObjectPlayer.aftersetupSize(increase,increaseW);
 
 		//Slidesets
-		V.Slideset.afterSetupSize(increase,increaseW);
+		V.Screen.afterSetupSize(increase,increaseW);
 	};
 
 	var _getDesiredVieweBarHeight = function(windowHeight){

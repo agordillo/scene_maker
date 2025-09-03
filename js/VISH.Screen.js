@@ -1,4 +1,4 @@
-VISH.Slideset = (function(V,$,undefined){
+VISH.Screen = (function(V,$,undefined){
 	var initialized = false;
 	var defaultHotspotImg;
 
@@ -12,7 +12,7 @@ VISH.Slideset = (function(V,$,undefined){
 		initialized = true;
 	};
 
-	var isSlideset = function(obj){
+	var isScreen = function(obj){
 		var type;
 		if(typeof obj == "string"){
 			type = obj;
@@ -208,7 +208,7 @@ VISH.Slideset = (function(V,$,undefined){
 
 	return {
 		init 					: init,
-		isSlideset				: isSlideset,
+		isScreen				: isScreen,
 		getDefaultHotspotImg	: getDefaultHotspotImg,
 		draw					: draw,
 		onEnterSlideset			: onEnterSlideset,

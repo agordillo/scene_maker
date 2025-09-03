@@ -136,32 +136,34 @@ VISH.Screen = (function(V,$,undefined){
 	};
 
 	var _replaceScreen = function(screenId,screenReplacementId){
-		console.log("V.Slides.getCurrentSlide()",V.Slides.getCurrentSlide());
-
 		var $screen = $("#" + screenId);
 		var $screenReplacement = $("#" + screenReplacementId);
 		if (($screen.length !== 1)||($screenReplacement.length !== 1)) {
 			return;
 		}
-		console.log("_replaceScreen",screenId,screenReplacementId);
 
-		//Change ids
-		$screenReplacement.attr("id","replaceScreenTmpId");
-		$screen.attr("id",screenReplacementId);
-		$screenReplacement.attr("id",screenId);
+		//Change positions in DOM
+		var $temp = $("<div>").insertBefore($screen);
+		$screen.insertBefore($screenReplacement);
+  		$screenReplacement.insertBefore($temp);
+		$temp.remove();
 
 		//Change slide numbers
 		var slideNumberScreenReplacement = $screenReplacement.attr("slidenumber");
 		$screenReplacement.attr("slidenumber",$screen.attr("slidenumber"));
 		$screen.attr("slidenumber",slideNumberScreenReplacement);
 
+		//Change ids
+		$screenReplacement.attr("id","replaceScreenTmpId");
+		$screen.attr("id",screenReplacementId);
+		$screenReplacement.attr("id",screenId);
+
 		//Change subslide ids
 		_changeViewsIds($screenReplacement);
 		_changeViewsIds($screen);
 
 		//Refresh
-		console.log("V.Slides.getCurrentSlide() 2",V.Slides.getCurrentSlide());
-		V.Slides.goToSlide(V.Slides.getCurrentSlide());
+		V.Slides.goToSlide(V.Slides.getCurrentSlideNumber(),true);
 	};
 
 	var _changeViewsIds = function($screen){

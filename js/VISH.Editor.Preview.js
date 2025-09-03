@@ -36,38 +36,22 @@ VISH.Editor.Preview = (function(V,$,undefined){
 		});
 	}
 
-	var preview = function(options){
-		_prepare(options);
+	var preview = function(){
+		_prepare();
 		$("#preview_action").trigger('click');
 	}
 
-
-	/*
-	 * Function to prepare the preview of the presentation as it is now
-	 */
-	var _prepare = function(options){
-		var slideNumberToPreview;
-		if((!options)||(!options["slideNumberToPreview"])||(typeof options["slideNumberToPreview"] != "number")){
-			slideNumberToPreview =  V.Slides.getCurrentSlideNumber();
-		} else {
-			slideNumberToPreview =  options["slideNumberToPreview"];
-		}
-
+	var _prepare = function(){
+		var slideNumberToPreview = 1;
 		if(typeof V.PreviewPath != "undefined"){
 			$("#preview_action").attr("href", V.PreviewPath + "#" + slideNumberToPreview);
 		}
-
-		if((!options)||(!options["presentationJSON"])||(typeof options["presentationJSON"] != "object")){
-			presentationPreview = V.Editor.savePresentation();
-		} else {
-			presentationPreview = options["presentationJSON"];
-		}
+		presentationPreview = V.Editor.savePresentation();
 	};
 
 	var getPreview = function(){
 		return presentationPreview;
 	};
-
 
 	return {
 		init 			: init,

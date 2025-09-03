@@ -311,20 +311,11 @@ VISH.Slides = (function(V,$,undefined){
    /**
 	* Go to the slide no
 	*/
-	var goToSlide = function(no,triggeredByUser){
-		if((no === getCurrentSlideNumber())||(no > slideEls.length)||(no <= 0)){
+	var goToSlide = function(no,ignoreCurrentSlideNumber){
+		if((ignoreCurrentSlideNumber!== true && no === getCurrentSlideNumber())||(no > slideEls.length)||(no <= 0)){
 			//Do nothing
 			return;
 		};
-
-		triggeredByUser = !(triggeredByUser===false);
-
-		if((triggeredByUser)&&(V.Status.isPreventDefaultMode())&&(V.Messenger)){
-			var params = {};
-			params.slideNumber = no;
-			V.Messenger.notifyEventByMessage(V.Constant.Event.onGoToSlide,params);
-			return;
-		}
 
 		//Close fancybox
 		if((!V.Editing)&&($.fancybox)){
@@ -335,7 +326,7 @@ VISH.Slides = (function(V,$,undefined){
 
 		var params = {};
 		params.slideNumber = no;
-		V.EventsNotifier.notifyEvent(V.Constant.Event.onGoToSlide,params,triggeredByUser);
+		V.EventsNotifier.notifyEvent(V.Constant.Event.onGoToSlide,params);
 	};
 
 	var _goToSlide = function(no){

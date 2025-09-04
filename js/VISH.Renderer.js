@@ -4,92 +4,76 @@ VISH.Renderer = (function(V,$,undefined){
 		V.Renderer.Filter.init();
 	}
 
-	var renderSlide = function(slide){
-		var article;
-
-		if(!extra_classes){
-			var extra_classes = "";
+	var renderSlide = function(slideJSON){
+		var slideDOM;
+		switch(slideJSON.type){
+			case V.Constant.SCREEN:
+				slideDOM = _renderScreen(slideJSON);
+				break;
+			case V.Constant.VIEW_IMAGE:
+				slideDOM = _renderViewImage(slideJSON);
+				break;
+			case V.Constant.VIEW_CONTENT:
+				slideDOM = _renderViewContent(slideJSON);
+				break;
 		}
-		if(!extra_buttons){
-			var extra_buttons = "";
-		}
-
-		var isSlideset = V.Screen.isScreen(slide.type);
-
-		if(isSlideset){
-			article = _renderSlideset(slide);
-		} else {
-			article = _renderStandardSlide(slide);
-		}
-
-		if(article){
-			$('section.slides').append($(article));
-
-			//For slidesets, we have to draw it after render its scaffolding
-			if(isSlideset){
-				V.Screen.draw(slide);
+		if(slideDOM){
+			$('section.slides').append($(slideDOM));
+			if(slideJSON.type !== V.Constant.VIEW_CONTENT){
+				V.Screen.draw(slideJSON);
 			}
 		}
 	};
 
-	var _renderStandardSlide = function(slide,options){
+	var _renderScreen = function(screenJSON){
+		var allViews = "";
+		var viewsL = screenJSON.slides.length;
+		for(var i=0; i<viewsL; i++){
+			var view = screenJSON.slides[i];
+			allViews += _renderView(view);
+		}
+		return $("<article type='"+screenJSON.type+"' id='"+screenJSON.id+"'>"+allViews+"</article>");
+	};
+
+	var _renderView = function(view){
+		if(view.type === V.Constant.VIEW_CONTENT){
+			return _renderViewContent(view);
+		} else if(view.type === V.Constant.VIEW_IMAGE){
+			return _renderViewImage(view);
+		}
+	};
+
+	var _renderViewImage = function(view){
+		return "";
+	};
+
+	var _renderViewContent = function(view){
 		var content = "";
-		var classes = "";
-		var extraClasses = "";
-		var extraButtons = "";
+		var classes = "hide_in_screen";
+		var buttons = "<div class='close_view' id='close"+view.id+"'></div>";
 
-		if(typeof options != "undefined"){
-			if(typeof options.extraClasses == "string"){
-				extraClasses = options.extraClasses;
-			}
-			if(typeof options.extraButtons == "string"){
-				extraButtons = options.extraButtons;
-			}
-		}
-
-		var elL = slide.elements.length;
+		var elL = view.elements.length;
 		for(var i=0; i<elL; i++){
-			var element = slide.elements[i];
+			var element = view.elements[i];
 			if(!V.Renderer.Filter.allowElement(element)){
-				content += V.Renderer.Filter.renderContentFiltered(element,slide.template);
+				content += V.Renderer.Filter.renderContentFiltered(element);
 			} else if(element.type === V.Constant.TEXT){
-				content += _renderText(element,slide.template);
+				content += _renderText(element);
 			} else if(element.type === V.Constant.IMAGE){
-				content += _renderImage(element,slide.template);
+				content += _renderImage(element);
 			} else if(element.type === V.Constant.VIDEO){
-				content += _renderHTML5Video(element,slide.template);
+				content += _renderHTML5Video(element);
 			} else if(element.type === V.Constant.AUDIO){
-				content += _renderHTML5Audio(element,slide.template);
+				content += _renderHTML5Audio(element);
 			} else if(element.type === V.Constant.OBJECT){
-				content += _renderObject(element,slide.template);
+				content += _renderObject(element);
 				classes += "object ";
-			} else if(element.type === V.Constant.SNAPSHOT){
-        		content += _renderSnapshot(element,slide.template);
-        		classes += "snapshot ";
-      		} else if(element.type === V.Constant.APPLET){
-				content += _renderApplet(element,slide.template);
-				classes += "applet ";
-			} else if(element.type === V.Constant.QUIZ){
-				content += V.Quiz.render(element,slide.template);
-				classes += V.Constant.QUIZ;
 			} else {
-				content += _renderEmpty(element, slide.template);
+				content += _renderEmpty(element);
 			}
 		}
 
-		return "<article class='"+ extraClasses + " " +classes+"' type='"+V.Constant.VIEW_CONTENT+"' template='" + slide.template + "' id='"+slide.id+"'>"+ extraButtons + content+"</article>";
-	};
-
-	var _renderSlideset = function(slidesetJSON){
-		var allSubslides = "";
-
-		var subslidesL = slidesetJSON.slides.length;
-		for(var i=0; i<subslidesL; i++){
-			var subslide = slidesetJSON.slides[i];
-			allSubslides += _renderStandardSlide(subslide, {extraClasses: "hide_in_smartcard", extraButtons: "<div class='close_subslide' id='close"+subslide.id+"'></div>"});
-		}
-		
-		return $("<article type='"+slidesetJSON.type+"' id='"+slidesetJSON.id+"'>"+allSubslides+"</article>");
+		return "<article class='"+ classes +"' type='"+V.Constant.VIEW_CONTENT+"' id='"+view.id+"'>"+ buttons + content+"</article>";
 	};
 
 
@@ -97,15 +81,18 @@ VISH.Renderer = (function(V,$,undefined){
 	 * Render elements
 	 */
 
-	var _renderEmpty = function(element, template){
+	var _renderEmpty = function(element){
+		var template = "view_content";
 		return "<div id='"+element['id']+"' class='"+template+"_"+element['areaid']+" "+template+"_text"+"'></div>";
 	};
 
-	var _renderText = function(element, template){
+	var _renderText = function(element){
+		var template = "view_content";
 		return "<div id='"+element['id']+"' class='VEtextArea "+template+"_"+element['areaid']+" "+template+"_text"+"'>"+element['body']+"</div>";
 	};
 	
-	var _renderImage = function(element, template){
+	var _renderImage = function(element){
+		var template = "view_content";
 		if(typeof element['style'] == "undefined"){
 			style = "max-height: 100%; max-width: 100%;";
 		} else {
@@ -126,21 +113,24 @@ VISH.Renderer = (function(V,$,undefined){
 		return V.Utils.getOuterHTML(div);
 	};
 	
-	var _renderHTML5Video = function(videoJSON, template){
+	var _renderHTML5Video = function(videoJSON){
+		var template = "view_content";
 		var rendered = "<div id='"+videoJSON['id']+"' class='"+template+"_"+videoJSON['areaid']+"'>";
 		var video = V.Video.HTML5.renderVideoFromJSON(videoJSON,{id: V.Utils.getId(videoJSON['id'] + "_video"),extraClasses: [template + "_video"], timestamp: true});
 		rendered = rendered + video + "</div>";
 		return rendered;
 	};
 
-	var _renderHTML5Audio = function(audioJSON, template){
+	var _renderHTML5Audio = function(audioJSON){
+		var template = "view_content";
 		var rendered = "<div id='"+audioJSON['id']+"' class='"+template+"_"+audioJSON['areaid']+"'>";
 		var audio = V.Audio.HTML5.renderAudioFromJSON(audioJSON,{id: V.Utils.getId(audioJSON['id'] + "_audio"),extraClasses: [template + "_audio"], timestamp: true});
 		rendered = rendered + audio + "</div>";
 		return rendered;
 	};
 	
-	var _renderObject = function(element,template){
+	var _renderObject = function(element){
+		var template = "view_content";
 		var objectSettings = element.settings || {};
 		var loadingObjectClass = (objectSettings.unloadObject===false) ? "unloadableObject" : "";
 		
@@ -159,18 +149,6 @@ VISH.Renderer = (function(V,$,undefined){
 				return "<div id='"+ element['id'] +"' class='objectelement " + loadingObjectClass + " " + template + "_" + element['areaid'] + "' objectStyle='" + style + "' zoomInStyle='" + zoomInStyle + "' objectWrapper='" + body + "'>" + "" + "</div>";
 				break;
 		}
-	};
-	
-	var _renderSnapshot = function(element, template){
-		var style = (element['style'])? element['style'] : "";
-		var body = V.Utils.checkUrlProtocolInStringTag(element['body']);
-		var scrollTop = (element['scrollTop'])? element['scrollTop'] : 0;
-		var scrollLeft = (element['scrollLeft'])? element['scrollLeft'] : 0;
-		return "<div id='"+element['id']+"' class='snapshotelement "+template+"_"+element['areaid']+ "' template='" + template + "' objectStyle='" + style + "' scrollTop='" + scrollTop + "' scrollTopOrigin='" + scrollTop + "' scrollLeft='" + scrollLeft + "' scrollLeftOrigin='" + scrollLeft + "' objectWrapper='" + body + "'>" + "" + "</div>";
-	};
-	
-	var _renderApplet = function(element, template){
-		return "<div id='"+element['id']+"' class='appletelement "+template+"_"+element['areaid']+"' code='"+element['code']+"' width='"+element['width']+"' height='"+element['height']+"' archive='"+element['archive']+"' params='"+element['params']+"' ></div>";
 	};
 
 	return {

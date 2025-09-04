@@ -485,7 +485,7 @@ VISH.Editor.Slides = (function(V,$,undefined){
 
 	var addSubslide = function(slideset,subslide){ 
 		var subslide = $(subslide).css("display","none")[0];
-		appendSubslide(slideset,subslide);
+		appendView(slideset,subslide);
 		V.Editor.Tools.addTooltipsToSlide(subslide);
 		V.Editor.Screen.openSubslide(subslide);
 		V.Editor.Thumbnails.drawSlidesetThumbnails($(slideset).find("article"),function(){
@@ -495,7 +495,7 @@ VISH.Editor.Slides = (function(V,$,undefined){
 		V.Editor.Screen.afterCreateSubslide(slideset,subslide);
 	};
 
-	var appendSubslide = function(slideset,subslide){
+	var appendView = function(slideset,subslide){
 		$(slideset).append(subslide);
 	}
 
@@ -531,7 +531,7 @@ VISH.Editor.Slides = (function(V,$,undefined){
 		addSlide 				: addSlide,
 		removeCurrentSlide		: removeCurrentSlide,
 		addSubslide				: addSubslide,
-		appendSubslide			: appendSubslide,
+		appendView				: appendView,
 		removeCurrentSlide		: removeCurrentSlide,
 		onDeleteScreenClicked	: onDeleteScreenClicked,
 		onDeleteSubslideClicked	: onDeleteSubslideClicked,

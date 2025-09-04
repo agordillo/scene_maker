@@ -56,9 +56,7 @@ VISH.Editor.Screen = (function(V,$,undefined){
 	 * Add new screen to the scene
 	 */
 	var addScreen = function(){
-		var options = {};
-		options.slideNumber = V.Slides.getSlidesQuantity()+1;
-		var slide = V.Editor.Dummies.getDummy(V.Constant.SCREEN,options);
+		var slide = V.Editor.Dummies.getDummy(V.Constant.SCREEN,{slideNumber:V.Slides.getSlidesQuantity()+1});
 		V.Editor.Slides.addSlide(slide);
 		$.fancybox.close();
 	};
@@ -66,14 +64,14 @@ VISH.Editor.Screen = (function(V,$,undefined){
 	/*
 	* Draw
 	*/
-	var draw = function(screenJSON,scaffoldDOM){
-		if(screenJSON){
-			if((typeof screenJSON.background === "string")&&(screenJSON.background !== "none")){
-				onBackgroundSelected(V.Utils.getSrcFromCSS(screenJSON.background));
+	var draw = function(slideJSON,scaffoldDOM){
+		if(slideJSON){
+			if((typeof slideJSON.background === "string")&&(slideJSON.background !== "none")){
+				onBackgroundSelected(V.Utils.getSrcFromCSS(slideJSON.background),scaffoldDOM);
 			};
 			//Draw hotspots
-			if (Array.isArray(screenJSON.hotspots)) {
-				$(screenJSON.hotspots).each(function(index,hotspot){
+			if (Array.isArray(slideJSON.hotspots)) {
+				$(slideJSON.hotspots).each(function(index,hotspot){
 					V.Utils.registerId(hotspot.id);
 
 					//Transform dimensions from percentage to absolute numbers for a container with dimensions 800x600.
@@ -82,9 +80,9 @@ VISH.Editor.Screen = (function(V,$,undefined){
 					var hotspotWidth = hotspot.width*800/100;
 					var hotspotHeight = hotspot.height*600/100;
 
-					_drawHotspot(screenJSON.id,hotspot.id,hotspotX,hotspotY,hotspot.image,hotspot.lockAspectRatio,hotspotWidth,hotspotHeight,hotspot.rotationAngle);
+					_drawHotspot(slideJSON.id,hotspot.id,hotspotX,hotspotY,hotspot.image,hotspot.lockAspectRatio,hotspotWidth,hotspotHeight,hotspot.rotationAngle);
 					if (Array.isArray(hotspot.actions)&&hotspot.actions.length>0) {
-						slideData[screenJSON.id].hotspots[hotspot.id].actions = hotspot.actions;
+						slideData[slideJSON.id].hotspots[hotspot.id].actions = hotspot.actions;
 					}
 				});
 			}
@@ -668,9 +666,11 @@ VISH.Editor.Screen = (function(V,$,undefined){
 	/*
 	 * Callback from the V.Editor.Image module to add the background
 	 */
-	var onBackgroundSelected = function(contentToAdd){
-		var slide = V.Slides.getCurrentSlide();
-		
+	var onBackgroundSelected = function(contentToAdd,slide){
+		if(typeof slide === "undefined"){
+			slide = V.Slides.getCurrentSlide();
+		}
+
 		if($(slide).attr("type")!==V.Constant.VIEW_CONTENT){
 			$(slide).css("background-image", "url("+contentToAdd+")");
 			$(slide).attr("avatar", "url('"+contentToAdd+"')");
@@ -720,7 +720,7 @@ VISH.Editor.Screen = (function(V,$,undefined){
 	var saveScreen = function(screenDOM){
 		var screen = {};
 		screen.id = $(screenDOM).attr('id');
-		screen.type = V.Constant.SCREEN;
+		screen.type = $(screenDOM).attr('type');
 
 		var screenBackground = $(screenDOM).css("background-image");
 		if((screenBackground && screenBackground !== "none")){

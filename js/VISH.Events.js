@@ -18,7 +18,7 @@ VISH.Events = (function(V,$,undefined){
 		$('article').live('slideenter', V.Viewer.onSlideEnterViewer);
 		$('article').live('slideleave', V.Viewer.onSlideLeaveViewer);
 
-		$(document).on('click','.close_subslide', V.Screen.onCloseSubslideClicked);
+		$(document).on('click','.close_view', V.Screen.onCloseSubslideClicked);
 
 		//Focus
 		$(window).focus(function(){

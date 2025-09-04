@@ -193,13 +193,9 @@ VISH.Editor = (function(V,$,undefined){
 		if(!V.Screen.isScreen(screen)){
 			return;
 		}
-
 		var type = $(event.currentTarget).attr('type');
-		var options = {};
-		options.screen = screen;
-		var subslide = V.Editor.Dummies.getDummy(type, options);
-		V.Editor.Slides.addSubslide(screen,subslide);
-
+		var view = V.Editor.Dummies.getDummy(type, {screenId: $(screen).attr("id"), slideNumber: ($(screen).find("article").length + 1)});
+		V.Editor.Slides.addSubslide(screen,view);
 		$.fancybox.close();
 	};
 
@@ -472,8 +468,24 @@ VISH.Editor = (function(V,$,undefined){
 
 		return presentation;
 	};
+
 	
-	var _saveView = function(slideDOM,presentation,isSubslide){
+	
+	var _saveView = function(slideDOM,presentation){
+		switch($(slideDOM).attr('type')){
+			case V.Constant.VIEW_IMAGE:
+				return _saveViewImage(slideDOM,presentation);
+			case V.Constant.VIEW_CONTENT:
+				return _saveViewContent(slideDOM,presentation);
+		}
+	};
+
+	var _saveViewImage = function(slideDOM,presentation){
+		var view = V.Editor.Screen.saveScreen(slideDOM);
+		return view;
+	};
+
+	var _saveViewContent = function(slideDOM,presentation){
 		slide = {};
 		slide.id = $(slideDOM).attr('id');
 		slide.type = $(slideDOM).attr('type');

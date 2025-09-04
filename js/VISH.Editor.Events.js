@@ -97,17 +97,6 @@ VISH.Editor.Events = (function(V,$,undefined){
 					if(slidesAddMode===V.Constant.NONE){
 						V.Editor.setContentAddMode(V.Constant.VIEW);
 					}
-
-					if(slidesAddMode===V.Constant.SLIDESET){
-						//Show slides only
-						$("#tab_pdfex").parent().hide();
-						$("#tab_presentations_repo").parent().hide();
-						$("#tab_json_file").parent().hide();
-
-						//Inside slides, show templates only
-						$(".tab_slides_smartcards").hide();
-					}
-
 					var clickedZoneId = $(data).attr("zone");
 					V.Editor.setCurrentArea($("#" + clickedZoneId));
 					V.Editor.Utils.loadTab('tab_slides');

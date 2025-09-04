@@ -62,6 +62,10 @@ VISH.Editor.Image = (function(V,$,undefined){
 			current_area = V.Editor.getCurrentArea();
 		}
 
+		if((typeof current_area === "undefined")||(current_area === null)){
+			return;
+		}
+
 		var newStyle;
 		if(style){
 			newStyle = V.Editor.Utils.setStyleInPixels(style,current_area);

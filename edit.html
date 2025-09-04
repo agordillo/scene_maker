@@ -113,10 +113,10 @@
 		<img src="/images/zonethumbs/video_hover.png" style="display:none"/>
 		<img src="/images/icons/ve_delete_hover.png" style="display:none"/>
 		<img src="/images/icons/delete_content_hover.png" style="display:none"/>
-		<img src="/images/vicons/ve_close.png" style="display:none"/>
-		<img src="/images/vicons/ve_close_hover.png" style="display:none"/>
-		<img src="/images/vicons/ve_close2.png" style="display:none"/>
-		<img src="/images/vicons/ve_close2_hover.png" style="display:none"/>
+		<img src="/images/vicons/close.png" style="display:none"/>
+		<img src="/images/vicons/close_hover.png" style="display:none"/>
+		<img src="/images/vicons/close2.png" style="display:none"/>
+		<img src="/images/vicons/close2_hover.png" style="display:none"/>
 		<img src="/images/icons/slide_add_background_hover.png" style="display:none"/>
 		<img src="/images/icons/opcion.png" style="display:none"/>
 		<img src="/images/carrousel/carrousel_sprite.png" style="display:none"/>
@@ -447,34 +447,13 @@
 			<div class="fancy_tabs" id="object_fancy_tabs_id">	   
 				<ul>
 					<li><a href="#" onclick="VISH.Editor.Utils.loadTab('tab_object_from_web'); return false;" id="tab_object_from_web" class="fancy_tab">web</a></li>
-					<li><a href="#" onclick="VISH.Editor.Utils.loadTab('tab_object_from_url'); return false;" id="tab_object_from_url" class="fancy_tab">embed</a></li>
 				</ul>
-			</div>
-
-			<div id='tab_object_from_url_content' class="fancy_tab_content">
-				<div class="box1 box1fancy1">
-					<div class="box1_section1">
-						<p class="textfancy" i18n-key="i.addembeddedobject">add embedded object</p>
-					</div>
-					<div class="box1_section2">
-						<img class="image_add_url" src="/images/icons/url_img.png"/>
-						<input id="object_embed_code" type="text" class="input_text_fancy formsizefancy1 marginsfancy1">
-					</div>
-					<div class="box1_section3">
-						<button type="button" class="button buttonfancy previewButton" i18n-key="i.Preview">Preview</button>
-					</div>
-				</div>
-				<div class="box2">
-					<div id="picture_preview" class="previewimgbox">
-						<button i18n-key="i.AddContent" type="button" class="button button_addContent" onclick="VISH.Editor.Object.drawPreviewElement()">Add Content</button>
-					</div>
-				</div>
 			</div>
 
 			<div id='tab_object_from_web_content' class="fancy_tab_content">
 				<div class="box1 box1fancy1">
 					<div class="box1_section1">
-						<p class="textfancy" i18n-key="i.embedwebsite">embed website</p>
+						<p class="textfancy" i18n-key="i.embedwebsite">add web URL</p>
 						</div>
 					<div class="box1_section2">
 						<img class="image_add_url" src="/images/icons/url_img.png"/>

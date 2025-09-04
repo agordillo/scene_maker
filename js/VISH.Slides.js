@@ -383,8 +383,8 @@ VISH.Slides = (function(V,$,undefined){
 
   		//done this way instead of .show() and .hide() to be able to add animations
   		//on show and on hide with these classes
-  		$("#" + slide_id).removeClass("hide_in_smartcard");
-  		$("#" + slide_id).addClass("show_in_smartcard");
+  		$("#" + slide_id).removeClass("hide_in_screen");
+  		$("#" + slide_id).addClass("show_in_screen");
 		//$("#" + slide_id).show();
 		triggerEnterEventById(slide_id);
 
@@ -409,8 +409,8 @@ VISH.Slides = (function(V,$,undefined){
 		}
 
   		_onCloseSubslide(slide_id);
-  		$("#" + slide_id).removeClass("show_in_smartcard");
-  		$("#" + slide_id).addClass("hide_in_smartcard");
+  		$("#" + slide_id).removeClass("show_in_screen");
+  		$("#" + slide_id).addClass("hide_in_screen");
 		//$("#"+slide_id).hide();
 		triggerLeaveEventById(slide_id);
 

@@ -188,8 +188,8 @@ VISH.ViewerAdapter = (function(V,$,undefined){
 		} else {
 			_closeButtonDimension = _closeButtonDimension*getPonderatedIncrease(increase,0.2);
 		}
-		$("div.close_subslide").css("width",_closeButtonDimension+"px");
-		$("div.close_subslide").css("height",_closeButtonDimension+"px");
+		$("div.close_view").css("width",_closeButtonDimension+"px");
+		$("div.close_view").css("height",_closeButtonDimension+"px");
 
 		//Fs button
 		$("#page-fullscreen").width($("#page-fullscreen").height());

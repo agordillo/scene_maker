@@ -18,54 +18,80 @@ VISH.Editor.Renderer = (function(V,$,undefined){
 			var slideNumber = V.Slides.getSlidesQuantity()+1;
 			var type = slides[i].type;
 			
-			if(type===V.Constant.VIEW){
-				_renderSlide(slides[i], {slideNumber: slideNumber });
+			if(type === V.Constant.SCREEN){
+				_renderScreen(slides[i], slideNumber);
 			} else {
-				var isSlideset = V.Screen.isScreen(type);
-				if(isSlideset){
-					_renderSlideset(slides[i], slideNumber);
-				}
+				_renderView(slides[i], {slideNumber: slideNumber });
 			}
 		}
 
 		_isRendering = false;
 	};
 
-	
-	/**
-	 * function to render one slide in editor
-	 */
-	var _renderSlide = function(slide,renderOptions){
+	var _renderScreen = function(screenJSON, slideNumber){
 		var options = {};
+		options.slideNumber = slideNumber;
+		options.screenId = (screenJSON.id).toString();
+		var scaffold = V.Editor.Dummies.getScaffoldForSlide(screenJSON,options);
 
-		options.template = "1";
-		if(slide.template){
-			options.template = slide.template.substring(1); //slide.template is "t10", with this we remove the "t"
-		}
-
-		options.slideNumber = renderOptions.slideNumber;
-		var scaffold = V.Editor.Dummies.getScaffoldForSlide(slide,options);
-
-		if(!renderOptions.subslide){
+		if(scaffold){
 			V.Editor.Slides.appendSlide(scaffold);
 			V.Slides.updateSlides();
 			V.Slides.lastSlide();  //important to get the browser to draw everything
-		} else {
-			//Render subslide
-			V.Editor.Slides.appendSubslide(renderOptions.slidesetDOM,scaffold);
-			var scaffoldDOM = $("#"+$(scaffold).attr("id"));
-			//Show subslide
-			V.Utils.addTempShown(scaffoldDOM);
-		}
 
-		var slideElementsLength = slide.elements.length;
-		for(var i=0; i<slideElementsLength; i++){
-			var element = slide.elements[i];
+			//Get screen in DOM
+			var screenId = $(scaffold).attr("id");
+			var scaffoldDOM = $("#"+screenId);
+
+			//Draw views
+			var views = screenJSON.slides;
+			if(views){
+				var ssL = views.length;
+				for(var i=0; i<ssL; i++){
+					var viewJSON = views[i];
+					_renderView(viewJSON, {screenDOM: scaffoldDOM, slideNumber: i+1});
+				}
+			}
+
+			//Complete scaffold
+			V.Editor.Screen.draw(screenJSON,scaffoldDOM);
+		}
+	};
+
+	var _renderView = function(view,renderOptions){
+		if(view.type === V.Constant.VIEW_CONTENT){
+			_renderViewContent(view,renderOptions);
+		} else if(view.type === V.Constant.VIEW_IMAGE){
+			_renderViewImage(view,renderOptions);
+		}
+	};
+
+	var _renderViewCommon = function(view,renderOptions){
+		var scaffold = V.Editor.Dummies.getScaffoldForSlide(view,{slideNumber: renderOptions.slideNumber});
+		V.Editor.Slides.appendView(renderOptions.screenDOM,scaffold);
+	};
+
+	var _renderViewImage = function(view,renderOptions){
+		_renderViewCommon(view,renderOptions);
+		var scaffoldDOM = $("#"+view.id);
+		V.Editor.Screen.draw(view,scaffoldDOM);
+	};
+
+	var _renderViewContent = function(view,renderOptions){
+		_renderViewCommon(view,renderOptions);
+		var scaffoldDOM = $("#"+view.id);
+
+		//Draw elements
+		V.Utils.addTempShown(scaffoldDOM);
+		
+		var viewElementsLength = view.elements.length;
+		for(var i=0; i<viewElementsLength; i++){
+			var element = view.elements[i];
 			var zoneId = element.id;
 			var area = $("div#" + zoneId + "[areaid='" + element.areaid +"']");
 
 			if(area.length === 0){
-				continue; //with first version presentations we had different template names and some fails, this condition avoid that
+				continue;
 			}
 
 			//Save element settings
@@ -89,10 +115,6 @@ VISH.Editor.Renderer = (function(V,$,undefined){
 				V.Editor.Audio.HTML5.drawAudio(V.Audio.HTML5.getSourcesFromJSON(element), options, area, element.style);
 			} else if(element.type === V.Constant.OBJECT){
 				V.Editor.Object.drawObject(element.body, {area:area, style:element.style, zoomInStyle:element.zoomInStyle});
-			} else if(element.type === V.Constant.SNAPSHOT){
-				V.Editor.Object.Snapshot.drawSnapShot(element.body, area, element.style,element.scrollTop,element.scrollLeft);
-			} else if(element.type === V.Constant.QUIZ){
-				V.Editor.Quiz.draw(area,element);
 			}
 
 			//Add tooltips to area
@@ -103,45 +125,9 @@ VISH.Editor.Renderer = (function(V,$,undefined){
 				$(area).addClass("editable");
 			}
 			V.Editor.Tools.addTooltipToZone(area,hideTooltip);
-
 		}
 
-		if(renderOptions.subslide){
-			V.Utils.removeTempShown(scaffoldDOM);
-		}
-	};
-	
-	/**
-	 * Function to render slidesets
-	 */
-	var _renderSlideset = function(slidesetJSON, slideNumber){
-		var options = {};
-		options.slideNumber = slideNumber;
-		options.slidesetId = (slidesetJSON.id).toString();
-		var scaffold = V.Editor.Dummies.getScaffoldForSlide(slidesetJSON,options);
-
-		if(scaffold){
-			V.Editor.Slides.appendSlide(scaffold);
-			V.Slides.updateSlides();
-			V.Slides.lastSlide();  //important to get the browser to draw everything
-
-			//Get slideset in DOM
-			var slidesetId = $(scaffold).attr("id");
-			var scaffoldDOM = $("#"+slidesetId);
-
-			//Draw subslides
-			var subslides = slidesetJSON.slides;
-			if(subslides){
-				var ssL = subslides.length;
-				for(var i=0; i<ssL; i++){
-					var subslideJSON = subslides[i];
-					_renderSlide(subslideJSON, {slidesetDOM: scaffoldDOM, slideNumber: i+1, subslide: true});
-				}
-			}
-
-			//Complete scaffold
-			V.Editor.Screen.draw(slidesetJSON,scaffoldDOM);
-		}
+		V.Utils.removeTempShown(scaffoldDOM);
 	};
 
 	var isRendering = function(){

@@ -188,7 +188,7 @@ VISH.Screen = (function(V,$,undefined){
 
 	var onEnterSlideset = function(slideset){
 		//Look for opened subslides
-		var openSubslides = $(slideset).children("article.show_in_smartcard");
+		var openSubslides = $(slideset).children("article.show_in_screen");
 		if(openSubslides.length===1){
 			var openSubslide = openSubslides[0];
 			var subSlideId = $(openSubslide).attr("id");
@@ -198,7 +198,7 @@ VISH.Screen = (function(V,$,undefined){
 
 	var onLeaveSlideset = function(slideset){
 		//Look for opened subslides
-		var openSubslides = $(slideset).children("article.show_in_smartcard");
+		var openSubslides = $(slideset).children("article.show_in_screen");
 		if(openSubslides.length===1){
 			var openSubslide = openSubslides[0];
 			var subSlideId = $(openSubslide).attr("id");

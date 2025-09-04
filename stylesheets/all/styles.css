@@ -115,7 +115,7 @@ this can not be done with show() and hide() because then it remains with display
 	z-index: 1076;
 }
 
-section.slides:not(.slides_editor) > article > article.hide_in_smartcard {
+section.slides:not(.slides_editor) > article > article.hide_in_screen {
 	-webkit-transition: all 0.85s ease-in ;
     -moz-transition: all 0.85s ease-in;
     -o-transition: all 0.85s ease-in;
@@ -127,7 +127,7 @@ section.slides:not(.slides_editor) > article > article.hide_in_smartcard {
 	display: block;
 }
 
-section.slides > article > article.show_in_smartcard {
+section.slides > article > article.show_in_screen {
 	-webkit-transition: all 0.85s ease-in ;
     -moz-transition: all 0.85s ease-in;
     -o-transition: all 0.85s ease-in;
@@ -293,7 +293,7 @@ button#closeButton {
 	z-index: 2620;
 }
 
-.close_subslide {
+.close_view {
 	position: absolute;
 	top: 0.5%;
 	right: 0.5%;
@@ -302,13 +302,13 @@ button#closeButton {
 	background-size: contain;
 	cursor: pointer;
 	z-index: 1103;
-	background-image: url("/images/vicons/ve_close.png");
+	background-image: url("/images/vicons/close.png");
 	background-repeat: no-repeat;
 	background-position: 100% 0%;
 }
 
-.close_subslide:hover {
-	background-image: url("/images/vicons/ve_close_hover.png");
+.close_view:hover {
+	background-image: url("/images/vicons/close_hover.png");
 }
 
 
@@ -319,12 +319,12 @@ body.SceneMakerViewerBody #fancybox-close {
 	height: auto;
 	right: 3px;
 	top: 7px;
-	background: transparent url('/images/vicons/ve_close2.png') no-repeat center top;
+	background: transparent url('/images/vicons/close2.png') no-repeat center top;
 	background-size:60%;
 }
 
 body.SceneMakerViewerBody #fancybox-close:hover {
-	background: transparent url('/images/vicons/ve_close2_hover.png') no-repeat center top;
+	background: transparent url('/images/vicons/close2_hover.png') no-repeat center top;
 	background-size:60%;
 }
 

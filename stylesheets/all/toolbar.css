@@ -224,12 +224,12 @@ section.hotspot_active div.tool_action[action='addHotspot'],  section.zone_activ
 	background-color: #326999;
 }
 
-section.hotspot_active article[type='view_image'] {
+section.hotspot_active article[type='screen'], section.hotspot_active article[type='view_image'] {
 	/*cursor: url("/images/icons/hotspot_cursor.png") 16 16, crosshair;*/
 	cursor: crosshair;
 }
 
-section.zone_active article[type='view_image'] {
+section.zone_active article[type='screen'], section.zone_active article[type='view_image'] {
 	cursor: crosshair;
 }
 

@@ -190,10 +190,10 @@ VISH.Editor.Utils = (function(V,$,undefined){
 		$(subSlide).attr("id",slideId);
 
 		//Close button
-		$(subSlide).children(".close_subslide").attr("id","close" + slideId);
+		$(subSlide).children(".close_view").attr("id","close" + slideId);
 
 		//Zones
-		var zones = $(subSlide).children("div[id]").not(".close_subslide");
+		var zones = $(subSlide).children("div[id]").not(".close_view");
 		$(zones).each(function(index, zone) {
 			zone = _replaceIdsForZone(zone,slideId);
 		});

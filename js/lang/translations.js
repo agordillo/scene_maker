@@ -54,7 +54,7 @@ VISH.Locales = {
 		"i.Done"					: "Done",
 		"i.draft"					: "draft",
 		"i.edit"					: "edit",
-		"i.embedwebsite"			: "embed website",
+		"i.embedwebsite"			: "add web URL",
 		"i.Enable"					: "Enable",
 		"i.Exit"					: "Exit",
 		"i.exitConfirmation"		: "You are about to leave Scene Maker. You will lose any changes you have not saved.",

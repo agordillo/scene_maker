@@ -185,58 +185,33 @@ VISH.Editor = (function(V,$,undefined){
 	////////////
 
 	/**
-	 * function called when user clicks on template
-	 * Includes a new slide following the template selected
+	 * Function called when user clicks on view template
 	 */
-	var onSlideThumbClicked = function(event){
-		var slideThumb;
-		if(event.currentTarget.tagName === "P"){
-			slideThumb = $(event.currentTarget).parent().find(".stthumb");
-		} else {
-			slideThumb = event.currentTarget;
-		}
+	var onViewThumbClicked = function(event){
+		var type = $(event.currentTarget).attr('type');
 
-		var type = $(slideThumb).attr('type');
-		if(!type){
-			type = V.Constant.STANDARD;
-		}
+		//Add a new subslide to a slideset
+		var slideset = V.Slides.getCurrentSlide();
 
-		//Get slideMode before close fancybox!
-		var slideMode = contentAddModeForSlides;
-
-		if(slideMode===V.Constant.STANDARD){
-			//Add a new slide to the presentation
-
-			var options = {};
-			if(type===V.Constant.STANDARD){
-				options.template = $(slideThumb).attr('template');
-			}
-			options.slideNumber = V.Slides.getSlidesQuantity()+1;
-			var slide = V.Editor.Dummies.getDummy(type, options);
-			V.Editor.Slides.addSlide(slide);
-
-		} else if(slideMode===V.Constant.SLIDESET){
-			//Add a new subslide to a slideset
-			var slideset = V.Slides.getCurrentSlide();
-
-			//Add a subslide (slide[type='standard']) to a slideset
-			if((type === V.Constant.STANDARD)&&(V.Screen.isScreen(slideset))){
+		//Add a subslide (slide[type='standard']) to a slideset
+		// if(type === "content"){
+			// if(V.Screen.isScreen(slideset)){
 				var options = {};
 				options.subslide = true;
-				options.template = $(slideThumb).attr('template');
+				options.template = "10";
 				options.slideset = slideset;
-				var subslide = V.Editor.Dummies.getDummy(type, options);
+				var subslide = V.Editor.Dummies.getDummy(V.Constant.STANDARD, options);
+
+				console.log("Subslide",subslide);
+				console.log("slideset",slideset);
+
 				V.Editor.Slides.addSubslide(slideset,subslide);
-			}
-
-		}
+			// }
+		// }
 
 		$.fancybox.close();
 	};
 
-	var onAnimationThumbClicked = function(){
-		$.fancybox.close();
-	};
 
 	/**
 	 * Function called when user clicks on an editable element
@@ -844,8 +819,7 @@ VISH.Editor = (function(V,$,undefined){
 		selectArea				: selectArea,
 		onSlideEnterEditor 		: onSlideEnterEditor,
 		onSlideLeaveEditor		: onSlideLeaveEditor,
-		onSlideThumbClicked		: onSlideThumbClicked,
-		onAnimationThumbClicked	: onAnimationThumbClicked,
+		onViewThumbClicked		: onViewThumbClicked,
 		onEditableClicked		: onEditableClicked,
 		onSelectableClicked 	: onSelectableClicked,
 		onNoSelectableClicked 	: onNoSelectableClicked,

@@ -223,8 +223,7 @@ VISH.Editor.Thumbnails = (function(V,$,undefined){
 
 	var _getDefaultThumbnailURLForStandardSlide = function(slide){
 		//Use template as thumbnail
-		var template = $(slide).attr('template');
-		return V.ImagesPath + "templatesthumbs/"+ template + ".png";
+		return V.ImagesPath + "templatesthumbs/view_content_template.png";
 	};
 
 	////////////////

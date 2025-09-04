@@ -121,28 +121,9 @@
 		<img src="/images/icons/opcion.png" style="display:none"/>
 		<img src="/images/carrousel/carrousel_sprite.png" style="display:none"/>
 		<img src="/images/vicons/fullscreen.png" style="display:none"/>
-		<img src="/images/templatesthumbs/flashcard_templateh.png" style="display:none"/>
-		<img src="/images/templatesthumbs/t1h.png" style="display:none"/>
-		<img src="/images/templatesthumbs/t2h.png" style="display:none"/>
-		<img src="/images/templatesthumbs/t3h.png" style="display:none"/>
-		<img src="/images/templatesthumbs/t4h.png" style="display:none"/>
-		<img src="/images/templatesthumbs/t5h.png" style="display:none"/>
-		<img src="/images/templatesthumbs/t6h.png" style="display:none"/>
-		<img src="/images/templatesthumbs/t7h.png" style="display:none"/>
-		<img src="/images/templatesthumbs/t8h.png" style="display:none"/>
-		<img src="/images/templatesthumbs/t9h.png" style="display:none"/>
-		<img src="/images/templatesthumbs/t10h.png" style="display:none"/>
-		<img src="/images/templatesthumbs/t11h.png" style="display:none"/>
-		<img src="/images/templatesthumbs/t12h.png" style="display:none"/>
-		<img src="/images/templatesthumbs/t13h.png" style="display:none"/>
-		<img src="/images/templatesthumbs/t14h.png" style="display:none"/>
-		<img src="/images/templatesthumbs/t15h.png" style="display:none"/>
-		<img src="/images/templatesthumbs/t16h.png" style="display:none"/>
-		<img src="/images/templatesthumbs/t17h.png" style="display:none"/>
-		<img src="/images/templatesthumbs/t18h.png" style="display:none"/>
-		<img src="/images/templatesthumbs/t19h.png" style="display:none"/>
-		<img src="/images/templatesthumbs/t20h.png" style="display:none"/>
-		
+		<img src="/images/templatesthumbs/screen_templateh.png" style="display:none"/>
+		<img src="/images/templatesthumbs/view_content_templateh.png" style="display:none"/>
+
 		<!-- Toolbar -->
 		<div id="toolbar_wrapper">
 			<div id="toolbar_menu">
@@ -289,7 +270,7 @@
 
 		<div id="bottomside" style="display:none">
 			<div id="slideset_selected">
-				<img id="slideset_selected_img" class="image_slidethumbnail" src="/images/templatesthumbs/t2.png">
+				<img id="slideset_selected_img" class="image_slidethumbnail">
 			</div>
 			<div id="subslides_wrapper">
 				<div id="subslides_list_actions">
@@ -308,7 +289,7 @@
 	<div id="hidden_links" style="display: none;">
 		<!-- Hidden link to open preview -->
 		<a id="preview_action"></a>
-		<!-- Hidden link to open fancybox when adding a slide -->
+		<!-- Hidden link to open fancybox when adding a view -->
 		<a id="addSlideFancybox" href="#thumbcontent"></a>
 		<!-- Hidden link to open presentation settings -->
 		<a id="edit_presentation_details" href="#presentationdetails"></a>
@@ -343,7 +324,6 @@
 	<!-- Import and Add slide fancybox -->
 	<div style='display:none'>
 		<div id='thumbcontent'>
-			
 			<div class='fancy_tabs' id='thumcontent_tabs'>
 				<ul>
 					<li>
@@ -351,79 +331,18 @@
 					</li>
 				</ul>
 			</div> 
-
 			<div id='tab_slides_content' class="fancy_tab_content" style='display:none' > 
 				<div class="tab_slides_content">
 					<div class="tab_slides_templates">
-						<p class="select_text" i18n-key="i.Templates">Templates</p>
+						<p class="select_text" i18n-key="i.ViewsType">Choose view type</p>
 						<div class="templateselectlist">
-							<div class='slidethumb templatethumb' template='10'>
-								<img src='/images/templatesthumbs/blank.png' id="t10" />
+							<div class='viewthumb' type='image'>
+								<div><img src="/images/templatesthumbs/blank.png"/></div>
+								<p i18n-key="i.ViewsTypeImage">Image</p>
 							</div>
-							<div class='slidethumb templatethumb' template='2'>
-								<img src='/images/templatesthumbs/blank.png' id="t2" />
-							</div>
-							<div class='slidethumb templatethumb' template='18'>
-								<img src='/images/templatesthumbs/blank.png' id="t18" />
-							</div>
-							<div class='slidethumb templatethumb' template='19'>
-								<img src='/images/templatesthumbs/blank.png' id="t19" />
-							</div>
-							<div class='slidethumb templatethumb' template='3'>
-								<img src='/images/templatesthumbs/blank.png' id="t3" />
-							</div>
-							<div class='slidethumb templatethumb' template='4'>
-								<img src='/images/templatesthumbs/blank.png' id="t4" />
-							</div>
-							<div class='slidethumb templatethumb' template='5'>
-								<img src='/images/templatesthumbs/blank.png' id="t5" />
-							</div>
-							<div class='slidethumb templatethumb' template='17'>
-								<img src='/images/templatesthumbs/blank.png' id="t17" />
-							</div>
-							<div class='slidethumb templatethumb' template='16'>
-								<img src='/images/templatesthumbs/blank.png' id="t16" />
-							</div>
-							<div class='slidethumb templatethumb' template='20'>
-								<img src='/images/templatesthumbs/blank.png' id="t20" />
-							</div>
-							<div class='slidethumb templatethumb' template='8'>
-								<img src='/images/templatesthumbs/blank.png' id="t8" />
-							</div>
-							<div class='slidethumb templatethumb' template='7'>
-								<img src='/images/templatesthumbs/blank.png' id="t7" />
-							</div>
-							<div class='slidethumb templatethumb' template='6'>
-								<img src='/images/templatesthumbs/blank.png' id="t6" />
-							</div>
-							<div class='slidethumb templatethumb' template='9'>
-								<img src='/images/templatesthumbs/blank.png' id="t9" />
-							</div>
-							<div class='slidethumb templatethumb' template='12'>
-								<img src='/images/templatesthumbs/blank.png' id="t12" />
-							</div>
-							<div class='slidethumb templatethumb' template='15'>
-								<img src='/images/templatesthumbs/blank.png' id="t15" />
-							</div>
-							<div class='slidethumb templatethumb' template='11'>
-								<img src='/images/templatesthumbs/blank.png' id="t11" />
-							</div>
-							<div class='slidethumb templatethumb' template='14'>
-								<img src='/images/templatesthumbs/blank.png' id="t14" />
-							</div>
-							<div class='slidethumb templatethumb' template='13'>
-								<img src='/images/templatesthumbs/blank.png' id="t13" />
-							</div>
-						</div>
-					</div>
-					<div class="tab_slides_smartcards">
-						<p class="select_text" i18n-key="i.Smartcards">Smartcards</p>
-						<div class="templateselectlist2">
-							<div class='stthumb_wrapper'>
-								<div class='stthumb fcthumb' type='flashcard'>
-									<img src="/images/templatesthumbs/blank.png" id="flscard"/>
-								</div>
-								<p i18n-key="i.Flashcard">Flashcard</p>
+							<div class='viewthumb' type='content'>
+								<div><img src="/images/templatesthumbs/blank.png"/></div>
+								<p i18n-key="i.ViewsTypeOther">Other content</p>
 							</div>
 						</div>
 					</div>
@@ -434,10 +353,7 @@
 
 	<div style='display:none'>
 		<div id='menuselect' class="menuselect_hide">
-			<a class='all' href="#">
-				<div class='thumbicon textthumb' i18n-key="i.Text" title="Text"></div>
-			</a>
-			<a class="addpicture all" href="#picture_fancybox">
+			<a class="addpicture" href="#picture_fancybox">
 				<div class='thumbicon picthumb' i18n-key="i.Image" title="Image"></div>
 			</a>
 			<a class="addobject all" href="#object_fancybox">
@@ -446,8 +362,8 @@
 			<a class="addvideo all" href="#video_fancybox">
 				<div class='thumbicon videothumb' i18n-key="i.Video" title="Video"></div>
 			</a>
-			<a class="addQuiz uniq large" href="#quiz_fancybox" id="add_quiz_thumb">
-				<div class='thumbicon quizthumb' i18n-key="i.Quiz" title="Quiz"></div>
+			<a class='all' href="#">
+				<div class='thumbicon textthumb' i18n-key="i.Text" title="Text"></div>
 			</a>
 		</div>
 	</div>

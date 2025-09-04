@@ -20,10 +20,7 @@ VISH.Editor.Events = (function(V,$,undefined){
 
 			//Settings events		
 			$(document).on('click', '#save_presentation_details', V.Editor.Settings.onSavePresentationDetailsButtonClicked);
-			
-			$(document).on('click','div.templatethumb', V.Editor.onSlideThumbClicked);
-			$(document).on('click','.stthumb_wrapper p', V.Editor.onSlideThumbClicked);
-			$(document).on('click','div.stthumb', V.Editor.onSlideThumbClicked);
+			$(document).on('click','div.viewthumb', V.Editor.onViewThumbClicked);
 
 			$(document).on('click','.editable', V.Editor.onEditableClicked);
 			$(document).on('click','.selectable', V.Editor.onSelectableClicked);

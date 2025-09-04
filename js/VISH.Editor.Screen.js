@@ -696,7 +696,7 @@ VISH.Editor.Screen = (function(V,$,undefined){
 	};
 
 	var getDefaultThumbnailURL = function(){
-		return (V.ImagesPath + "templatesthumbs/flashcard_template.png");
+		return (V.ImagesPath + "templatesthumbs/screen_template.png");
 	};
 
 	var onThumbnailLoadFail = function(screen){

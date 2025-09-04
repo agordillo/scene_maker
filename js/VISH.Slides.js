@@ -373,61 +373,40 @@ VISH.Slides = (function(V,$,undefined){
 		}
 	};
 
-	/**
-	 * Function to open a subslide
-	 */
-	var openSubslide = function(slide_id,triggeredByUser){
-		triggeredByUser = !(triggeredByUser===false);
+	var openSubslide = function(slide_id){
+		var currentView = getCurrentView();
+		if((typeof currentView !== "undefined")&&(currentView !== null)){
+			var currentViewId = $(currentView).attr("id");
+			if(slide_id === currentViewId){
+				return;
+			} else {
+				closeSubslide(currentViewId);
+			}
+		}
 
-  		_onOpenSubslide(slide_id);
-
-  		//done this way instead of .show() and .hide() to be able to add animations
-  		//on show and on hide with these classes
-  		$("#" + slide_id).removeClass("hide_in_screen");
-  		$("#" + slide_id).addClass("show_in_screen");
-		//$("#" + slide_id).show();
+		curSubSlideId = slide_id;
+		$("#" + slide_id).removeClass("hide_in_screen");
+		$("#" + slide_id).addClass("show_in_screen");
 		triggerEnterEventById(slide_id);
 
 		//Notify
 		var params = new Object();
 		params.slideId = slide_id;
-		V.EventsNotifier.notifyEvent(V.Constant.Event.onSubslideOpen,params,triggeredByUser);	
+		V.EventsNotifier.notifyEvent(V.Constant.Event.onSubslideOpen,params);	
 	};
 
-
-	/**
-	 * Function to close a subslide
-	 */
-	var closeSubslide = function(slide_id,triggeredByUser){
-		triggeredByUser = !(triggeredByUser===false);
-
-		if((triggeredByUser)&&(V.Status.isPreventDefaultMode())&&(V.Messenger)){
-			var params = new Object();
-			params.slideId = slide_id;
-			V.Messenger.notifyEventByMessage(V.Constant.Event.onSubslideClosed,params);
-			return;
-		}
-
-  		_onCloseSubslide(slide_id);
-  		$("#" + slide_id).removeClass("show_in_screen");
-  		$("#" + slide_id).addClass("hide_in_screen");
-		//$("#"+slide_id).hide();
+	var closeSubslide = function(slide_id){
+		curSubSlideId = null;
+		$("#" + slide_id).removeClass("show_in_screen");
+		$("#" + slide_id).addClass("hide_in_screen");
 		triggerLeaveEventById(slide_id);
 
 		//Notify
 		var params = new Object();
 		params.slideId = slide_id;
-		V.EventsNotifier.notifyEvent(V.Constant.Event.onSubslideClosed,params,triggeredByUser);	
+		V.EventsNotifier.notifyEvent(V.Constant.Event.onSubslideClosed,params);	
 	};
 
-	var _onOpenSubslide = function(subSlideId){
-		curSubSlideId = subSlideId;
-		$("#closeButton").hide();
-	};
-
-	var _onCloseSubslide = function(){
-		curSubSlideId = null;
-	};
 
 	return {	
 			init          			: init,

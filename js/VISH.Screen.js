@@ -108,6 +108,12 @@ VISH.Screen = (function(V,$,undefined){
 						var screenId = action.actionParams.screen;
 						var $screen = $("#" + screenId);
 						if ($screen.length > 0) {
+							if($screen[0] === V.Slides.getCurrentScreen()){
+								var currentView = V.Slides.getCurrentView();
+								if((typeof currentView !== "undefined")&&(currentView !== null)){
+									V.Slides.closeSubslide($(currentView).attr("id"));
+								}
+							}
 							V.Slides.goToSlide($screen.attr("slideNumber"));
 						}
 					}

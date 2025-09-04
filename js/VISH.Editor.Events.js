@@ -95,7 +95,7 @@ VISH.Editor.Events = (function(V,$,undefined){
 				"onStart"  : function(data) {
 					var slidesAddMode = V.Editor.getContentAddMode();
 					if(slidesAddMode===V.Constant.NONE){
-						V.Editor.setContentAddMode(V.Constant.STANDARD);
+						V.Editor.setContentAddMode(V.Constant.VIEW);
 					}
 
 					if(slidesAddMode===V.Constant.SLIDESET){
@@ -151,7 +151,7 @@ VISH.Editor.Events = (function(V,$,undefined){
 				'height': 600,
 				'padding' : 0,
 				"onStart"  : function(data) {
-					V.Editor.Image.setAddContentMode(V.Constant.FLASHCARD);
+					V.Editor.Image.setAddContentMode(V.Constant.SCREEN);
 					V.Editor.Utils.loadTab('tab_pic_from_url');
 				},
 				"onClosed"  : function(data) {

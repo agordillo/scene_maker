@@ -31,9 +31,8 @@ VISH.Constant.NONE = "none";
 VISH.Constant.UNKNOWN = 'Unknown';
 
 //Slide types
-VISH.Constant.STANDARD = "standard";
-VISH.Constant.SLIDESET = "slideset";
-VISH.Constant.FLASHCARD = "flashcard";
+VISH.Constant.SCREEN = "screen";
+VISH.Constant.VIEW = "view";
 
 //Element types
 VISH.Constant.TEXT = "text";

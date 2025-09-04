@@ -163,7 +163,7 @@ VISH.Editor = (function(V,$,undefined){
 
 		//Add the first slide
 		if(!initialPresentation){
-			var screen = V.Editor.Screen.getDummy(V.Utils.getId("article"),{slideNumber:1});
+			var screen = V.Editor.Dummies.getDummy(V.Constant.SCREEN,{slideNumber:1});
 			V.Editor.Slides.addSlide(screen);
 			V.Slides.goToSlide(1);
 		}
@@ -185,29 +185,26 @@ VISH.Editor = (function(V,$,undefined){
 	////////////
 
 	/**
-	 * Function called when user clicks on view template
+	 * Function called when user clicks on view template.
+	 * Add a new view to the current screen.
 	 */
 	var onViewThumbClicked = function(event){
-		var type = $(event.currentTarget).attr('type');
-
-		//Add a new subslide to a slideset
 		var slideset = V.Slides.getCurrentSlide();
+		if(!V.Screen.isScreen(slideset)){
+			return;
+		}
 
-		//Add a subslide (slide[type='standard']) to a slideset
-		// if(type === "content"){
-			// if(V.Screen.isScreen(slideset)){
-				var options = {};
-				options.subslide = true;
-				options.template = "10";
-				options.slideset = slideset;
-				var subslide = V.Editor.Dummies.getDummy(V.Constant.STANDARD, options);
-
-				console.log("Subslide",subslide);
-				console.log("slideset",slideset);
-
-				V.Editor.Slides.addSubslide(slideset,subslide);
-			// }
-		// }
+		var type = $(event.currentTarget).attr('type');
+		if(type === "content"){
+			var options = {};
+			options.subslide = true;
+			options.template = "10";
+			options.slideset = slideset;
+			var subslide = V.Editor.Dummies.getDummy(V.Constant.VIEW, options);
+			V.Editor.Slides.addSubslide(slideset,subslide);
+		} else if(type === "image"){
+			//TODO
+		}
 
 		$.fancybox.close();
 	};
@@ -397,7 +394,7 @@ VISH.Editor = (function(V,$,undefined){
 		if(V.Screen.isScreen(slide)){
 			V.Editor.Screen.onEnterSlideset(slide);
 		} else {
-			//Standard slide
+			//Views
 			V.Editor.Utils.Loader.loadObjectsInEditorSlide(slide);
 			//Show objects
 			setTimeout(function(){
@@ -421,7 +418,7 @@ VISH.Editor = (function(V,$,undefined){
 		if(V.Screen.isScreen(slide)){
 			V.Editor.Screen.onLeaveSlideset(slide);
 		} else {
-			//Standard slide
+			//View
 			V.Editor.Utils.Loader.unloadObjectsInEditorSlide(slide);
 			//Hide objects
 			$('.object_wrapper').hide();
@@ -456,13 +453,13 @@ VISH.Editor = (function(V,$,undefined){
 			var slide = {};
 
 			if(!V.Screen.isScreen(slideDOM)){
-				slide = _saveStandardSlide(slideDOM,presentation,false);
+				slide = _saveView(slideDOM,presentation,false);
 			} else {
 				V.Utils.addTempShown(slideDOM);
 				slide = V.Editor.Screen.saveScreen(slideDOM);
 				//Save views
 				$(slideDOM).find("article").each(function(index,subslideDOM){
-					var subslide = _saveStandardSlide(subslideDOM,presentation,true);
+					var subslide = _saveView(subslideDOM,presentation,true);
 					slide.slides.push(subslide);
 				});
 				V.Utils.removeTempShown(slideDOM);
@@ -482,7 +479,7 @@ VISH.Editor = (function(V,$,undefined){
 		return presentation;
 	};
 	
-	var _saveStandardSlide = function(slideDOM,presentation,isSubslide){
+	var _saveView = function(slideDOM,presentation,isSubslide){
 		slide = {};
 		slide.id = $(slideDOM).attr('id');
 		slide.type = $(slideDOM).attr('type');

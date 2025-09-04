@@ -34,7 +34,7 @@ VISH.Editor.Image = (function(V,$,undefined){
 		}
 
 		switch(contentAddMode){
-			case V.Constant.FLASHCARD:
+			case V.Constant.SCREEN:
 				V.Editor.Screen.onBackgroundSelected(contentToAdd);
 				break;
 			case V.Constant.THUMBNAIL:
@@ -131,7 +131,7 @@ VISH.Editor.Image = (function(V,$,undefined){
 				$("#tab_pic_thumbnails").not(".disabled").show();
 				break;
 			case V.Constant.NONE:
-			case V.Constant.FLASHCARD:
+			case V.Constant.SCREEN:
 				break;
 		}
 		contentAddMode = mode;

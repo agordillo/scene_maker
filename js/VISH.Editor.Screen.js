@@ -58,8 +58,7 @@ VISH.Editor.Screen = (function(V,$,undefined){
 	var addScreen = function(){
 		var options = {};
 		options.slideNumber = V.Slides.getSlidesQuantity()+1;
-		var slidesetId = V.Utils.getId("article");
-		var slide = getDummy(slidesetId,options);
+		var slide = V.Editor.Dummies.getDummy(V.Constant.SCREEN,options);
 		V.Editor.Slides.addSlide(slide);
 		$.fancybox.close();
 	};
@@ -149,7 +148,7 @@ VISH.Editor.Screen = (function(V,$,undefined){
 	var onClick = function(event){
 		var $target = $(event.target);
 		if(currentEditingMode !== "NONE"){
-			if ($target.closest('article[type="flashcard"]').length === 0) {
+			if ($target.closest('article[type="screen"]').length === 0) {
 				//Click outside a screen
 				currentEditingMode = "NONE";
 				_enableEditingMode("NONE");
@@ -266,7 +265,7 @@ VISH.Editor.Screen = (function(V,$,undefined){
 	var _validateHotspotPosition = function($hotspot, margin = 4) {
 		const $screen = $hotspot.parent();
 
-		if (!$screen.is('article[type="flashcard"]')) {
+		if (!$screen.is('article[type="screen"]')) {
 		  return;
 		}
 
@@ -364,7 +363,7 @@ VISH.Editor.Screen = (function(V,$,undefined){
 
 		//Fill action template with current screens
 		var currentOptionsScreens = [];
-		$('article[type="flashcard"]').each(function() {
+		$('article[type="screen"]').each(function() {
 		  var $screen = $(this);
 		  currentOptionsScreens.push({
 		    value: $screen.attr('id'),
@@ -674,7 +673,7 @@ VISH.Editor.Screen = (function(V,$,undefined){
 			screen = V.Slides.getCurrentSlide();
 		}
 
-		if($(screen).attr("type")===V.Constant.FLASHCARD){
+		if($(screen).attr("type")===V.Constant.SCREEN){
 			$(screen).css("background-image", "url("+contentToAdd+")");
 			$(screen).attr("avatar", "url('"+contentToAdd+"')");
 			$(screen).find("div.change_bg_button").hide();
@@ -723,7 +722,7 @@ VISH.Editor.Screen = (function(V,$,undefined){
 	var saveScreen = function(screenDOM){
 		var screen = {};
 		screen.id = $(screenDOM).attr('id');
-		screen.type = V.Constant.FLASHCARD;
+		screen.type = V.Constant.SCREEN;
 
 		var screenBackground = $(screenDOM).css("background-image");
 		if((screenBackground && screenBackground !== "none")){
@@ -770,10 +769,6 @@ VISH.Editor.Screen = (function(V,$,undefined){
 
 		screen.slides = [];
 		return screen;
-	};
-
-	var getDummy = function(slidesetId,options){
-		return "<article id='"+slidesetId+"' type='"+V.Constant.FLASHCARD+"' slidenumber='"+options.slideNumber+"'><div class='change_bg_button'></div></article>";
 	};
 
 	var getCurrentSubslide = function(){
@@ -948,7 +943,6 @@ VISH.Editor.Screen = (function(V,$,undefined){
 
 	return {
 		init 							: init,
-		getDummy						: getDummy,
 		addScreen						: addScreen,
 		draw 							: draw,
 		refreshDraggables				: refreshDraggables,

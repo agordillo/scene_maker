@@ -252,7 +252,7 @@ VISH.Editor.Slides = (function(V,$,undefined){
 		}
 		
 		//Restore text areas
-		if(slideToCopyType === V.Constant.STANDARD){
+		if(slideToCopyType === V.Constant.VIEW){
 			if(options.textAreas){
 				_loadTextAreasOfSlide(slideCopied,options.textAreas);
 			}
@@ -355,7 +355,7 @@ VISH.Editor.Slides = (function(V,$,undefined){
 		//currentSlide number is next slide
 		V.Slides.setCurrentSlideNumber(oldCurrentSlideNumber+1);
 
-		if(slideType===V.Constant.STANDARD){
+		if(slideType===V.Constant.VIEW){
 			V.Editor.Tools.addTooltipsToSlide(slide);
 		}
 
@@ -384,14 +384,14 @@ VISH.Editor.Slides = (function(V,$,undefined){
 
 	var onDeleteScreenClicked = function(event){
 		var slideNumber = $(event.target).prev("img").attr("slidenumber");
-		var slideToDelete = $("article[type='flashcard'][slidenumber='" + slideNumber + "']")[0];
+		var slideToDelete = $("article[type='screen'][slidenumber='" + slideNumber + "']")[0];
 		_removeSlide(slideToDelete);
 	};
 
 	var onDeleteSubslideClicked = function(event){
 		var currentScreen = V.Slides.getCurrentSlide();
 		var slideNumber = $(event.target).prev("img").attr("slidenumber");
-		var slideToDelete = $(currentScreen).find("article[type='standard'][slidenumber='" + slideNumber + "']")[0];
+		var slideToDelete = $(currentScreen).find("article[type='view'][slidenumber='" + slideNumber + "']")[0];
 		_removeSlide(slideToDelete);
 	};
 
@@ -499,14 +499,11 @@ VISH.Editor.Slides = (function(V,$,undefined){
 		var subslide = $(subslide).css("display","none")[0];
 		appendSubslide(slideset,subslide);
 		V.Editor.Tools.addTooltipsToSlide(subslide);
-
 		V.Editor.Screen.openSubslide(subslide);
-
 		V.Editor.Thumbnails.drawSlidesetThumbnails($(slideset).find("article"),function(){
 			//Subslides Thumbnails drawed succesfully
 			V.Editor.Thumbnails.selectSubslideThumbnail($(subslide).attr("slidenumber"));
 		});
-
 		V.Editor.Screen.afterCreateSubslide(slideset,subslide);
 	};
 

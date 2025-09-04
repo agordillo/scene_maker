@@ -19,7 +19,7 @@ VISH.Screen = (function(V,$,undefined){
 		} else {
 			type = $(obj).attr("type");
 		}
-		return (type === "flashcard");
+		return (type === V.Constant.SCREEN);
 	};
 
 	var getDefaultHotspotImg = function(){
@@ -168,7 +168,7 @@ VISH.Screen = (function(V,$,undefined){
 
 	var _changeViewsIds = function($screen){
 		var screenId = $screen.attr("id");
-		$screen.find("article[type='standard']").each(function(index, view) {
+		$screen.find("article[type='view']").each(function(index, view) {
 			var oldId = $(this).attr("id");
 			var suffix = oldId.split('_')[1];
 			var newId = screenId + '_' + suffix;

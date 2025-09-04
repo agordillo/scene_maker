@@ -18,7 +18,7 @@ VISH.Editor.Renderer = (function(V,$,undefined){
 			var slideNumber = V.Slides.getSlidesQuantity()+1;
 			var type = slides[i].type;
 			
-			if(type===V.Constant.STANDARD){
+			if(type===V.Constant.VIEW){
 				_renderSlide(slides[i], {slideNumber: slideNumber });
 			} else {
 				var isSlideset = V.Screen.isScreen(type);

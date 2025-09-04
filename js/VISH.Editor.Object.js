@@ -126,7 +126,7 @@ VISH.Editor.Object = (function(V,$,undefined){
 			$("#" + divId + " .previewimgbox .objectPreview").remove();
 		}
 		var wrapper = $(renderObjectPreview(src));
-		if((options)&&(options.contentAddMode === V.Constant.FLASHCARD)){
+		if((options)&&(options.contentAddMode === V.Constant.SCREEN)){
 			$(wrapper).addClass("previewForScreen");
 		}
 		

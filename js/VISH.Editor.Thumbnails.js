@@ -195,7 +195,7 @@ VISH.Editor.Thumbnails = (function(V,$,undefined){
 
 		if(isSlideset){
 			thumbnailURL = V.Editor.Screen.getThumbnailURL(slide);
-		} else if(slideType==V.Constant.STANDARD){
+		} else if(slideType==V.Constant.VIEW){
 			//If the slide only contains one element, and it's an image, use it as thumbnail.
 			var zone = $(slide).children("div.vezone");
 			if(($(zone).length === 1)&&(!V.Editor.isZoneEmpty(zone))&&($(zone).attr("type")=="image")){
@@ -214,7 +214,7 @@ VISH.Editor.Thumbnails = (function(V,$,undefined){
 
 	var getDefaultThumbnailURL = function(slide){
 		var slideType = $(slide).attr('type');
-		if(slideType==V.Constant.STANDARD){
+		if(slideType==V.Constant.VIEW){
 			return _getDefaultThumbnailURLForStandardSlide(slide);
 		} else if(V.Screen.isScreen(slideType)){
 			return V.Editor.Screen.getDefaultThumbnailURL(slide);
@@ -244,7 +244,7 @@ VISH.Editor.Thumbnails = (function(V,$,undefined){
 		var slideElements = 0;
 
 		$(subslides).each(function(index,s){
-			if($(s).attr('type')!==V.Constant.STANDARD){
+			if($(s).attr('type')!==V.Constant.VIEW){
 				V.Debugging.log("Subslide must be of standard type");
 				return true; //Continue
 			}
@@ -330,7 +330,7 @@ VISH.Editor.Thumbnails = (function(V,$,undefined){
 			var offsetLeft = offset.left;
 			return ((offsetLeft > 466) && (offsetLeft < 1119));
 		} else {
-			//Standard slide
+			//Screen
 			var offsetTop = offset.top;
 			return ((offsetTop > 132) && (offsetTop < 667));
 		}

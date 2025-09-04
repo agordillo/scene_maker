@@ -765,7 +765,6 @@ VISH.Editor.Screen = (function(V,$,undefined){
 			}
 		}
 
-		screen.slides = [];
 		return screen;
 	};
 

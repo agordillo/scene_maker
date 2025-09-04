@@ -59,7 +59,7 @@ VISH.Viewer = (function(V,$,undefined){
 		V.Video.init();
 		V.Audio.init();
 		V.FullScreen.init();
-		V.Presentation.init(presentation.slides, function(){
+		V.Presentation.init(presentation.screens, function(){
 			_initAferRenderPresentation(options,presentation);
 		});
 	};

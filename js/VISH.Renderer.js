@@ -4,32 +4,25 @@ VISH.Renderer = (function(V,$,undefined){
 		V.Renderer.Filter.init();
 	}
 
-	var renderSlide = function(slideJSON){
-		var slideDOM;
-		switch(slideJSON.type){
-			case V.Constant.SCREEN:
-				slideDOM = _renderScreen(slideJSON);
-				break;
-			case V.Constant.VIEW_IMAGE:
-				slideDOM = _renderViewImage(slideJSON);
-				break;
-			case V.Constant.VIEW_CONTENT:
-				slideDOM = _renderViewContent(slideJSON);
-				break;
-		}
-		if(slideDOM){
-			$('section.slides').append($(slideDOM));
-			if(slideJSON.type !== V.Constant.VIEW_CONTENT){
-				V.Screen.draw(slideJSON);
+	var renderScreen = function(screenJSON){
+		var screenDOM = _renderScreen(screenJSON);
+		if(screenDOM){
+			$('section.slides').append($(screenDOM));
+			V.Screen.draw(screenJSON);
+			//Draw views with type VIEWS_IMAGE
+			var viewsL = screenJSON.views.length;
+			for(var i=0; i<viewsL; i++){
+				var viewJSON = screenJSON.views[i];
+				V.Screen.draw(viewJSON);
 			}
 		}
 	};
 
 	var _renderScreen = function(screenJSON){
 		var allViews = "";
-		var viewsL = screenJSON.slides.length;
+		var viewsL = screenJSON.views.length;
 		for(var i=0; i<viewsL; i++){
-			var view = screenJSON.slides[i];
+			var view = screenJSON.views[i];
 			allViews += _renderView(view);
 		}
 		return $("<article type='"+screenJSON.type+"' id='"+screenJSON.id+"'>"+allViews+"</article>");
@@ -44,7 +37,9 @@ VISH.Renderer = (function(V,$,undefined){
 	};
 
 	var _renderViewImage = function(view){
-		return "";
+		var classes = "hide_in_screen";
+		var buttons = "<div class='close_view' id='close"+view.id+"'></div>";
+		return "<article class='"+ classes +"' type='"+V.Constant.VIEW_IMAGE+"' id='"+view.id+"'>"+ buttons +"</article>";
 	};
 
 	var _renderViewContent = function(view){
@@ -153,7 +148,7 @@ VISH.Renderer = (function(V,$,undefined){
 
 	return {
 		init        		: init,
-		renderSlide 		: renderSlide
+		renderScreen 		: renderScreen
 	};
 
 }) (VISH,jQuery);

@@ -250,21 +250,10 @@ VISH.Utils = (function(V,undefined){
 	};
 
 	/**
-	 * Fix presentations with old JSON format
-	 * Try to update them to current version
-	 * Return null if presentation is irretrievable
+	 * Fix JSONs with old format
+	 * Return null if JSON cannot be loaded
 	 */
 	var fixPresentation = function(presentation){
-		if((typeof presentation == "undefined")||(presentation === null)||(typeof presentation.slides == "undefined")){
-			return null;
-		}
-
-		if(typeof presentation.VEVersion == "undefined"){
-			presentation.VEVersion = "0.1";
-		}
-
-		//Apply fixes
-
 		return presentation;
 	};
 

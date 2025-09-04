@@ -52,7 +52,7 @@ VISH.Screen = (function(V,$,undefined){
 		}
 	};
 
-	var _drawHotspot = function($screen, hotspotJSON){
+	var _drawHotspot = function($slide, hotspotJSON){
 		if((!hotspotJSON)||(!hotspotJSON.id)){
 			return;
 		}
@@ -90,7 +90,7 @@ VISH.Screen = (function(V,$,undefined){
 				height: (hotspotJSON.height + "%"),
 				transform: "rotate(" + rotationAngle + "deg)"
 			}
-		}).appendTo($screen);
+		}).appendTo($slide);
 
 		if (Array.isArray(hotspotJSON.actions)&&(hotspotJSON.actions.length > 0)) {
 			$hotspot.addClass("hotspot_with_actions");

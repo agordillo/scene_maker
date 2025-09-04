@@ -1,16 +1,13 @@
 VISH.Presentation = (function(V,undefined){
-	var mySlides = null;
 	
 	/**
-	 * Function to initialize the presentation
-	 * Initialize renderer and call it to render each slide
+	 * Function to initialize and render the scene
 	 */
-	var init = function(slides,callback){
-		mySlides = slides;
+	var init = function(screens,callback){
 		V.Renderer.init();
 
-		for(var i=0;i<slides.length;i++){
-			V.Renderer.renderSlide(slides[i]);
+		for(var i=0;i<screens.length;i++){
+			V.Renderer.renderScreen(screens[i]);
 		}
 
 		if(typeof callback == "function"){

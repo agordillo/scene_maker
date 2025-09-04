@@ -431,31 +431,26 @@ VISH.Editor = (function(V,$,undefined){
 
 		//Save settings
 		presentation = V.Editor.Settings.saveSettings();
-
-		//Slides of the presentation
-		presentation.slides = [];
+		presentation.screens = [];
 
 		//Load and show all objects
 		V.Editor.Utils.Loader.loadAllObjects();
 		$(".object_wrapper").show();
 
-		$('section.slides > article').each(function(index,slideDOM){
-			var slide = {};
-
-			if(!V.Screen.isScreen(slideDOM)){
-				slide = _saveView(slideDOM,presentation,false);
-			} else {
-				V.Utils.addTempShown(slideDOM);
-				slide = V.Editor.Screen.saveScreen(slideDOM);
+		$('section.slides > article').each(function(index,screenDOM){
+			var screen = {};
+			if(V.Screen.isScreen(screenDOM)){
+				V.Utils.addTempShown(screenDOM);
+				screen = V.Editor.Screen.saveScreen(screenDOM);
+				screen.views = [];
 				//Save views
-				$(slideDOM).find("article").each(function(index,subslideDOM){
-					var subslide = _saveView(subslideDOM,presentation,true);
-					slide.slides.push(subslide);
+				$(screenDOM).find("article").each(function(index,viewDOM){
+					var view = _saveView(viewDOM,presentation,true);
+					screen.views.push(view);
 				});
-				V.Utils.removeTempShown(slideDOM);
-			}
-
-			presentation.slides.push(slide);	
+				V.Utils.removeTempShown(screenDOM);
+				presentation.screens.push(screen);
+			}	
 		});
 
 		//Unload all objects
@@ -480,8 +475,10 @@ VISH.Editor = (function(V,$,undefined){
 		}
 	};
 
-	var _saveViewImage = function(slideDOM,presentation){
-		var view = V.Editor.Screen.saveScreen(slideDOM);
+	var _saveViewImage = function(viewDOM){
+		V.Utils.addTempShown(viewDOM);
+		var view = V.Editor.Screen.saveScreen(viewDOM);
+		V.Utils.removeTempShown(viewDOM);
 		return view;
 	};
 

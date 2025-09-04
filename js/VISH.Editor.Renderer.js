@@ -13,24 +13,17 @@ VISH.Editor.Renderer = (function(V,$,undefined){
 	var renderPresentation = function(presentation){
 		_isRendering = true;
 
-		var slides = presentation.slides;
-		for(var i=0;i<slides.length;i++){
-			var slideNumber = V.Slides.getSlidesQuantity()+1;
-			var type = slides[i].type;
-			
-			if(type === V.Constant.SCREEN){
-				_renderScreen(slides[i], slideNumber);
-			} else {
-				_renderView(slides[i], {slideNumber: slideNumber });
-			}
+		var screens = presentation.screens;
+		for(var i=0;i<screens.length;i++){
+			_renderScreen(screens[i]);
 		}
 
 		_isRendering = false;
 	};
 
-	var _renderScreen = function(screenJSON, slideNumber){
+	var _renderScreen = function(screenJSON){
 		var options = {};
-		options.slideNumber = slideNumber;
+		options.slideNumber = V.Slides.getSlidesQuantity()+1;
 		options.screenId = (screenJSON.id).toString();
 		var scaffold = V.Editor.Dummies.getScaffoldForSlide(screenJSON,options);
 
@@ -44,7 +37,7 @@ VISH.Editor.Renderer = (function(V,$,undefined){
 			var scaffoldDOM = $("#"+screenId);
 
 			//Draw views
-			var views = screenJSON.slides;
+			var views = screenJSON.views;
 			if(views){
 				var ssL = views.length;
 				for(var i=0; i<ssL; i++){

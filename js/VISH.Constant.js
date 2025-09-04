@@ -33,6 +33,8 @@ VISH.Constant.UNKNOWN = 'Unknown';
 //Slide types
 VISH.Constant.SCREEN = "screen";
 VISH.Constant.VIEW = "view";
+VISH.Constant.VIEW_IMAGE = "view_image";
+VISH.Constant.VIEW_CONTENT = "view_content";
 
 //Element types
 VISH.Constant.TEXT = "text";

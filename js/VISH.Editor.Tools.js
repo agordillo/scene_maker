@@ -37,7 +37,7 @@ VISH.Editor.Tools = (function(V,$,undefined){
 	};
 	 
 	var cleanToolbar = function(){
-		var cSlide = V.Slides.getCurrentSlide();
+		var cSlide = V.Slides.getCurrentScreen();
 		if(typeof cSlide != "undefined"){
 			loadToolsForSlide(cSlide);
 		}
@@ -358,7 +358,7 @@ VISH.Editor.Tools = (function(V,$,undefined){
 	};
 
    /*
-	* Slideset actions
+	* Screen actions
 	*/
 
 	var changeBackground = function(){

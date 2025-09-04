@@ -22,11 +22,11 @@ VISH.Editor.Preview = (function(V,$,undefined){
 				if(presentationPreview === null){
 					_prepare();
 				}
-				V.Editor.Utils.Loader.unloadObjectsInEditorSlide(V.Slides.getCurrentSlide());
+				V.Editor.Utils.Loader.unloadObjectsInEditorSlide(V.Slides.getCurrentScreen());
 			},
 			'onClosed'			: function() {
 				presentationPreview = null;
-				V.Editor.Utils.Loader.loadObjectsInEditorSlide(V.Slides.getCurrentSlide());
+				V.Editor.Utils.Loader.loadObjectsInEditorSlide(V.Slides.getCurrentScreen());
 			},
 			'onComplete': function() {
 				$("#fancybox-wrap").css('top','45px');

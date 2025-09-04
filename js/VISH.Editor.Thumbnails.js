@@ -193,13 +193,11 @@ VISH.Editor.Thumbnails = (function(V,$,undefined){
 		var slideType = $(slide).attr('type');
 		var isSlideset = V.Screen.isScreen(slideType);
 
-		if(isSlideset){
-			thumbnailURL = V.Editor.Screen.getThumbnailURL(slide);
-		} else if(slideType==V.Constant.VIEW){
+		if(slideType===V.Constant.VIEW_CONTENT){
 			//If the slide only contains one element, and it's an image, use it as thumbnail.
 			var zone = $(slide).children("div.vezone");
 			if(($(zone).length === 1)&&(!V.Editor.isZoneEmpty(zone))&&($(zone).attr("type")=="image")){
-				//The slide contains only one image in the zone 'zone'
+				//The slide contains only one image
 				var img = $(zone).find("img");
 				if(($(img).length === 1)&&(typeof $(img).attr("src") == "string")){
 					thumbnailURL = $(img).attr("src");
@@ -207,8 +205,10 @@ VISH.Editor.Thumbnails = (function(V,$,undefined){
 			} else {
 				thumbnailURL = _getDefaultThumbnailURLForStandardSlide(slide);
 			}
+		} else {
+			//Screen or VIEW_IMAGE
+			thumbnailURL = V.Editor.Screen.getThumbnailURL(slide);
 		}
-
 		return thumbnailURL;
 	};
 
@@ -244,8 +244,8 @@ VISH.Editor.Thumbnails = (function(V,$,undefined){
 		var slideElements = 0;
 
 		$(subslides).each(function(index,s){
-			if($(s).attr('type')!==V.Constant.VIEW){
-				V.Debugging.log("Subslide must be of standard type");
+			if(!V.Screen.isView(s)){
+				V.Debugging.log("Invalid view type");
 				return true; //Continue
 			}
 			var srcURL = getThumbnailURL(s);
@@ -309,7 +309,7 @@ VISH.Editor.Thumbnails = (function(V,$,undefined){
 
 		var advance = ((lastSelectedSubslideThumbnail===undefined)||(no > lastSelectedSubslideThumbnail));
 		lastSelectedSubslideThumbnail = no;
-		var subslide = V.Slides.getSubslideWithNumber(V.Slides.getCurrentSlide(),no);
+		var subslide = V.Slides.getSubslideWithNumber(V.Slides.getCurrentScreen(),no);
 		if(!isThumbnailVisible(subslide)){
 			if(advance){
 				moveThumbnailsToSubslide(Math.max(no-7,1));

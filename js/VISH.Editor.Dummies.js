@@ -3,34 +3,38 @@ VISH.Editor.Dummies = (function(V,undefined){
 	var init = function(){
 	};
 
-	////////////
-	// Dummies: used to create new slides
-	////////////
-
-	/*
-	 * Function to get the dummy of a new slide
-	 */
 	var getDummy = function(slideType, options){
-		console.log("Get dummy", slideType, options);
-		var isScreen = V.Screen.isScreen(slideType);
-		if(isScreen){
-			return _getScreenDummy(options);
-		} else if(slideType==V.Constant.VIEW){
-			return _getViewDummy(options);
+		switch(slideType){
+			case V.Constant.SCREEN:
+				return _getScreenDummy(options);
+			break;
+			case V.Constant.VIEW_IMAGE:
+				return _getViewImageDummy(options);
+			break;
+			case V.Constant.VIEW_CONTENT:
+				return _getViewContentDummy(options);
+			break;
 		}
-	};
-
-	var _getViewDummy = function(options){
-		var slidesetId = $(options.slideset).attr("id");
-		var subslideId = V.Utils.getId(slidesetId + "_article");
-		var slideNumber = $(options.slideset).find("article").length + 1;
-		var dummy = "<article id='article_id_to_change' type='view' template='t10' slidenumber='slidenumber_to_change'><div id='div_id_to_change' areaid='center' size='large' class='t10_center editable vezone selectable'></div></article>";
-		return _replaceIds(dummy, slideNumber, subslideId);
 	};
 
 	var _getScreenDummy = function(options){
 		var screenId = V.Utils.getId("article");
 		return "<article id='"+screenId+"' type='"+V.Constant.SCREEN+"' slidenumber='"+options.slideNumber+"'><div class='change_bg_button'></div></article>";
+	};
+
+	var _getViewContentDummy = function(options){
+		var screenId = $(options.screen).attr("id");
+		var viewId = V.Utils.getId(screenId + "_article");
+		var slideNumber = $(options.screen).find("article").length + 1;
+		var dummy = "<article id='article_id_to_change' type='" + V.Constant.VIEW_CONTENT +"' template='t10' slidenumber='slidenumber_to_change'><div id='div_id_to_change' areaid='center' size='large' class='t10_center editable vezone selectable'></div></article>";
+		return _replaceIds(dummy, slideNumber, viewId);
+	};
+
+	var _getViewImageDummy = function(options){
+		var screenId = $(options.screen).attr("id");
+		var viewId = V.Utils.getId(screenId + "_article");
+		var slideNumber = $(options.screen).find("article").length + 1;
+		return "<article id='"+viewId+"' type='"+V.Constant.VIEW_IMAGE+"' slidenumber='"+slideNumber+"'><div class='change_bg_button'></div></article>";
 	};
 
 
@@ -43,26 +47,26 @@ VISH.Editor.Dummies = (function(V,undefined){
 	 * slide: slide in JSON format
 	 */
 
-	var getScaffoldForSlide = function(slide,options){
-		var slideType = V.Slides.getSlideType(slide);
-		var isSlideset = V.Screen.isScreen(slideType);
-		if(isSlideset){
-			var dummy = _getScreenDummy(slide.id, options);
+	var getScaffoldForSlide = function(slideJSON,options){
+		var slideType = V.Slides.getSlideType(slideJSON);
+		var isScreen = V.Screen.isScreen(slideType);
+		if(isScreen){
+			var dummy = _getScreenDummy(slideJSON.id, options);
 			if(dummy){
-				return _removeEditable(_replaceIds(dummy, options.slideNumber, slide.id));
+				return _removeEditable(_replaceIds(dummy, options.slideNumber, slideJSON.id));
 			}
 		} else if(slideType==V.Constant.VIEW){
-			return _getScaffoldForView(slide,options);
+			return _getScaffoldForView(slideJSON,options);
 		}
 	};
 
-	var _getScaffoldForView = function(slide,options){
+	var _getScaffoldForView = function(slideJSON,options){
 		var zoneIds = [];
-		for(el in slide.elements){
-			zoneIds.push(slide.elements[el].id);
+		for(el in slideJSON.elements){
+			zoneIds.push(slideJSON.elements[el].id);
 		}
 		var dummy = dummies[parseInt(options.template,10)-1];
-		return _removeEditable(_replaceIds(dummy, options.slideNumber, slide.id, zoneIds));
+		return _removeEditable(_replaceIds(dummy, options.slideNumber, slideJSON.id, zoneIds));
 	};
 
 	/**

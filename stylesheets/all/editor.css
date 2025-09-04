@@ -430,11 +430,6 @@ section.slides_editor > article > article {
 	top: 50% !important;
 }
 
-/*Padding for Virtual Tours (to allow search box)*/
-section.slides_editor > article[type='VirtualTour'] {
-	padding-top: 38px !important;
-}
-
 div.zoneSelected {
 	cursor: auto;
 	background: url("/images/icons/grid.png") repeat;
@@ -896,19 +891,19 @@ Views type
 	height:100%;
 }
 
-.viewthumb[type='image'] img {
+.viewthumb[type='view_image'] img {
 	background-image: url("/images/templatesthumbs/screen_template.png");
 }
 
-.viewthumb[type='image'] img:hover {
+.viewthumb[type='view_image'] img:hover {
 	background-image: url("/images/templatesthumbs/screen_templateh.png");
 }
 
-.viewthumb[type='content'] img {
+.viewthumb[type='view_content'] img {
 	background-image: url("/images/templatesthumbs/view_content_template.png");
 }
 
-.viewthumb[type='content'] img:hover {
+.viewthumb[type='view_content'] img:hover {
 	background-image: url("/images/templatesthumbs/view_content_templateh.png");
 }
 

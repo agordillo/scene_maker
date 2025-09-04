@@ -22,6 +22,16 @@ VISH.Screen = (function(V,$,undefined){
 		return (type === V.Constant.SCREEN);
 	};
 
+	var isView = function(obj){
+		var type;
+		if(typeof obj == "string"){
+			type = obj;
+		} else {
+			type = $(obj).attr("type");
+		}
+		return ((type === V.Constant.VIEW_IMAGE)||(type === V.Constant.VIEW_CONTENT));
+	};
+
 	var getDefaultHotspotImg = function(){
 		return defaultHotspotImg;
 	};
@@ -163,7 +173,7 @@ VISH.Screen = (function(V,$,undefined){
 		_changeViewsIds($screen);
 
 		//Refresh
-		V.Slides.goToSlide(V.Slides.getCurrentSlideNumber(),true);
+		V.Slides.goToSlide(V.Slides.getCurrentScreenNumber(),true);
 	};
 
 	var _changeViewsIds = function($screen){
@@ -211,6 +221,7 @@ VISH.Screen = (function(V,$,undefined){
 	return {
 		init 					: init,
 		isScreen				: isScreen,
+		isView					: isView,
 		getDefaultHotspotImg	: getDefaultHotspotImg,
 		draw					: draw,
 		onEnterSlideset			: onEnterSlideset,

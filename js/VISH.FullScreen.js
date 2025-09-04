@@ -114,11 +114,11 @@ VISH.FullScreen = (function(V,$,undefined){
 	var _enableFallbackFS = function(){
 		if((_pageIsFullScreen)&&(typeof _exitFsURL == "string")){
 			$(document).on('click', '#page-fullscreen', function(){
-				window.location = V.Utils.removeHashFromUrlString(_exitFsURL) + '#' + V.Slides.getCurrentSlideNumber();
+				window.location = V.Utils.removeHashFromUrlString(_exitFsURL) + '#' + V.Slides.getCurrentScreenNumber();
 			});
 		} else if((!_pageIsFullScreen)&&(typeof _enterFsURL == "string")){
 			$(document).on('click', '#page-fullscreen', function(){
-				V.Utils.sendParentToURL(V.Utils.removeHashFromUrlString(_enterFsURL) + "?orgUrl=" + V.Utils.removeHashFromUrlString(window.parent.location.href) + '#' + V.Slides.getCurrentSlideNumber());
+				V.Utils.sendParentToURL(V.Utils.removeHashFromUrlString(_enterFsURL) + "?orgUrl=" + V.Utils.removeHashFromUrlString(window.parent.location.href) + '#' + V.Slides.getCurrentScreenNumber());
 			});
 		}
 	};

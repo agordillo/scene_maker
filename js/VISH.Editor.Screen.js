@@ -181,7 +181,7 @@ VISH.Editor.Screen = (function(V,$,undefined){
 		event.preventDefault();
 		event.stopPropagation();
 
-		var screen = V.Slides.getCurrentSlide();
+		var screen = V.Slides.getCurrentScreen();
 		var screenId = $(screen).attr("id");
 		var hotspotId = V.Utils.getId("hotspot-");
 		var hotspotSize = 42;
@@ -313,7 +313,7 @@ VISH.Editor.Screen = (function(V,$,undefined){
 	};
 
 	var _onStartHotspotSettingsFancybox = function(){
-		var screenId = $(V.Slides.getCurrentSlide()).attr("id");
+		var screenId = $(V.Slides.getCurrentScreen()).attr("id");
 		var $hotspot = $(currentHotspot);
 		var hotspotId = $hotspot.attr("id");
 		var hotspotSettings = screenData[screenId].hotspots[hotspotId];
@@ -391,7 +391,7 @@ VISH.Editor.Screen = (function(V,$,undefined){
 
 		//Fill action template with current views
 		var currentOptionsViews = [];
-		$(V.Slides.getCurrentSlide()).children("article").each(function() {
+		$(V.Slides.getCurrentScreen()).children("article").each(function() {
 		  var $view = $(this);
 		  currentOptionsViews.push({
 		    value: $view.attr('id'),
@@ -566,7 +566,7 @@ VISH.Editor.Screen = (function(V,$,undefined){
 	};
 
 	var onHotspotSettingsDone = function(event){
-		var screenId = $(V.Slides.getCurrentSlide()).attr("id");
+		var screenId = $(V.Slides.getCurrentScreen()).attr("id");
 		var $hotspot = $(currentHotspot);
 		var hotspotId = $hotspot.attr("id");
 		var hotspotSettings = {};
@@ -668,18 +668,16 @@ VISH.Editor.Screen = (function(V,$,undefined){
 	/*
 	 * Callback from the V.Editor.Image module to add the background
 	 */
-	var onBackgroundSelected = function(contentToAdd,screen){
-		if(!screen){
-			screen = V.Slides.getCurrentSlide();
-		}
+	var onBackgroundSelected = function(contentToAdd){
+		var slide = V.Slides.getCurrentSlide();
+		
+		if($(slide).attr("type")!==V.Constant.VIEW_CONTENT){
+			$(slide).css("background-image", "url("+contentToAdd+")");
+			$(slide).attr("avatar", "url('"+contentToAdd+"')");
+			$(slide).find("div.change_bg_button").hide();
 
-		if($(screen).attr("type")===V.Constant.SCREEN){
-			$(screen).css("background-image", "url("+contentToAdd+")");
-			$(screen).attr("avatar", "url('"+contentToAdd+"')");
-			$(screen).find("div.change_bg_button").hide();
-
-			V.Editor.Slides.updateThumbnail(screen);
-			V.Editor.Tools.loadToolsForSlide(screen);
+			V.Editor.Slides.updateThumbnail(slide);
+			V.Editor.Tools.loadToolsForSlide(slide);
 		}
 
 		$.fancybox.close();
@@ -704,7 +702,7 @@ VISH.Editor.Screen = (function(V,$,undefined){
 		$(screen).attr("avatar", "url('"+thumbnailURL+"')");
 		$(screen).find("div.change_bg_button").show();
 
-		if(V.Slides.getCurrentSlide()==screen){
+		if(V.Slides.getCurrentScreen()==screen){
 			$("#slideset_selected > img").attr("src",thumbnailURL);
 		}
 		var slideThumbnail = V.Editor.Thumbnails.getThumbnailForSlide(screen);
@@ -771,7 +769,7 @@ VISH.Editor.Screen = (function(V,$,undefined){
 		return screen;
 	};
 
-	var getCurrentSubslide = function(){
+	var getCurrentView = function(){
 		return currentSubslide;
 	};
 
@@ -803,7 +801,7 @@ VISH.Editor.Screen = (function(V,$,undefined){
 			var $hotspot = $(currentHotspot);
 			var hotspotId = $hotspot.attr("id");
 			$hotspot.remove();
-			var screenId = $(V.Slides.getCurrentSlide()).attr("id");
+			var screenId = $(V.Slides.getCurrentScreen()).attr("id");
 			delete screenData[screenId].hotspots[hotspotId];
 
 			currentHotspot = undefined;
@@ -838,7 +836,7 @@ VISH.Editor.Screen = (function(V,$,undefined){
 	var onLeaveSlideset = function(slideset){
 		closeSlideset(slideset);
 
-		var currentSubslide = getCurrentSubslide();
+		var currentSubslide = getCurrentView();
 		if(currentSubslide){
 			closeSubslide(currentSubslide);
 		}
@@ -848,7 +846,7 @@ VISH.Editor.Screen = (function(V,$,undefined){
 	};
 
 	var onClickOpenSlideset = function(){
-		var slideset = V.Slides.getCurrentSlide();
+		var slideset = V.Slides.getCurrentScreen();
 		openSlideset(slideset);
 	};
 
@@ -856,7 +854,7 @@ VISH.Editor.Screen = (function(V,$,undefined){
 		//Mark slideset thumbnail as selected
 		$("#slideset_selected_img").addClass("selectedSlidesetThumbnail");
 
-		var currentSubslide = getCurrentSubslide();
+		var currentSubslide = getCurrentView();
 		if(currentSubslide){
 			closeSubslide(currentSubslide);
 		}
@@ -873,13 +871,13 @@ VISH.Editor.Screen = (function(V,$,undefined){
 	};
 
 	var beforeRemoveSlideset = function(slideset){
-		if(V.Slides.getCurrentSlide() === slideset){
+		if(V.Slides.getCurrentScreen() === slideset){
 			onLeaveSlideset(slideset);
 		}
 	};
 
 	var beforeRemoveSubslide = function(slideset,subslide){
-		if(V.Slides.getCurrentSubslide() === subslide){
+		if(V.Slides.getCurrentView() === subslide){
 			closeSubslide(subslide);
 		}
 	};
@@ -893,14 +891,14 @@ VISH.Editor.Screen = (function(V,$,undefined){
 	////////////////
 
 	var openSubslideWithNumber = function(subslideNumber){
-		var slideset = V.Slides.getCurrentSlide();
+		var slideset = V.Slides.getCurrentScreen();
 		var subslides = $(slideset).find("article");
 		var subslide = subslides[subslideNumber-1];
 		openSubslide(subslide);
 	};
 
 	var openSubslide = function(subslide){
-		var currentSubslide = getCurrentSubslide();
+		var currentSubslide = getCurrentView();
 
 		if(currentSubslide){
 			closeSubslide(currentSubslide);
@@ -924,7 +922,7 @@ VISH.Editor.Screen = (function(V,$,undefined){
 	};
 
 	var closeSubslideWithNumber = function(subslideNumber){
-		var slideset = V.Slides.getCurrentSlide();
+		var slideset = V.Slides.getCurrentScreen();
 		var subslides = $(slideset).find("article");
 		var subslide = subslides[subslideNumber-1];
 		closeSubslide(subslide);
@@ -972,7 +970,7 @@ VISH.Editor.Screen = (function(V,$,undefined){
 		beforeRemoveSlideset			: beforeRemoveSlideset,
 		beforeRemoveSubslide			: beforeRemoveSubslide,
 		afterCreateSubslide				: afterCreateSubslide,
-		getCurrentSubslide				: getCurrentSubslide,
+		getCurrentView				: getCurrentView,
 		openSubslideWithNumber 			: openSubslideWithNumber,
 		openSubslide					: openSubslide,
 		closeSubslideWithNumber			: closeSubslideWithNumber,

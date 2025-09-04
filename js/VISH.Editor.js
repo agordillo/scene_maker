@@ -131,8 +131,8 @@ VISH.Editor = (function(V,$,undefined){
 		}
 		V.Slides.updateSlides();
 		V.Editor.Thumbnails.redrawThumbnails(function(){
-			V.Editor.Thumbnails.selectThumbnail(V.Slides.getCurrentSlideNumber());
-			V.Editor.Thumbnails.moveThumbnailsToSlide(V.Slides.getCurrentSlideNumber());
+			V.Editor.Thumbnails.selectThumbnail(V.Slides.getCurrentScreenNumber());
+			V.Editor.Thumbnails.moveThumbnailsToSlide(V.Slides.getCurrentScreenNumber());
 		});
 		
 		if(initialPresentation){
@@ -157,8 +157,8 @@ VISH.Editor = (function(V,$,undefined){
 		V.Editor.Utils.Loader.unloadAllObjects();
 
 		//Enter in currentSlide (this will cause that objects will be shown)
-		if(V.Slides.getCurrentSlideNumber()>0){
-			V.Slides.triggerEnterEventById($(V.Slides.getCurrentSlide()).attr("id"));
+		if(V.Slides.getCurrentScreenNumber()>0){
+			V.Slides.triggerEnterEventById($(V.Slides.getCurrentScreen()).attr("id"));
 		}
 
 		//Add the first slide
@@ -189,22 +189,16 @@ VISH.Editor = (function(V,$,undefined){
 	 * Add a new view to the current screen.
 	 */
 	var onViewThumbClicked = function(event){
-		var slideset = V.Slides.getCurrentSlide();
-		if(!V.Screen.isScreen(slideset)){
+		var screen = V.Slides.getCurrentScreen();
+		if(!V.Screen.isScreen(screen)){
 			return;
 		}
 
 		var type = $(event.currentTarget).attr('type');
-		if(type === "content"){
-			var options = {};
-			options.subslide = true;
-			options.template = "10";
-			options.slideset = slideset;
-			var subslide = V.Editor.Dummies.getDummy(V.Constant.VIEW, options);
-			V.Editor.Slides.addSubslide(slideset,subslide);
-		} else if(type === "image"){
-			//TODO
-		}
+		var options = {};
+		options.screen = screen;
+		var subslide = V.Editor.Dummies.getDummy(type, options);
+		V.Editor.Slides.addSubslide(screen,subslide);
 
 		$.fancybox.close();
 	};
@@ -237,7 +231,7 @@ VISH.Editor = (function(V,$,undefined){
 			var shouldBeShown = false;
 			switch($(uthumb).attr("id")){
 				case "add_quiz_thumb":
-					if($(V.Slides.getCurrentSlide()).children("div.vezone[type='quiz']").length < 1){
+					if($(V.Slides.getCurrentScreen()).children("div.vezone[type='quiz']").length < 1){
 						shouldBeShown = true;
 					}	
 					break;
@@ -281,7 +275,7 @@ VISH.Editor = (function(V,$,undefined){
 			area.addClass("editable");
 			V.Editor.Tools.addTooltipToZone(area);
 			selectArea(null);
-			V.Editor.Slides.updateThumbnail(V.Slides.getTargetSlide());
+			V.Editor.Slides.updateThumbnail(V.Slides.getCurrentSlide());
 			$.fancybox.close();
 		}
 		options.buttons = [button1,button2];
@@ -402,7 +396,7 @@ VISH.Editor = (function(V,$,undefined){
 			},500);
 		}
 
-		V.Editor.Thumbnails.selectThumbnail(V.Slides.getCurrentSlideNumber());
+		V.Editor.Thumbnails.selectThumbnail(V.Slides.getCurrentScreenNumber());
 		cleanArea();
 		V.Editor.Tools.loadToolsForSlide(slide);
 	};
@@ -471,7 +465,7 @@ VISH.Editor = (function(V,$,undefined){
 		//Unload all objects
 		V.Editor.Utils.Loader.unloadAllObjects();
 		//Reload current slide objects
-		V.Editor.Utils.Loader.loadObjectsInEditorSlide(V.Slides.getCurrentSlide());
+		V.Editor.Utils.Loader.loadObjectsInEditorSlide(V.Slides.getCurrentScreen());
 
 		V.Debugging.log("\n\nScene Maker save the following scene:\n");
 		V.Debugging.log(JSON.stringify(presentation));

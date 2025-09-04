@@ -81,7 +81,7 @@ VISH.Video.HTML5 = (function(V,$,undefined){
 				params.type = "HTML5";
 				params.id = mEl.id;
 				params.currentTime = mEl.currentTime;
-				params.slideNumber = V.Slides.getCurrentSlideNumber();
+				params.slideNumber = V.Slides.getCurrentScreenNumber();
 				var eventId = (isVideo ? V.Constant.Event.onPlayVideo : V.Constant.Event.onPlayAudio);
 				V.EventsNotifier.notifyEvent(eventId,params,playTriggeredByUser);
 				playTriggeredByUser = true;
@@ -93,7 +93,7 @@ VISH.Video.HTML5 = (function(V,$,undefined){
 				params.type = "HTML5";
 				params.id = mEl.id;
 				params.currentTime = mEl.currentTime;
-				params.slideNumber = V.Slides.getCurrentSlideNumber();
+				params.slideNumber = V.Slides.getCurrentScreenNumber();
 				var eventId = (isVideo ? V.Constant.Event.onPauseVideo : V.Constant.Event.onPauseAudio);
 				V.EventsNotifier.notifyEvent(eventId,params,pauseTriggeredByUser);
 				pauseTriggeredByUser = true;
@@ -111,7 +111,7 @@ VISH.Video.HTML5 = (function(V,$,undefined){
 				params.type = "HTML5";
 				params.id = mEl.id;
 				params.currentTime = mEl.currentTime;
-				params.slideNumber = V.Slides.getCurrentSlideNumber();
+				params.slideNumber = V.Slides.getCurrentScreenNumber();
 				var eventId = (isVideo ? V.Constant.Event.onSeekVideo : V.Constant.Event.onSeekAudio);
 				V.EventsNotifier.notifyEvent(eventId,params,seekTriggeredByUser);
 				seekTriggeredByUser = true;

@@ -226,7 +226,7 @@ VISH.Video.Youtube = (function(V,$,undefined){
 			var params = new Object();
 			params.videoId = iframeId;
 			params.currentTime = ytPlayer.getCurrentTime();
-			params.slideNumber = V.Slides.getCurrentSlideNumber();
+			params.slideNumber = V.Slides.getCurrentScreenNumber();
 
 			if((triggeredByUser)&&(V.Status.isPreventDefaultMode())){
 				V.Messenger.notifyEventByMessage(V.Constant.Event.onPlayVideo,params);
@@ -253,7 +253,7 @@ VISH.Video.Youtube = (function(V,$,undefined){
 			var params = new Object();
 			params.videoId = iframeId;
 			params.currentTime = ytPlayer.getCurrentTime();
-			params.slideNumber = V.Slides.getCurrentSlideNumber();
+			params.slideNumber = V.Slides.getCurrentScreenNumber();
 
 			if((triggeredByUser)&&(V.Status.isPreventDefaultMode())){
 				V.Messenger.notifyEventByMessage(V.Constant.Event.onPauseVideo,params);
@@ -285,7 +285,7 @@ VISH.Video.Youtube = (function(V,$,undefined){
 			var params = new Object();
 			params.videoId = iframeId;
 			params.currentTime = seekTime;
-			params.slideNumber = V.Slides.getCurrentSlideNumber();
+			params.slideNumber = V.Slides.getCurrentScreenNumber();
 
 			if((triggeredByUser)&&(V.Status.isPreventDefaultMode())){
 				V.Messenger.notifyEventByMessage(V.Constant.Event.onSeekVideo,params);

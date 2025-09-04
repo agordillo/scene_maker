@@ -37,9 +37,6 @@ VISH.Editor.Image = (function(V,$,undefined){
 			case V.Constant.SCREEN:
 				V.Editor.Screen.onBackgroundSelected(contentToAdd);
 				break;
-			case V.Constant.THUMBNAIL:
-				V.Editor.Settings.onThumbnailSelected(contentToAdd);
-				break;
 			default:
 				V.Editor.Object.drawPreviewObject(contentToAdd, {forceType: V.Constant.MEDIA.IMAGE});
 		}
@@ -113,7 +110,7 @@ VISH.Editor.Image = (function(V,$,undefined){
 		});
 
 		if(renderOnInit === false){
-			V.Editor.Slides.updateThumbnail(V.Slides.getTargetSlide());
+			V.Editor.Slides.updateThumbnail(V.Slides.getCurrentSlide());
 		};
 	};
 
@@ -123,17 +120,6 @@ VISH.Editor.Image = (function(V,$,undefined){
 
 	var setAddContentMode = function(mode){
 		V.Editor.Utils.hideNonDefaultTabs();
-		switch(mode){
-			case V.Constant.THUMBNAIL:
-				//When choosing thumbnail, only allow upload and thumbnail tabs.
-				$("#picture_fancybox div.fancy_tabs a.fancy_tab").hide();
-				$("#tab_pic_upload").not(".disabled").show();
-				$("#tab_pic_thumbnails").not(".disabled").show();
-				break;
-			case V.Constant.NONE:
-			case V.Constant.SCREEN:
-				break;
-		}
 		contentAddMode = mode;
 	};
 

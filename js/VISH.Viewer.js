@@ -72,8 +72,8 @@ VISH.Viewer = (function(V,$,undefined){
 		V.Slides.updateSlides();
 		V.ViewerAdapter.init(options); //Also init texts
 
-		if(V.Slides.getCurrentSlideNumber()>0){
-			V.Slides.triggerEnterEventById($(V.Slides.getCurrentSlide()).attr("id"));
+		if(V.Slides.getCurrentScreenNumber()>0){
+			V.Slides.triggerEnterEventById($(V.Slides.getCurrentScreen()).attr("id"));
 		}
 
 		if(!V.Status.isExternalDomain()){
@@ -92,7 +92,7 @@ VISH.Viewer = (function(V,$,undefined){
 	*/
 	var onSlideEnterViewer = function(e){
 		var slide = e.target;
-		var cSlideNumber = V.Slides.getCurrentSlideNumber();
+		var cSlideNumber = V.Slides.getCurrentScreenNumber();
 		var isSubslide = V.Slides.isSubslide(slide);
 		var isSlideset = ((!isSubslide)&&(V.Screen.isScreen(slide)));
 
@@ -104,7 +104,7 @@ VISH.Viewer = (function(V,$,undefined){
 
 		setTimeout(function(){
 			if(!isSubslide){
-				if(cSlideNumber!==V.Slides.getCurrentSlideNumber()){
+				if(cSlideNumber!==V.Slides.getCurrentScreenNumber()){
 					//Prevent objects to load when the slide isn't focused
 					return;
 				}

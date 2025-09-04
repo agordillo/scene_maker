@@ -241,7 +241,7 @@ VISH.Editor.Events = (function(V,$,undefined){
 		switch (event.keyCode) {
 		case 39: // right arrow
 			if(V.Editor.Slides.isSlideFocused()){
-				if(V.Screen.isScreen(V.Slides.getCurrentSlide())){
+				if(V.Screen.isScreen(V.Slides.getCurrentScreen())){
 					V.Editor.Slides.forwardOneSubslide();
 				}
 				event.preventDefault();
@@ -255,7 +255,7 @@ VISH.Editor.Events = (function(V,$,undefined){
 			break;
 		case 37: // left arrow
 			if(V.Editor.Slides.isSlideFocused()){
-				if(V.Screen.isScreen(V.Slides.getCurrentSlide())){
+				if(V.Screen.isScreen(V.Slides.getCurrentScreen())){
 					V.Editor.Slides.backwardOneSubslide();
 				}
 				event.preventDefault();
@@ -273,8 +273,8 @@ VISH.Editor.Events = (function(V,$,undefined){
 		case 67: //cKey
 			if(V.Editor.Slides.isSlideFocused()){
 				if(_isCtrlKeyPressed){
-					if(V.Slides.getCurrentSlideNumber()){
-						V.Editor.Clipboard.copy(V.Slides.getCurrentSlide(),V.Constant.Clipboard.Slide);
+					if(V.Slides.getCurrentScreenNumber()){
+						V.Editor.Clipboard.copy(V.Slides.getCurrentScreen(),V.Constant.Clipboard.Slide);
 					}
 				}
 			}

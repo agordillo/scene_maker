@@ -915,7 +915,7 @@ VISH.Utils = (function(V,undefined){
 	};
 
 	var updateHash = function(){
-		var newHash = '#' + V.Slides.getCurrentSlideNumber();
+		var newHash = '#' + V.Slides.getCurrentScreenNumber();
 
 		//Propagate hash (slidenumber without params)
 		if(getOptions()["readHashFromParent"]===true){

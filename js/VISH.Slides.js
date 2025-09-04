@@ -95,13 +95,13 @@ VISH.Slides = (function(V,$,undefined){
 		});
 	};
 
-	var getCurrentSlide = function(){
+	var getCurrentScreen = function(){
 		return slideEls[curSlideIndex];
 	};
 
-	var getCurrentSubslide = function(){
+	var getCurrentView = function(){
 		if(V.Editing){
-			return V.Editor.Screen.getCurrentSubslide();
+			return V.Editor.Screen.getCurrentView();
 		}
 
 		if(curSubSlideId === null){
@@ -111,21 +111,21 @@ VISH.Slides = (function(V,$,undefined){
 		}
 	};
 
-	var getTargetSlide = function(){
-		var cSubslide = getCurrentSubslide();
-		if((typeof cSubslide == "undefined") || (cSubslide === null)){
-			return getCurrentSlide();
+	var getCurrentSlide = function(){
+		var currentView = getCurrentView();
+		if((typeof currentView == "undefined") || (currentView === null)){
+			return getCurrentScreen();
 		} else {
-			return cSubslide;
+			return currentView;
 		}
 	};
 
-	var getCurrentSlideNumber = function(){
+	var getCurrentScreenNumber = function(){
 		return curSlideIndex+1;
 	};
 
-	var getCurrentSubslideNumber = function(){
-		var cSubslide = getCurrentSubslide();
+	var getCurrentViewNumber = function(){
+		var cSubslide = getCurrentView();
 		if((typeof cSubslide == "undefined") || (cSubslide === null)){
 			return undefined;
 		}
@@ -139,12 +139,12 @@ VISH.Slides = (function(V,$,undefined){
 		}
 	};
 
-	var getTargetSlideNumber = function(){
-		var cSubslide = getCurrentSubslide();
+	var getCurrentSlideNumber = function(){
+		var cSubslide = getCurrentView();
 		if((typeof cSubslide == "undefined") || (cSubslide === null)){
-			return getCurrentSubslideNumber();
+			return getCurrentViewNumber();
 		} else {
-			return getCurrentSlideNumber();
+			return getCurrentScreenNumber();
 		}
 	};
 
@@ -312,7 +312,7 @@ VISH.Slides = (function(V,$,undefined){
 	* Go to the slide no
 	*/
 	var goToSlide = function(no,ignoreCurrentSlideNumber){
-		if((ignoreCurrentSlideNumber!== true && no === getCurrentSlideNumber())||(no > slideEls.length)||(no <= 0)){
+		if((ignoreCurrentSlideNumber!== true && no === getCurrentScreenNumber())||(no > slideEls.length)||(no <= 0)){
 			//Do nothing
 			return;
 		};
@@ -435,12 +435,12 @@ VISH.Slides = (function(V,$,undefined){
 			updateCurrentSlideFromHash	: updateCurrentSlideFromHash,
 			getSlides 				: getSlides,
 			setSlides				: setSlides,
-			getCurrentSlide 		: getCurrentSlide,
-			getCurrentSubslide 		: getCurrentSubslide,
-			getTargetSlide			: getTargetSlide,
+			getCurrentScreen 		: getCurrentScreen,
+			getCurrentView 		: getCurrentView,
+			getCurrentSlide			: getCurrentSlide,
+			getCurrentScreenNumber	: getCurrentScreenNumber,
+			getCurrentViewNumber	: getCurrentViewNumber,
 			getCurrentSlideNumber	: getCurrentSlideNumber,
-			getCurrentSubslideNumber	: getCurrentSubslideNumber,
-			getTargetSlideNumber	: getTargetSlideNumber,
 			setCurrentSlideNumber	: setCurrentSlideNumber,
 			getSlideWithNumber		: getSlideWithNumber,
 			getSubslideWithNumber	: getSubslideWithNumber,

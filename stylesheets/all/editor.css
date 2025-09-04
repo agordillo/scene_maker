@@ -1651,14 +1651,14 @@ div.change_bg_button {
 	position: absolute;
 	left: 325px;
 	top: 225px;
-	background: url("/images/icons/flashcard_add_img_button.png");
+	background: url("/images/icons/slide_add_background.png");
 	width: 150px;
 	height: 150px;
 	cursor: pointer;
 }
 
 div.change_bg_button:hover {
-	background: url("/images/icons/flashcard_add_img_button_hover.png");
+	background: url("/images/icons/slide_add_background_hover.png");
 }
 
 div.draggable_sc_div {

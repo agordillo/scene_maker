@@ -3,12 +3,12 @@ VISH.Editor.Screen = (function(V,$,undefined){
 	var initialized = false;
 	var currentEditingMode = "NONE"; //Can be "NONE", HOTSPOT" or "ZONE".
 	var _hiddenLinkToInitHotspotSettings;
-	var screenData;
+	var slideData;
 	var currentHotspot;
 	var currentSubslide;
 
 	var init = function(){
-		screenData = {};
+		slideData = {};
 
 		//Hotspot Settings
 		_hiddenLinkToInitHotspotSettings = $('<a href="#hotspotSettings_fancybox" style="display:none"></a>');
@@ -84,7 +84,7 @@ VISH.Editor.Screen = (function(V,$,undefined){
 
 					_drawHotspot(screenJSON.id,hotspot.id,hotspotX,hotspotY,hotspot.image,hotspot.lockAspectRatio,hotspotWidth,hotspotHeight,hotspot.rotationAngle);
 					if (Array.isArray(hotspot.actions)&&hotspot.actions.length>0) {
-						screenData[screenJSON.id].hotspots[hotspot.id].actions = hotspot.actions;
+						slideData[screenJSON.id].hotspots[hotspot.id].actions = hotspot.actions;
 					}
 				});
 			}
@@ -181,21 +181,21 @@ VISH.Editor.Screen = (function(V,$,undefined){
 		event.preventDefault();
 		event.stopPropagation();
 
-		var screen = V.Slides.getCurrentScreen();
-		var screenId = $(screen).attr("id");
+		var slide = V.Slides.getCurrentSlide();
+		var slideId = $(slide).attr("id");
 		var hotspotId = V.Utils.getId("hotspot-");
 		var hotspotSize = 42;
-		var rect = screen.getBoundingClientRect();
+		var rect = slide.getBoundingClientRect();
 	    var x = event.clientX - rect.left - hotspotSize/2;
 	    var y = event.clientY - rect.top - hotspotSize/2;
 		
-		_drawHotspot(screenId,hotspotId,x,y);
+		_drawHotspot(slideId,hotspotId,x,y);
 
 		currentEditingMode = "NONE";
 		_enableEditingMode("NONE");
 	};
 
-	var _drawHotspot = function(screenId,hotspotId,x,y,imgURL,lockAspectRatio,width,height,rotationAngle){
+	var _drawHotspot = function(slideId,hotspotId,x,y,imgURL,lockAspectRatio,width,height,rotationAngle){
 		if(typeof imgURL !== "string"){
 			imgURL = V.Screen.getDefaultHotspotImg();
 		}
@@ -214,7 +214,7 @@ VISH.Editor.Screen = (function(V,$,undefined){
 			rotationAngle = 0;
 		}
 
-		var screen = $("#"+screenId);
+		var screen = $("#"+slideId);
 		var $hotspot = $('<img>', {
 			src: imgURL,
 			class: 'hotspot',
@@ -231,14 +231,14 @@ VISH.Editor.Screen = (function(V,$,undefined){
 		}).appendTo(screen);
 		_validateHotspotPosition($hotspot);
 
-		if(typeof screenData[screenId] === "undefined"){
-			screenData[screenId] = {
+		if(typeof slideData[slideId] === "undefined"){
+			slideData[slideId] = {
 				hotspots: {},
 				zones: {}
 			};
 		}
-		screenData[screenId].hotspots[hotspotId] = {};
-		screenData[screenId].hotspots[hotspotId].lockAspectRatio = lockAspectRatio;
+		slideData[slideId].hotspots[hotspotId] = {};
+		slideData[slideId].hotspots[hotspotId].lockAspectRatio = lockAspectRatio;
 		
 		_enableDraggableHotspot($hotspot);
 	};
@@ -313,10 +313,10 @@ VISH.Editor.Screen = (function(V,$,undefined){
 	};
 
 	var _onStartHotspotSettingsFancybox = function(){
-		var screenId = $(V.Slides.getCurrentScreen()).attr("id");
+		var slideId = $(V.Slides.getCurrentSlide()).attr("id");
 		var $hotspot = $(currentHotspot);
 		var hotspotId = $hotspot.attr("id");
-		var hotspotSettings = screenData[screenId].hotspots[hotspotId];
+		var hotspotSettings = slideData[slideId].hotspots[hotspotId];
 
 		//ID
 		$("#hotspotId").val(hotspotId);
@@ -337,8 +337,8 @@ VISH.Editor.Screen = (function(V,$,undefined){
 		}
 
 		//Size
-		if(typeof screenData[screenId].hotspots[hotspotId].lockAspectRatio === "boolean"){
-			$("#hotspotLockAspectRatio").prop("checked", screenData[screenId].hotspots[hotspotId].lockAspectRatio);
+		if(typeof slideData[slideId].hotspots[hotspotId].lockAspectRatio === "boolean"){
+			$("#hotspotLockAspectRatio").prop("checked", slideData[slideId].hotspots[hotspotId].lockAspectRatio);
 		}
 		
 		var hotspotWidth = $hotspot.width();
@@ -566,7 +566,7 @@ VISH.Editor.Screen = (function(V,$,undefined){
 	};
 
 	var onHotspotSettingsDone = function(event){
-		var screenId = $(V.Slides.getCurrentScreen()).attr("id");
+		var slideId = $(V.Slides.getCurrentSlide()).attr("id");
 		var $hotspot = $(currentHotspot);
 		var hotspotId = $hotspot.attr("id");
 		var hotspotSettings = {};
@@ -648,7 +648,7 @@ VISH.Editor.Screen = (function(V,$,undefined){
 			hotspotSettings.actions = actions;
 		}
 
-		screenData[screenId].hotspots[hotspotId] = hotspotSettings;
+		slideData[slideId].hotspots[hotspotId] = hotspotSettings;
 		$.fancybox.close();
 	};
 
@@ -702,7 +702,7 @@ VISH.Editor.Screen = (function(V,$,undefined){
 		$(screen).attr("avatar", "url('"+thumbnailURL+"')");
 		$(screen).find("div.change_bg_button").show();
 
-		if(V.Slides.getCurrentScreen()==screen){
+		if(V.Slides.getCurrentSlide()==screen){
 			$("#slideset_selected > img").attr("src",thumbnailURL);
 		}
 		var slideThumbnail = V.Editor.Thumbnails.getThumbnailForSlide(screen);
@@ -727,14 +727,14 @@ VISH.Editor.Screen = (function(V,$,undefined){
 			screen.background = screenBackground;
 		}
 
-		if(typeof screenData[screen.id] !== "undefined"){
-			var hotspotsIds = Object.keys(screenData[screen.id].hotspots);
+		if(typeof slideData[screen.id] !== "undefined"){
+			var hotspotsIds = Object.keys(slideData[screen.id].hotspots);
 			if(hotspotsIds.length > 0) {
 				screen.hotspots = [];
 				hotspotsIds.forEach(hotspotId => {
 					var hotspotDOM = $("img.hotspot[id='" + hotspotId + "']");
 					var hotspotPosition = $(hotspotDOM).position();
-					var hotspotSettings = screenData[screen.id].hotspots[hotspotId];
+					var hotspotSettings = slideData[screen.id].hotspots[hotspotId];
 
 					//Transform dimensions to percentage instead of absolute numbers.
 					//Dimensions are calculated for a container with dimensions 800x600
@@ -760,8 +760,8 @@ VISH.Editor.Screen = (function(V,$,undefined){
 					screen.hotspots.push(hotspotJSON);
 				});
 			}
-			if(Object.keys(screenData[screen.id].zones).length > 0) {
-				screen.zones = screenData[screen.id].zones;
+			if(Object.keys(slideData[screen.id].zones).length > 0) {
+				screen.zones = slideData[screen.id].zones;
 			}
 		}
 
@@ -801,8 +801,8 @@ VISH.Editor.Screen = (function(V,$,undefined){
 			var $hotspot = $(currentHotspot);
 			var hotspotId = $hotspot.attr("id");
 			$hotspot.remove();
-			var screenId = $(V.Slides.getCurrentScreen()).attr("id");
-			delete screenData[screenId].hotspots[hotspotId];
+			var slideId = $(V.Slides.getCurrentSlide()).attr("id");
+			delete slideData[slideId].hotspots[hotspotId];
 
 			currentHotspot = undefined;
 			V.Editor.Tools.cleanToolbar();
@@ -850,8 +850,7 @@ VISH.Editor.Screen = (function(V,$,undefined){
 		openSlideset(slideset);
 	};
 
-	var openSlideset = function(slideset){
-		//Mark slideset thumbnail as selected
+	var openSlideset = function(screen){
 		$("#slideset_selected_img").addClass("selectedSlidesetThumbnail");
 
 		var currentSubslide = getCurrentView();
@@ -859,7 +858,7 @@ VISH.Editor.Screen = (function(V,$,undefined){
 			closeSubslide(currentSubslide);
 		}
 
-		V.Editor.Tools.loadToolsForSlide(slideset);
+		V.Editor.Tools.loadToolsForSlide(screen);
 	};
 
 	var closeSlideset = function(slideset){

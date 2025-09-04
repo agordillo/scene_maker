@@ -84,12 +84,8 @@ section.slides > article > article {
 	display: none;
 }
 
-.slides > article[type="flashcard"] {
+.slides > article[type="screen"], .slides > article[type="view_image"] {
 	padding: 0;
-}
-
-.slides > article[type="enrichedvideo"] {
-	padding: 0 !important;
 }
 
 /*class used to show a slide to get width and height and after that remove the class

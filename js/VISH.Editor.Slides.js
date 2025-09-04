@@ -252,23 +252,11 @@ VISH.Editor.Slides = (function(V,$,undefined){
 		}
 		
 		//Restore text areas
-		if(slideToCopyType === V.Constant.VIEW){
+		if(slideToCopyType === V.Constant.VIEW_CONTENT){
 			if(options.textAreas){
 				_loadTextAreasOfSlide(slideCopied,options.textAreas);
 			}
 		}
-
-		//Call for custom post-copy actions
-		$(slideToCopy).find("div.vezone").each(function(index,zone){
-			var zoneType = $(zone).attr("type");
-			switch(zoneType){
-				case V.Constant.QUIZ:
-					V.Editor.Quiz.afterCopyQuiz(zone);
-					break;
-				default:
-					break;
-			}
-		});
 		
 		//Update slideEls and refresh classes
 		V.Slides.updateSlides();
@@ -355,7 +343,7 @@ VISH.Editor.Slides = (function(V,$,undefined){
 		//currentSlide number is next slide
 		V.Slides.setCurrentSlideNumber(oldCurrentSlideNumber+1);
 
-		if(slideType===V.Constant.VIEW){
+		if(slideType===V.Constant.VIEW_CONTENT){
 			V.Editor.Tools.addTooltipsToSlide(slide);
 		}
 
@@ -391,7 +379,7 @@ VISH.Editor.Slides = (function(V,$,undefined){
 	var onDeleteSubslideClicked = function(event){
 		var currentScreen = V.Slides.getCurrentScreen();
 		var slideNumber = $(event.target).prev("img").attr("slidenumber");
-		var slideToDelete = $(currentScreen).find("article[type='view'][slidenumber='" + slideNumber + "']")[0];
+		var slideToDelete = $(currentScreen).find("article[slidenumber='" + slideNumber + "']")[0];
 		_removeSlide(slideToDelete);
 	};
 

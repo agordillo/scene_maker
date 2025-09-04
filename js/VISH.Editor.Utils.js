@@ -155,8 +155,8 @@ VISH.Editor.Utils = (function(V,$,undefined){
 
 		var slideType = V.Slides.getSlideType(slide);
 		switch(slideType){
-			case V.Constant.VIEW:
-				slide = _replaceIdsForStandardSlide(slide,slideId);
+			case V.Constant.VIEW_CONTENT:
+				slide = _replaceIdsForViewContent(slide,slideId);
 				break;
 			case V.Constant.SCREEN:
 				slide = _replaceIdsForScreen(slide,slideId);
@@ -168,7 +168,7 @@ VISH.Editor.Utils = (function(V,$,undefined){
 		return slide;
 	};
 
-	var _replaceIdsForStandardSlide = function(slide,slideId){
+	var _replaceIdsForViewContent = function(slide,slideId){
 		//Replace zone Ids
 		$(slide).children("div[id][areaid]").each(function(index, zone) {
 			zone = _replaceIdsForZone(zone,slideId);
@@ -243,13 +243,13 @@ VISH.Editor.Utils = (function(V,$,undefined){
 		if(V.Screen.isScreen(slideType)){
 			slide = _replaceIdsForSlidesetJSON(slide,slideId);
 		} else {
-			slide = _replaceIdsForStandardSlideJSON(slide,slideId);
+			slide = _replaceIdsForViewJSON(slide,slideId);
 		}
 
 		return slide;
 	};
 
-	var _replaceIdsForStandardSlideJSON = function(slide,slideId){
+	var _replaceIdsForViewJSON = function(slide,slideId){
 		var s = jQuery.extend(true, {}, slide);
 		var oldId = s.id;
 		s.id = slideId;
@@ -278,7 +278,7 @@ VISH.Editor.Utils = (function(V,$,undefined){
 		var slidesetSlidesL = slideset.slides.length;
 		for(var i=0; i<slidesetSlidesL; i++){
 			var oldSubslideId = slideset.slides[i].id;
-			slideset.slides[i] = _replaceIdsForStandardSlideJSON(slideset.slides[i],slideset.id + "_article" + (parseInt(i)+1));
+			slideset.slides[i] = _replaceIdsForViewJSON(slideset.slides[i],slideset.id + "_article" + (parseInt(i)+1));
 			if(slideset.slides[i]===null){
 				return null;
 			}

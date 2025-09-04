@@ -203,7 +203,7 @@ VISH.Editor.Thumbnails = (function(V,$,undefined){
 					thumbnailURL = $(img).attr("src");
 				}
 			} else {
-				thumbnailURL = _getDefaultThumbnailURLForStandardSlide(slide);
+				thumbnailURL = _getDefaultThumbnailURLForViewContent(slide);
 			}
 		} else {
 			//Screen or VIEW_IMAGE
@@ -214,14 +214,14 @@ VISH.Editor.Thumbnails = (function(V,$,undefined){
 
 	var getDefaultThumbnailURL = function(slide){
 		var slideType = $(slide).attr('type');
-		if(slideType==V.Constant.VIEW){
-			return _getDefaultThumbnailURLForStandardSlide(slide);
-		} else if(V.Screen.isScreen(slideType)){
+		if(slideType===V.Constant.VIEW_CONTENT){
+			return _getDefaultThumbnailURLForViewContent(slide);
+		} else {
 			return V.Editor.Screen.getDefaultThumbnailURL(slide);
 		}
 	};
 
-	var _getDefaultThumbnailURLForStandardSlide = function(slide){
+	var _getDefaultThumbnailURLForViewContent = function(slide){
 		//Use template as thumbnail
 		return V.ImagesPath + "templatesthumbs/view_content_template.png";
 	};

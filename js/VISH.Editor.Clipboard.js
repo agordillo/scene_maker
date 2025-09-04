@@ -15,10 +15,11 @@ VISH.Editor.Clipboard = (function(V,$,undefined){
 				case V.Constant.Clipboard.Slide:
 					var slideType = V.Slides.getSlideType(element);
 					switch(slideType){
-						case V.Constant.VIEW:
+						case V.Constant.VIEW_CONTENT:
 							//Store WYSIWYG values
 							params.textAreas = V.Editor.Slides.copyTextAreasOfSlide(element);
 							break;
+						case V.Constant.VIEW_IMAGE:
 						case V.Constant.SCREEN:
 							break;
 						default:

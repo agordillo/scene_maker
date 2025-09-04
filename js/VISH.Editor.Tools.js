@@ -73,11 +73,12 @@ VISH.Editor.Tools = (function(V,$,undefined){
 		$("#toolbar_slide .toolbar_btn.tool_action:not(.toolbar_" + type + ")").hide();
 
 		switch(type){
-			case V.Constant.VIEW:
-				$("#toolbar_slide").removeClass("toolbar_slide_screen").addClass("toolbar_slide_view");
+			case V.Constant.VIEW_CONTENT:
+				$("#toolbar_slide").removeClass("toolbar_slide_screen").addClass("toolbar_slide_view_content");
 				break;
+			case V.Constant.VIEW_IMAGE:
 			case V.Constant.SCREEN:
-				$("#toolbar_slide").removeClass("toolbar_slide_view").addClass("toolbar_slide_screen");
+				$("#toolbar_slide").removeClass("toolbar_slide_view_content").addClass("toolbar_slide_screen");
 				$("#toolbar_background_wrapper").show();
 				$("#toolbar_background_wrapper").children().css("visibility","visible");
 				if(typeof $(slide).attr("avatar") !== "undefined"){

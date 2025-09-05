@@ -23,6 +23,19 @@ VISH.Editor.Image = (function(V,$,undefined){
 	};
 	
 	var _onLoadURLTab = function(){
+		if(contentAddMode === V.Constant.SCREEN){
+			var $slide = $(V.Slides.getCurrentSlide());
+			var avatar = $slide.attr("avatar");
+			if(typeof avatar === "string"){
+				var imgURL = V.Utils.getSrcFromCSS(avatar);
+				if((typeof imgURL === "string")&&(imgURL.length > 0)){
+					$("#" + urlInputId).val(imgURL);
+					$("#" + urlDivId + " .previewButton").trigger("click");
+					return;
+				}
+			}
+		}
+
 		contentToAdd = null;
 		V.Editor.Object.resetPreview(urlDivId);
 		$("#" + urlInputId).val("");

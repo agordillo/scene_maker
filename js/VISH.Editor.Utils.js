@@ -149,150 +149,6 @@ VISH.Editor.Utils = (function(V,$,undefined){
 		return path.replace("C:\\fakepath\\","");
 	};
 
-	var replaceIdsForSlide = function(slide){
-		var slideId = V.Utils.getId("article");
-		$(slide).attr("id",slideId);
-
-		var slideType = V.Slides.getSlideType(slide);
-		switch(slideType){
-			case V.Constant.VIEW_CONTENT:
-				slide = _replaceIdsForViewContent(slide,slideId);
-				break;
-			case V.Constant.SCREEN:
-				slide = _replaceIdsForScreen(slide,slideId);
-				break;
-			default:
-				return;
-		}
-
-		return slide;
-	};
-
-	var _replaceIdsForViewContent = function(slide,slideId){
-		//Replace zone Ids
-		$(slide).children("div[id][areaid]").each(function(index, zone) {
-			zone = _replaceIdsForZone(zone,slideId);
-		});
-		return slide;
-	};
-
-	var _replaceIdsForScreen = function(screen,screenId){
-		var subslides = $(screen).find(".subslides > article.subslide");
-		$(subslides).each(function(index, subSlide) {
-			subSlide = _replaceIdsForSubSlide(subSlide,screenId);
-		});
-
-		return screen;
-	};
-
-	var _replaceIdsForSubSlide = function(subSlide,parentId){
-		var slideId = V.Utils.getId(parentId + "_article");
-		$(subSlide).attr("id",slideId);
-
-		//Close button
-		$(subSlide).children(".close_view").attr("id","close" + slideId);
-
-		//Zones
-		var zones = $(subSlide).children("div[id]").not(".close_view");
-		$(zones).each(function(index, zone) {
-			zone = _replaceIdsForZone(zone,slideId);
-		});
-	};
-
-	var _replaceIdsForZone = function(zone,slideId){
-		var zoneId = V.Utils.getId(slideId + "_zone");
-		$(zone).attr("id",zoneId);
-
-		$(zone).find("[id]").each(function(index, el) {
-			el = _replaceIdsForEl(el,zoneId);
-		});
-
-		return zone;
-	};
-
-	var _replaceIdsForEl = function(el,zoneId){
-		var elName = _getNameOfEl(el);
-		var elId = V.Utils.getId(zoneId + "_" + elName);
-		$(el).attr("id",elId);
-		return el;
-	};
-
-	var _getNameOfEl = function(el){
-		var elName = $($(el).attr("id").split("_")).last()[0];
-		if (elName.length>1){
-			return elName.substring(0,elName.length-1);
-		} else {
-			return elName;
-		}
-	};
-
-	/*
-	 *	Ensure that forceId is/will be really unic in the DOM before call.
-	 *	Replace Ids for a slide in JSON
-	 */
-	var replaceIdsForSlideJSON = function(slide,forceId){
-		var slideType = slide.type;
-		
-		var slideId;
-		if(forceId){
-			slideId = forceId;
-		} else {
-			slideId = V.Utils.getId("article");
-		}
-		
-		if(V.Screen.isScreen(slideType)){
-			slide = _replaceIdsForSlidesetJSON(slide,slideId);
-		} else {
-			slide = _replaceIdsForViewJSON(slide,slideId);
-		}
-
-		return slide;
-	};
-
-	var _replaceIdsForViewJSON = function(slide,slideId){
-		var s = jQuery.extend(true, {}, slide);
-		var oldId = s.id;
-		s.id = slideId;
-
-		var eL = s.elements.length;
-		for(var i=0; i<eL; i++){
-			var el = s.elements[i];
-
-			if (el.id.match(new RegExp("^"+oldId, "g")) != null){
-				el.id = el.id.replace(oldId,s.id);
-			} else {
-				return null;
-			}
-		}
-
-		return s;
-	};
-
-	var _replaceIdsForSlidesetJSON = function(slidesetJSON,slidesetId){
-		var newSubslideIds = {};
-		//newSubslideIds[oldSubslideId] = newSubslideId;
-
-		var slideset = jQuery.extend(true, {}, slidesetJSON);
-		slideset.id = slidesetId;
-
-		var slidesetSlidesL = slideset.slides.length;
-		for(var i=0; i<slidesetSlidesL; i++){
-			var oldSubslideId = slideset.slides[i].id;
-			slideset.slides[i] = _replaceIdsForViewJSON(slideset.slides[i],slideset.id + "_article" + (parseInt(i)+1));
-			if(slideset.slides[i]===null){
-				return null;
-			}
-			newSubslideIds[oldSubslideId] = slideset.slides[i].id;
-		}
-
-		var slidesetPoisL = slideset.pois.length;
-		for(var j=0; j<slidesetPoisL; j++){
-			slideset.pois[j].id = slideset.id + "_poi" + (parseInt(j)+1);
-			slideset.pois[j].slide_id = newSubslideIds[slideset.pois[j].slide_id];
-		}
-
-		return slideset;
-	};
 
 
 	/////////////////////////
@@ -306,8 +162,6 @@ VISH.Editor.Utils = (function(V,$,undefined){
 	 * also changes the help button to show the correct help
 	 */
 	var loadTab = function (tab_id){
-		// first remove the walkthrough if open
-		$('.joyride-close-tip').click();
 		//hide previous tab
 		$(".fancy_tab_content").hide();
 		//show content
@@ -316,26 +170,11 @@ VISH.Editor.Utils = (function(V,$,undefined){
 		$(".fancy_tab").removeClass("fancy_selected");
 		//select the correct one
 		$("#" + tab_id).addClass("fancy_selected");
-		//hide previous help button
-		$(".help_in_fancybox").not("#"+ tab_id + "_help").hide();
 		//show correct one
 		$("#"+ tab_id + "_help").show();
 
-		//Fix occasionally help img bug on Google Chrome
-		if(typeof loadTabTimer != "undefined"){
-			clearTimeout(loadTabTimer);
-		}
-		loadTabTimer = setTimeout(function(){
-			if($("#"+ tab_id + "_help").length > 0 && !$("#"+ tab_id + "_help").is(":visible") && $("#"+ tab_id + "_content").is(":visible")){
-				$("#"+ tab_id + "_help").hide().show(1);
-			}
-		},0);
-
 		//Submodule callbacks
 		switch (tab_id) {
-			case "tab_slides":
-				//templates and smartcards
-				break;
 			//Image
 			case "tab_pic_from_url":
 				V.Editor.Image.onLoadTab("url");
@@ -356,7 +195,6 @@ VISH.Editor.Utils = (function(V,$,undefined){
 
 	var hideNonDefaultTabs = function(){
 		$("div.fancy_tabs a.fancy_tab:not(.disabled)").show();
-		$("a.venondefaulttab").hide();
 	};
 
 	var showErrorDialog = function(msg){
@@ -403,8 +241,6 @@ VISH.Editor.Utils = (function(V,$,undefined){
 		setStyleInPixels  			: setStyleInPixels,		
 		addZoomToStyle  			: addZoomToStyle,	
 		getStylesInPercentages 		: getStylesInPercentages,
-		replaceIdsForSlide 			: replaceIdsForSlide,
-		replaceIdsForSlideJSON		: replaceIdsForSlideJSON,
 		generateTable 				: generateTable,
 		convertToTagsArray 			: convertToTagsArray,
 		autocompleteUrls 			: autocompleteUrls,

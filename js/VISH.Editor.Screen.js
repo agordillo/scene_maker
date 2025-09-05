@@ -252,14 +252,6 @@ VISH.Editor.Screen = (function(V,$,undefined){
 		});
 	};
 
-	var refreshDraggables = function(screen){
-		//Refresh hotspots
-		$(screen).find('img.hotspot').each(function() {
-			var $hotspot = $(this);
-			_enableDraggableHotspot($hotspot);
-		});
-	};
-
 	var _validateHotspotPosition = function($hotspot, margin = 4) {
 		const $screen = $hotspot.parent();
 
@@ -301,6 +293,69 @@ VISH.Editor.Screen = (function(V,$,undefined){
 		$el.stop(true).animate({ left, top }, 1000);
 	};
 
+	var refreshDraggables = function(screen){
+		//Refresh hotspots
+		$(screen).find('img.hotspot').each(function() {
+			var $hotspot = $(this);
+			_enableDraggableHotspot($hotspot);
+		});
+	};
+
+	var copyHotspotConfig = function(oldScreenId,newScreenId,hotspotIdsMapping){
+		if(slideData[newScreenId] === "undefined"){
+			slideData[newScreenId] = {
+				hotspots: {},
+				zones: {}
+			};
+		}
+		if(slideData[oldScreenId] === "undefined"){
+			//Nothing to copy
+			return;
+		}
+		slideData[newScreenId] = JSON.parse(JSON.stringify(slideData[oldScreenId]));
+
+		//Change ids in config
+		//Hotspot ids
+		for (var oldHotspotId in hotspotIdsMapping) {
+			var newHotspotId = hotspotIdsMapping[oldHotspotId];
+			var oldHotspotData = Object.assign({}, slideData[newScreenId].hotspots[oldHotspotId]);
+			if((typeof oldHotspotData !== "undefined")&&(Object.keys(oldHotspotData).length > 0)){
+				slideData[newScreenId].hotspots[newHotspotId] = oldHotspotData;
+			}
+			delete slideData[newScreenId].hotspots[oldHotspotId];
+		}
+
+		//Ids in actions
+		for (var key in slideData[newScreenId].hotspots) {
+			var hotspot = slideData[newScreenId].hotspots[key];		
+			var nActions = hotspot.actions.length;
+			for(var i=0; i<nActions; i++){
+				var action = hotspot.actions[i];
+				switch(action.actionType){
+					case 'openView':
+						//open the same view but in the copy screen
+						if((action.actionParams)&&(typeof action.actionParams.view === "string")){
+							var oldViewId = action.actionParams.view;
+							if (oldViewId.startsWith(oldScreenId)) {
+							  var newViewId = newScreenId + oldViewId.slice(oldScreenId.length);
+							  slideData[newScreenId].hotspots[key].actions[i].actionParams.view = newViewId;
+							}
+						}
+						break;
+					case 'removeElement':
+						//Keep behaviour if the hotspot remove itself
+						if((action.actionParams)&&(typeof action.actionParams.elementId === "string")){
+							var oldHotspotId = Object.keys(hotspotIdsMapping).find(k => hotspotIdsMapping[k] === key);
+							if(action.actionParams.elementId === oldHotspotId){
+								action.actionParams.elementId = key;
+							}
+						}
+						break;
+				}
+			}
+		}
+	};
+
 	var _onSelectHotspot = function($hotspot){
 		currentHotspot = $hotspot;
 		V.Editor.Tools.loadToolsForElement("hotspot");
@@ -317,7 +372,7 @@ VISH.Editor.Screen = (function(V,$,undefined){
 		var hotspotSettings = slideData[slideId].hotspots[hotspotId];
 
 		//ID
-		$("#hotspotId").val(hotspotId);
+		$("#hotspotIdInput").val(hotspotId);
 
 		//Image
 		//Reset gallery
@@ -333,6 +388,13 @@ VISH.Editor.Screen = (function(V,$,undefined){
 			$(imgGallery).addClass("selected");
 			$("#hotspotImageSource").val("gallery").trigger("change");
 		}
+
+		//Position
+		//var hotspotPosition = $hotspot.position();
+		var hotspotX = parseFloat($hotspot.css("left"));
+		var hotspotY = parseFloat($hotspot.css("top"));
+		$("#hotspotPositionX").val(hotspotX);
+		$("#hotspotPositionY").val(hotspotY);
 
 		//Size
 		if(typeof slideData[slideId].hotspots[hotspotId].lockAspectRatio === "boolean"){
@@ -517,6 +579,20 @@ VISH.Editor.Screen = (function(V,$,undefined){
 		$(event.target).closest(".hotspotActionWrapper").remove();
 	};
 
+	var onHotspotPuzzleChange = function(event){
+		var option = event.target.value;
+		var $actionWrapperDiv = $(event.target).closest("div.hotspotActionWrapper");
+		var $inputPuzzleSolutionWrapper = $actionWrapperDiv.find("div.hotspotActionParamsPuzzleSolution");
+		var $inputPuzzleSolution = $inputPuzzleSolutionWrapper.find("input");
+		if(option != "none"){
+			$inputPuzzleSolution.val($("#hotspotIdInput").val());
+			$inputPuzzleSolutionWrapper.show();
+		} else {
+			$inputPuzzleSolution.val();
+			$inputPuzzleSolutionWrapper.hide();
+		}
+	};
+
 	var onHotspotActionChange = function(event){
 		var option = event.target.value;
 		var $actionWrapperDiv = $(event.target).closest("div.hotspotActionWrapper");
@@ -530,6 +606,7 @@ VISH.Editor.Screen = (function(V,$,undefined){
 		var $selectElementId = $selectElementIdWrapper.find("select");
 		var $selectPuzzleWrapper = $actionWrapperDiv.find("div.hotspotActionParamsPuzzle");
 		var $selectPuzzle = $selectPuzzleWrapper.find("select");
+		var $inputPuzzleSolutionWrapper = $actionWrapperDiv.find("div.hotspotActionParamsPuzzleSolution");
 		
 		if((option === "goToScreen")||(option === "changeScreen")){
 			$selectScreen.prop("selectedIndex", 0);
@@ -561,6 +638,7 @@ VISH.Editor.Screen = (function(V,$,undefined){
 		} else {
 			$selectPuzzleWrapper.hide();
 		}
+		$inputPuzzleSolutionWrapper.hide();
 	};
 
 	var onHotspotSettingsDone = function(event){
@@ -589,6 +667,16 @@ VISH.Editor.Screen = (function(V,$,undefined){
 		}
 		$hotspot.attr("src", hotspotImg);
 
+		//Hotspot position
+		var hotspotX = parseFloat($("#hotspotPositionX").val());
+		var hotspotY = parseFloat($("#hotspotPositionY").val());
+		if((typeof hotspotX === "number")&&(!Number.isNaN(hotspotX))&&(hotspotX >= 0)){
+			$hotspot.css("left",hotspotX + "px");
+		}
+		if((typeof hotspotY === "number")&&(!Number.isNaN(hotspotY))&&(hotspotY >= 0)){
+			$hotspot.css("top",hotspotY + "px");
+		}
+
 		//Hotspot size
 		hotspotSettings.lockAspectRatio = $("#hotspotLockAspectRatio").prop("checked");
 		var hotspotWidth = $("#hotspotSizeWidth").val();
@@ -606,6 +694,9 @@ VISH.Editor.Screen = (function(V,$,undefined){
 		  	$hotspot.attr("rotationAngle",rotationAngle);
 			$hotspot.css("transform", "rotate(" + rotationAngle + "deg)");
 		}
+
+		//Validate position
+		_validateHotspotPosition($hotspot);
 
 		//Hotspot actions
 		var actions = [];
@@ -647,6 +738,7 @@ VISH.Editor.Screen = (function(V,$,undefined){
 		}
 
 		slideData[slideId].hotspots[hotspotId] = hotspotSettings;
+
 		$.fancybox.close();
 	};
 
@@ -733,13 +825,18 @@ VISH.Editor.Screen = (function(V,$,undefined){
 				screen.hotspots = [];
 				hotspotsIds.forEach(hotspotId => {
 					var hotspotDOM = $("img.hotspot[id='" + hotspotId + "']");
-					var hotspotPosition = $(hotspotDOM).position();
+					//var hotspotPosition = $(hotspotDOM).position();
+					//var hotspotX = hotspotPosition.left;
+					//var hotspotY = hotspotPosition.top;
+					var hotspotX = parseFloat(hotspotDOM.css("left"));
+					var hotspotY = parseFloat(hotspotDOM.css("top"));
+
 					var hotspotSettings = slideData[screen.id].hotspots[hotspotId];
 
 					//Transform dimensions to percentage instead of absolute numbers.
 					//Dimensions are calculated for a container with dimensions 800x600
-					var hotspotAdaptiveX = (hotspotPosition.left*100/800).toFixed(4);
-					var hotspotAdaptiveY = (hotspotPosition.top*100/600).toFixed(4);
+					var hotspotAdaptiveX = (hotspotX*100/800).toFixed(4);
+					var hotspotAdaptiveY = (hotspotY*100/600).toFixed(4);
 					var hotspotAdaptiveWidth = (hotspotDOM.width()*100/800).toFixed(4);
 					var hotspotAdaptiveHeight = (hotspotDOM.height()*100/600).toFixed(4);
 
@@ -942,6 +1039,7 @@ VISH.Editor.Screen = (function(V,$,undefined){
 		addScreen						: addScreen,
 		draw 							: draw,
 		refreshDraggables				: refreshDraggables,
+		copyHotspotConfig				: copyHotspotConfig,
 		onBackgroundSelected 			: onBackgroundSelected,
 		addHotspot						: addHotspot,
 		addZone							: addZone,
@@ -952,6 +1050,7 @@ VISH.Editor.Screen = (function(V,$,undefined){
 		onHotspotNewAction				: onHotspotNewAction,
 		onHotspotDeleteAction			: onHotspotDeleteAction,
 		onHotspotActionChange			: onHotspotActionChange,
+		onHotspotPuzzleChange			: onHotspotPuzzleChange,
 		onHotspotImageSourceChange		: onHotspotImageSourceChange,
 		onClickHotspotImageGallery		: onClickHotspotImageGallery,
 		checkHotspotImageURLPreview		: checkHotspotImageURLPreview,

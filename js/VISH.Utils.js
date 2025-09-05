@@ -433,7 +433,6 @@ VISH.Utils = (function(V,undefined){
 
 	/*
 	* In the css we have url("image_path") and to use ir in an image src attribute we need to get the image_path
-	* this function does that
 	*/
 	var getSrcFromCSS = function(css){
 		try {
@@ -446,7 +445,6 @@ VISH.Utils = (function(V,undefined){
 				}
 			}
 		} catch(e){}
-		
 		return css;
 	};
 

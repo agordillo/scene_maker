@@ -2253,7 +2253,7 @@ div.hotspot_settings_element_wrapper input[type="text"] {
   	padding: 4px 8px;
 }
 
-#hotspotId{
+#hotspotSettings_wrapper input[readonly] {
 	background: #ddd;
 	pointer-events: none;
 }

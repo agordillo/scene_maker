@@ -98,6 +98,9 @@ VISH.Editor.Slides = (function(V,$,undefined){
 	};
 
 
+
+	//Move and copy features
+
 	/*
 	 *	Move slide_to_move after or before reference_slide.
 	 *  Movement param posible values: "after", "before"
@@ -206,33 +209,18 @@ VISH.Editor.Slides = (function(V,$,undefined){
 		V.Slides.updateSlides();
 	}
 
-	var copySlideWithNumber = function(slideNumber,options){
-		var slide = V.Slides.getSlideWithNumber(slideNumber);
-		if(slide===null){
-			return;
-		}
-		var newSlide = $(slide).clone();
-		copySlide(newSlide,options);
-	}
-
-	var copySlide = function(slideToCopy,options){
-		slideToCopy = _cleanTextAreas(slideToCopy);
-		slideToCopy = V.Editor.Utils.replaceIdsForSlide(slideToCopy);
-		var newId = $(slideToCopy).attr("id");
-
+	var copyScreen = function(slideToCopy,options){
 		if(typeof slideToCopy == "undefined"){
 			return;
 		}
 
-		var slideToCopyType = V.Slides.getSlideType(slideToCopy);
-
-		/////////////////
-		//Pre-copy actions
-		/////////////////
-
 		/////////////////
 		//Copy actions
 		/////////////////
+
+		_cleanTextAreas(slideToCopy);
+		slideToCopy = _replaceIdsForCopyScreen(slideToCopy);
+		var newId = $(slideToCopy).attr("id");
 
 		var currentSlide = V.Slides.getCurrentScreen();
 		if(currentSlide){
@@ -252,13 +240,10 @@ VISH.Editor.Slides = (function(V,$,undefined){
 		}
 		
 		//Restore text areas
-		if(slideToCopyType === V.Constant.VIEW_CONTENT){
-			if(options.textAreas){
-				_loadTextAreasOfSlide(slideCopied,options.textAreas);
-			}
+		if(options.textAreas){
+			_loadTextAreasOfSlide(slideCopied,options.textAreas);
 		}
 		
-		//Update slideEls and refresh classes
 		V.Slides.updateSlides();
 
 		//Redraw thumbnails
@@ -271,13 +256,12 @@ VISH.Editor.Slides = (function(V,$,undefined){
 				V.Editor.Thumbnails.moveThumbnailsToSlide(1);
 			}
 		});
-	}
+	};
 
 	var _cleanTextAreas = function(slide){
 		$(slide).find("div[type='text'],div.wysiwygTextArea").each(function(index,textArea){
 			$(textArea).html("");
 		});
-		return slide;
 	};
 
 	var copyTextAreasOfSlide = function(slide){
@@ -307,6 +291,95 @@ VISH.Editor.Slides = (function(V,$,undefined){
 		V.Utils.removeTempShown(slide);
 	};
 
+
+	var _replaceIdsForCopyScreen = function(screen){
+		var oldScreenId = $(screen).attr("id");
+		var newScreenId  = V.Utils.getId("article");
+		$(screen).attr("id",newScreenId);
+
+		//Hotspots
+		var hotspotIdsMapping = {};
+		$(screen).children("img.hotspot").each(function(index, hotspot) {
+			var oldHotspotId = $(hotspot).attr("id");
+			var newHotspotId = V.Utils.getId("hotspot-");
+			$(hotspot).attr("id",newHotspotId);
+			hotspotIdsMapping[oldHotspotId] = newHotspotId;
+		});
+		// Copy hotspot config
+		V.Editor.Screen.copyHotspotConfig(oldScreenId,newScreenId,hotspotIdsMapping);
+
+		var views = $(screen).children("article");
+		$(views).each(function(index, view) {
+			_replaceIdsForCopyView(view,newScreenId,oldScreenId);
+		});
+		return screen;
+	};
+
+	var _replaceIdsForCopyView = function(view,newScreenId){
+		switch($(view).attr("type")){
+			case V.Constant.VIEW_IMAGE:
+				return _replaceIdsForCopyViewImage(view,newScreenId);
+			case V.Constant.VIEW_CONTENT:
+				return _replaceIdsForCopyViewContent(view,newScreenId);
+		}
+	};
+
+	var _replaceIdsForCopyViewImage = function(view,newScreenId){
+		var oldViewId = $(view).attr("id");
+		var newViewId = V.Utils.getId(newScreenId + "_article");
+		$(view).attr("id",newViewId);
+
+		//Hotspots
+		var hotspotIdsMapping = {};
+		$(view).children("img.hotspot").each(function(index, hotspot) {
+			var oldHotspotId = $(hotspot).attr("id");
+			var newHotspotId = V.Utils.getId("hotspot-");
+			$(hotspot).attr("id",newHotspotId);
+			hotspotIdsMapping[oldHotspotId] = newHotspotId;
+		});
+		// Copy hotspot config
+		V.Editor.Screen.copyHotspotConfig(oldViewId,newViewId,hotspotIdsMapping);
+	};
+
+	var _replaceIdsForCopyViewContent = function(view,newScreenId){
+		var viewId = V.Utils.getId(newScreenId + "_article");
+		$(view).attr("id",viewId);
+
+		//Replace zone Ids
+		$(view).children("div[id][areaid]").each(function(index, zone) {
+			zone = _replaceIdsForCopyZone(zone,newScreenId);
+		});
+	};
+
+	var _replaceIdsForCopyZone = function(zone,screenId){
+		var zoneId = V.Utils.getId(screenId + "_zone");
+		$(zone).attr("id",zoneId);
+
+		$(zone).find("[id]").each(function(index, el) {
+			el = _replaceIdsForCopyEl(el,zoneId);
+		});
+
+		return zone;
+	};
+
+	var _replaceIdsForCopyEl = function(el,zoneId){
+		var elName = _getNameOfCopyEl(el);
+		var elId = V.Utils.getId(zoneId + "_" + elName);
+		$(el).attr("id",elId);
+		return el;
+	};
+
+	var _getNameOfCopyEl = function(el){
+		var elName = $($(el).attr("id").split("_")).last()[0];
+		if (elName.length>1){
+			return elName.substring(0,elName.length-1);
+		} else {
+			return elName;
+		}
+	};
+
+
+	// Add slides
 	var addSlide = function(slide){
 		var slide = $(slide);
 		var slideType = V.Slides.getSlideType(slide);
@@ -503,8 +576,7 @@ VISH.Editor.Slides = (function(V,$,undefined){
 		hideSlides				: hideSlides,
 		isSlideFocused			: isSlideFocused,
 		moveSlideTo				: moveSlideTo,
-		copySlide				: copySlide,
-		copySlideWithNumber		: copySlideWithNumber,
+		copyScreen				: copyScreen,
 		appendSlide				: appendSlide,
 		addSlide 				: addSlide,
 		removeCurrentSlide		: removeCurrentSlide,

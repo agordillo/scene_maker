@@ -8,35 +8,19 @@ VISH.Editor.Clipboard = (function(V,$,undefined){
 		// stack = [ElementToCopy,typeOfElement,Params];
 	};
 
-	var copy = function(element,type) {
-		if(element){
-			var params = {};
-			switch(type){
-				case V.Constant.Clipboard.Slide:
-					var slideType = V.Slides.getSlideType(element);
-					switch(slideType){
-						case V.Constant.VIEW_CONTENT:
-							//Store WYSIWYG values
-							params.textAreas = V.Editor.Slides.copyTextAreasOfSlide(element);
-							break;
-						case V.Constant.VIEW_IMAGE:
-						case V.Constant.SCREEN:
-							break;
-						default:
-							break;
-					}
-					break;
-				default:
-					return;
-			}
+	var copy = function(element) {
+		if((!element)||(!V.Screen.isScreen(element))){
+			return;
+		}
 
-			stack[0] = V.Utils.getOuterHTML($(element).clone()[0]);
-			stack[1] = type;
-			stack[2] = params;
-			
-			if(V.Status.getDevice().features.localStorage){
-				localStorage.setItem(V.Constant.Clipboard.LocalStorageStack,JSON.stringify(stack));
-			}
+		stack[0] = V.Utils.getOuterHTML($(element).clone()[0]);
+		var params = {};
+		//Store WYSIWYG values
+		params.textAreas = V.Editor.Slides.copyTextAreasOfSlide(element);
+		stack[1] = params;
+		
+		if(V.Status.getDevice().features.localStorage){
+			localStorage.setItem(V.Constant.Clipboard.LocalStorageStack,JSON.stringify(stack));
 		}
 	};
 
@@ -62,7 +46,6 @@ VISH.Editor.Clipboard = (function(V,$,undefined){
 			myStack = stack;
 		}
 
-
 		//Check selected stack and parse object to be copied
 		if(!myStack[0]){
 			return;
@@ -70,34 +53,17 @@ VISH.Editor.Clipboard = (function(V,$,undefined){
 			myStack[0] = $(myStack[0])[0];
 		}
 
+		//Copy screen
+		var slideToCopy = $(myStack[0]).clone()[0];
 
-		switch(myStack[1]){
-			case V.Constant.Clipboard.Slide:
-				var slideToCopy = $(myStack[0]).clone()[0];
-
-				// Prevent slidesets to be copied with keyboard shortcuts.
-				// This feature is not well implemented yet.
-				// TODO: Implement slideset copy feature
-				if(V.Screen.isScreen(slideToCopy)){
-					return;
-				}
-
-				var options = {};
-				if(myStack[2]){
-					if(myStack[2].textAreas){
-						options.textAreas = myStack[2].textAreas;
-					}
-					if(myStack[2].JSON){
-						options.JSON = myStack[2].JSON;
-					}
-				}
-				V.Editor.Slides.copySlide(slideToCopy,options);
-				break;
-			default:
-				break;
+		var options = {};
+		if(myStack[1]){
+			if(myStack[1].textAreas){
+				options.textAreas = myStack[1].textAreas;
+			}
 		}
+		V.Editor.Slides.copyScreen(slideToCopy,options);
 	};
-
 
 	return {
 			init 		: init,

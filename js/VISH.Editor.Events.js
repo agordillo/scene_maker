@@ -157,6 +157,7 @@ VISH.Editor.Events = (function(V,$,undefined){
 			$(document).on("click", "#hotspotNewAction", V.Editor.Screen.onHotspotNewAction);
 			$(document).on("click", "div.delete_action", V.Editor.Screen.onHotspotDeleteAction);
 			$(document).on("change", "select.hotspotActionType", V.Editor.Screen.onHotspotActionChange);
+			$(document).on("change", "div.hotspotActionParamsPuzzle select", V.Editor.Screen.onHotspotPuzzleChange);
 			$(document).on("click", "#hotspotSettingsDone", V.Editor.Screen.onHotspotSettingsDone);
 		
 			//Element settings
@@ -263,7 +264,7 @@ VISH.Editor.Events = (function(V,$,undefined){
 			if(V.Editor.Slides.isSlideFocused()){
 				if(_isCtrlKeyPressed){
 					if(V.Slides.getCurrentScreenNumber()){
-						V.Editor.Clipboard.copy(V.Slides.getCurrentScreen(),V.Constant.Clipboard.Slide);
+						V.Editor.Clipboard.copy(V.Slides.getCurrentScreen());
 					}
 				}
 			}

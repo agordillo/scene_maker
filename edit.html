@@ -510,7 +510,7 @@
 			<div id="hotspotSettings_wrapper">
 				<div class="new_hotspot_settings_field new_hotspot_settings_field_first">
 					<label i18n-key="i.HotspotID">Hotspot ID:</label>
-					<input id="hotspotId" type="text" maxlength="8" readonly>
+					<input id="hotspotIdInput" type="text" maxlength="8" readonly>
 				</div>
 				<div class="new_hotspot_settings_field">
 					<p i18n-key="i.HotspotImage">Image</p>
@@ -534,6 +534,17 @@
 						<input id="hotspotImageURL" type="text">
 					</div>
 					<div id="hotspotImageURLPreviewWrapper" class="hotspot_settings_element_wrapper" style='display:none'></div>
+				</div>
+				<div class="new_hotspot_settings_field">
+					<p i18n-key="i.HotspotPosition">Position</p>
+					<div id="HotspotPositionXWrapper" class="hotspot_settings_element_wrapper">
+						<label i18n-key="i.HotspotPositionX">X (px):</label>
+						<input id="hotspotPositionX" type="number" step="1">
+					</div>
+					<div id="HotspotPositionYWrapper" class="hotspot_settings_element_wrapper">
+						<label i18n-key="i.HotspotPositionY">Y (px):</label>
+						<input id="hotspotPositionY" type="number" step="1">
+					</div>
 				</div>
 				<div class="new_hotspot_settings_field">
 					<p i18n-key="i.HotspotSize">Size</p>
@@ -593,6 +604,10 @@
 						<div class="hotspot_settings_element_wrapper hotspotActionParamsPuzzle" style='display:none'>
 							<label i18n-key="i.HotspotActionParamsPuzzle">Puzzle:</label>
 							<select></select>
+						</div>
+						<div class="hotspot_settings_element_wrapper hotspotActionParamsPuzzleSolution" style='display:none'>
+							<label i18n-key="i.HotspotActionParamsPuzzleSolution">Puzzle solution:</label>
+							<input type="text" readonly>
 						</div>
 					</div>
 				</div>

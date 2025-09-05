@@ -26,11 +26,15 @@ VISH.Editor.Video = (function(V,$,undefined){
 		$("#tab_video_from_url_content").find("input").val("");
 		V.Editor.Object.resetPreview("tab_video_from_url_content");
 	};
-	
-	var addContent = function(content,options){
-		if(content){
-			contentToAdd = content;
+
+	var addVideo = function(video){
+		if(video){
+			contentToAdd = video;
+			addContent();
 		}
+	};
+	
+	var addContent = function(){
 		switch(contentAddMode){
 			case V.Constant.EVIDEO:
 				V.Editor.EVideo.onVideoSelected(contentToAdd);
@@ -68,6 +72,7 @@ VISH.Editor.Video = (function(V,$,undefined){
 	return {
 		init				: init,
 		onLoadTab 			: onLoadTab,
+		addVideo			: addVideo,
 		addContent 			: addContent,
 		getAddContentMode	: getAddContentMode,
 		setAddContentMode	: setAddContentMode,

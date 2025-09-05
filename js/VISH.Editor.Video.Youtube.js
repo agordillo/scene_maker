@@ -161,7 +161,7 @@ VISH.Editor.Video.Youtube = (function(V,$,undefined){
 
 	var addSelectedVideo = function(){
 		if(selectedVideo != null){
-			V.Editor.Video.addContent(_generateWrapper(selectedVideo.id));
+			V.Editor.Video.addVideo(_generateWrapper(selectedVideo.id));
 		}
 	};
 

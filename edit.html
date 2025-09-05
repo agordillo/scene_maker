@@ -330,13 +330,13 @@
 			<div class='fancy_tabs' id='thumcontent_tabs'>
 				<ul>
 					<li>
-						<a href="#" onclick="VISH.Editor.Utils.loadTab('tab_slides'); return false;" id="tab_slides" class="fancy_tab tabbable" i18n-key="i.View">View</a>
+						<a href="#" id="tab_views" class="fancy_tab tabbable" i18n-key="i.Views">Views</a>
 					</li>
 				</ul>
 			</div> 
-			<div id='tab_slides_content' class="fancy_tab_content" style='display:none' > 
-				<div class="tab_slides_content">
-					<div class="tab_slides_templates">
+			<div id='tab_views_content' class="fancy_tab_content" style='display:none' > 
+				<div class="tab_views_content">
+					<div class="tab_views_templates">
 						<p class="select_text" i18n-key="i.ViewsType">Choose view type</p>
 						<div class="templateselectlist">
 							<div class='viewthumb' type='view_image'>
@@ -383,10 +383,8 @@
 				<input class="input_text_fancy formsizefancy1 marginsfancy1 tools_input_addUrl" type="text" size="25" value="">
 				</div>
 				<div class="addUrlButtons">
-					<button type="button" class="addUrlButton" i18n-key="i.Add" 
-					onclick="VISH.Editor.Tools.addUrl(); return false;">Add</button>
-					<button type="button" class="removeUrlButton" style="display:none" i18n-key="i.Remove" 
-					onclick="VISH.Editor.Tools.removeUrl(); return false;">Remove</button>
+					<button type="button" class="addUrlButton" i18n-key="i.Add" return false;">Add</button>
+					<button type="button" class="removeUrlButton" style="display:none" i18n-key="i.Remove">Remove</button>
 				</div>
 
 			</div>
@@ -417,7 +415,7 @@
 		<div id="picture_fancybox" class="outer_box">
 			<div class="fancy_tabs" id="images_fancy_tabs_id">	   
 				<ul>
-					<li><a href="#" onclick="VISH.Editor.Utils.loadTab('tab_pic_from_url'); return false;" id="tab_pic_from_url" class="fancy_tab tabbable" i18n-key="i.url">url</a></li>
+					<li><a href="#" id="tab_pic_from_url" class="fancy_tab tabbable" i18n-key="i.url">url</a></li>
 				</ul>
 			</div>
 
@@ -440,7 +438,7 @@
 				</div>
 				<div class="box2">
 					<div id="picture_preview" class="previewimgbox">
-						<button i18n-key="i.AddContent" type="button" class="button button_addContent" onclick="VISH.Editor.Image.addContent()">Add Content</button>
+						<button i18n-key="i.AddContent" type="button" class="button button_addContent">Add Content</button>
 					</div>
 				</div>
 			</div> 
@@ -453,7 +451,7 @@
 
 			<div class="fancy_tabs" id="object_fancy_tabs_id">	   
 				<ul>
-					<li><a href="#" onclick="VISH.Editor.Utils.loadTab('tab_object_from_web'); return false;" id="tab_object_from_web" class="fancy_tab">web</a></li>
+					<li><a href="#" id="tab_object_from_web" class="fancy_tab">web</a></li>
 				</ul>
 			</div>
 
@@ -472,7 +470,7 @@
 				</div>
 				<div class="box2">
 					<div id="picture_preview" class="previewimgbox">
-						<button i18n-key="i.AddContent" type="button" class="button button_addContent" onclick="VISH.Editor.Object.Web.drawPreviewElement()">Add Content</button>
+						<button i18n-key="i.AddContent" type="button" class="button button_addContent">Add Content</button>
 					</div>
 				</div>
 			</div>
@@ -484,7 +482,7 @@
 		<div id="video_fancybox" class="outer_box">
 			<div class="fancy_tabs" id="video_fancy_tabs_id">	   
 				<ul>
-					<li><a href="#" onclick="VISH.Editor.Utils.loadTab('tab_video_from_url'); return false;" id="tab_video_from_url" class="fancy_tab" i18n-key="i.url">url</a></li>
+					<li><a href="#" id="tab_video_from_url" class="fancy_tab" i18n-key="i.url">url</a></li>
 				</ul>
 			</div>
 
@@ -503,7 +501,7 @@
 				</div>
 				<div id="box2" class="box2">
 					<div id="previewimgbox" class="previewimgbox">
-						<button i18n-key="i.AddContent" type="button" class="button button_addContent" onclick="VISH.Editor.Video.addContent()">Add Content</button>
+						<button i18n-key="i.AddContent" type="button" class="button button_addContent">Add Content</button>
 					</div>
 				</div>
 			</div>

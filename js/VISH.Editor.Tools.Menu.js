@@ -205,7 +205,7 @@ VISH.Editor.Tools.Menu = (function(V,$,undefined){
 	var insertSubslide = function(){
 		V.Editor.setContentAddMode(V.Constant.SLIDESET);
 		$("#addSlideFancybox").trigger('click');
-		V.Editor.Utils.loadTab('tab_slides');
+		V.Editor.Utils.loadTab('tab_views');
 		return false; //Prevent iframe to move
 	};
 

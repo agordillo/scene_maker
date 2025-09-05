@@ -33,8 +33,8 @@ body[aspectratio="16:9"] section.slides_editor > article {
 }
 
 body[aspectratio="16:9"] section.slides_editor > article > article {
-	margin-left: -513px;
-	margin-top: -289px;
+	margin-left: -512px;
+	margin-top: -288px;
 }
 
 body[aspectratio="16:9"] #leftside, body[aspectratio="16:9"] #slides_list_actions, body[aspectratio="16:9"] #toolbar_menu {
@@ -48,8 +48,8 @@ body[aspectratio="16:9"] #bottomside {
 }
 
 body[aspectratio="16:9"] #slides_list div.delete_screen {
-	right: 8px;
-	top: 54px;
+	right: 11px;
+	top: 50px;
 }
 
 body[aspectratio="16:9"] #slides_list img.image_slidethumbnail {
@@ -61,16 +61,6 @@ body[aspectratio="16:9"] #slides_list img.image_slidethumbnail {
 
 img {
   border:0;
-}
-
-/* Fancybox */
-
-#fancybox-content {
-    -webkit-user-select:none;
-	-moz-user-select:none;
-	-khtml-user-select:none;
-	-ms-user-select:none;
-	border-radius:7px;
 }
 
 /* Settings */
@@ -339,12 +329,13 @@ select.presentation_details_select {
 	position: relative;
 	display: block;
 	width: 90%;	
-	padding-top: 19px;
-	padding-bottom: 20px;
-	margin-bottom: 0px;
-	margin-top: 0px;
-	padding-right: 2px;
-	margin-left: 5px;
+	padding: 19px 2px 20px 2px;
+	margin: 0px 0px 0px 5px;
+}
+
+body[aspectratio="16:9"] #slides_list div.wrapper_slidethumbnail {
+	padding: 15px 2px 14px 2px;
+
 }
 
 .selectedThumbnailBackground:not(.ui-sortable-helper) {
@@ -364,7 +355,12 @@ select.presentation_details_select {
 	font-family: Arial, Helvetica, sans-serif;
 	cursor: default;
 	width: 25px;
-	margin: 30px 0px;
+	margin: 37px 0px;
+}
+
+body[aspectratio="16:9"] #slides_list p.ptext_barbutton {
+	width: 23px;
+	margin-top: 26px;
 }
 
 #slides_list img.image_slidethumbnail {
@@ -375,6 +371,10 @@ select.presentation_details_select {
 	border: 1px solid #f0f0f0;
 	margin: 0px 0px 0px 29px;
 	border-radius: 3px;
+}
+
+body[aspectratio="16:9"] #slides_list img.image_slidethumbnail {
+	margin-left: 26px;
 }
 
 #slides_list img.image_slidethumbnail:hover {
@@ -407,7 +407,11 @@ button.downimport {
 	width: 57px;
 	height: 70px;
 	margin-right: 34px;
-	margin-top: 18px;
+	margin-top: 17px;
+}
+
+body[aspectratio="16:9"] #subslides_list div.wrapper_slidethumbnail {
+	margin-top: 20px;
 }
 
 #slides_list div.delete_screen, #subslides_list div.delete_subslide {
@@ -449,7 +453,8 @@ body[aspectratio="16:9"] #subslides_list div.delete_subslide {
 #slideset_selected img.image_slidethumbnail {
 	width: 80px;
 	height: 60px;
-	margin-top: 5px;
+	margin-top: 4px;
+	margin-right: 11px;
 	border-radius: 3px;
 	opacity: 0.8;
 	box-shadow: 0px 2px 3px 1.25px rgba(0, 0, 0, 0.3);
@@ -458,8 +463,10 @@ body[aspectratio="16:9"] #subslides_list div.delete_subslide {
 }
 
 body[aspectratio="16:9"] #slideset_selected img.image_slidethumbnail {
-	height: 45px;
-	margin-top: 11px;
+	width: 96px;
+	height: 54px;
+	margin-top: 6px;
+	margin-right: 11px;
 }
 
 #slideset_selected img.image_slidethumbnail:hover {
@@ -917,13 +924,18 @@ Views type
 }
 
 .viewthumb {
-	width: 115px;
-	height: 79px;
+	width: 128px;
+	height: 96px;
 	float: left;
-	margin: 9px 4px 6px 16px;
+	margin: 10px 15px 10px 15px;
 	text-align: center;
 	border: transparent;
 	opacity: 0.9;
+}
+
+body[aspectratio="16:9"] .viewthumb{
+	width: 128px;
+	height: 72px;
 }
 
 .viewthumb:hover {
@@ -969,7 +981,7 @@ Views type
 
 .viewthumb p {
 	text-align: center;
-	font-size: 1.1em;
+	font-size: 14px;
 	font-weight: 400;
 	font-family: Arial, Helvetica, sans-serif;
 	padding: 0px;
@@ -992,7 +1004,24 @@ div.vezone {
 	height: 120px;
 }
 
-/* Fancybox tabs */
+/* Fancybox */
+
+body.SceneMakerBody #fancybox-wrap {
+	margin-top: 18px;
+	margin-left: 16px;
+}
+
+body.SceneMakerBody #fancybox-overlay {
+	opacity: 0.8 !important;
+}
+
+#fancybox-content {
+    -webkit-user-select:none;
+	-moz-user-select:none;
+	-khtml-user-select:none;
+	-ms-user-select:none;
+	border-radius:7px;
+}
 
 #fancybox-overlay {
 	border-radius: 0px;
@@ -1072,21 +1101,12 @@ body.SceneMakerBody #fancybox-close:hover {
 	text-align:left;
 }
 
-p#descSearch {
-    margin-left: 77px;
-    margin-top: 40px;
-    margin-bottom: 0px;
-    font-family: Arial, Helvetica, sans-serif;
-    font-size: 19px;
-    color: #2D2D2D;
-}
-
-.tab_slides_content {
+.tab_views_content {
 	margin-top: 25px;
 	margin-left: 50px;
 }
 
-.tab_slides_templates {
+.tab_views_templates {
 }
 
 a#tab_video_youtube {
@@ -1907,7 +1927,7 @@ div.disableSettingsField {
 
 #hotspotSettings_wrapper {
 	overflow: auto;
-	height: 474px;
+	height: 555px;
 }
 
 div.new_hotspot_settings_field {

@@ -41,11 +41,7 @@ VISH.Editor.Image = (function(V,$,undefined){
 		$("#" + urlInputId).val("");
 	};
 	
-	var addContent = function(content,options){
-		if(content){
-			contentToAdd = content;
-		}
-
+	var addContent = function(){
 		switch(contentAddMode){
 			case V.Constant.SCREEN:
 				V.Editor.Screen.onBackgroundSelected(contentToAdd);

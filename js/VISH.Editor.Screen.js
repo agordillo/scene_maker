@@ -14,8 +14,8 @@ VISH.Editor.Screen = (function(V,$,undefined){
 		_hiddenLinkToInitHotspotSettings = $('<a href="#hotspotSettings_fancybox" style="display:none"></a>');
 		$(_hiddenLinkToInitHotspotSettings).fancybox({
 			'autoDimensions' : false,
-			'height': 600,
-			'width': 800,
+			'height': 690,
+			'width': 920,
 			'scrolling': 'no',
 			'showCloseButton': false,
 			'padding' : 0,

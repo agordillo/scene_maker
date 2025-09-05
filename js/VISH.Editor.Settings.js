@@ -16,7 +16,7 @@ VISH.Editor.Settings = (function(V,$,undefined){
 			'hideOnContentClick': false,
 			'showCloseButton': true,
 			"onComplete"  : function(data){
-				$("#fancybox-wrap").css("margin-top", "20px");
+				//$("#fancybox-wrap").css("margin-top", "20px");
 				_onDisplaySettings();
 			}
 		});

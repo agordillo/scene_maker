@@ -16,9 +16,7 @@ VISH.Editor.Events = (function(V,$,undefined){
 			$(document).on('click', '#addScreenButton', V.Editor.Screen.addScreen);
 			$(document).on('click', '#addSlideButtonOnSubslides', V.Editor.Tools.Menu.insertSubslide);
 			$(document).on('click', '#slideset_selected_img', V.Editor.Screen.onClickOpenSlideset);
-			$(document).on('click', handleClick);
-
-			//Settings events		
+					
 			$(document).on('click', '#save_presentation_details', V.Editor.Settings.onSavePresentationDetailsButtonClicked);
 			$(document).on('click','div.viewthumb', V.Editor.onViewThumbClicked);
 
@@ -32,6 +30,29 @@ VISH.Editor.Events = (function(V,$,undefined){
 
 			$(document).on("click", ".change_bg_button", V.Editor.Tools.changeBackground);
 
+			$(document).on("click", "#tab_pic_from_url_content button.button_addContent", V.Editor.Image.addContent);
+			$(document).on("click", "#tab_object_from_web_content button.button_addContent", V.Editor.Object.Web.drawPreviewElement);
+			$(document).on("click", "#tab_video_from_url_content button.button_addContent", V.Editor.Video.addContent);
+
+			$(document).on("click", "button.addUrlButton", V.Editor.Tools.addUrl);
+			$(document).on("click", "button.removeUrlButton", V.Editor.Tools.removeUrl);
+
+			//Hotspot Settings
+			$(document).on("change", "#hotspotImageSource", V.Editor.Screen.onHotspotImageSourceChange);
+			$(document).on("click", "#hotspotImageGallery img", V.Editor.Screen.onClickHotspotImageGallery);
+			$(document).on("blur", "#hotspotImageURL", V.Editor.Screen.checkHotspotImageURLPreview);
+			$(document).on("input", "#hotspotSizeWidth", V.Editor.Screen.onInputHotspotSizeWidth);
+			$(document).on("input", "#hotspotSizeHeight", V.Editor.Screen.onInputHotspotSizeHeight);
+			$(document).on("click", "#hotspotNewAction", V.Editor.Screen.onHotspotNewAction);
+			$(document).on("click", "div.delete_action", V.Editor.Screen.onHotspotDeleteAction);
+			$(document).on("change", "select.hotspotActionType", V.Editor.Screen.onHotspotActionChange);
+			$(document).on("change", "div.hotspotActionParamsPuzzle select", V.Editor.Screen.onHotspotPuzzleChange);
+			$(document).on("click", "#hotspotSettingsDone", V.Editor.Screen.onHotspotSettingsDone);
+		
+			//Element settings
+			$(document).on("click", "#objectSettingsDone", V.Editor.Object.onObjectSettingsDone);
+
+			$(document).on('click', handleClick);
 			$(document).bind('keydown', handleBodyKeyDown);
 			$(document).bind('keyup', handleBodyKeyUp);
 
@@ -72,15 +93,9 @@ VISH.Editor.Events = (function(V,$,undefined){
 					}
 					var clickedZoneId = $(data).attr("zone");
 					V.Editor.setCurrentArea($("#" + clickedZoneId));
-					V.Editor.Utils.loadTab('tab_slides');
+					V.Editor.Utils.loadTab('tab_views');
 				},
 				"onClosed"  : function(data) {
-					$(".tab_slides_smartcards").show();
-
-					$("#tab_pdfex").parent().show();
-					$("#tab_presentations_repo").parent().show();
-					$("#tab_json_file").parent().show();
-
 					V.Editor.setContentAddMode(V.Constant.NONE);
 				}
 			});
@@ -121,21 +136,6 @@ VISH.Editor.Events = (function(V,$,undefined){
 				}
 			});
 
-			//Hotspot Settings
-			$(document).on("change", "#hotspotImageSource", V.Editor.Screen.onHotspotImageSourceChange);
-			$(document).on("click", "#hotspotImageGallery img", V.Editor.Screen.onClickHotspotImageGallery);
-			$(document).on("blur", "#hotspotImageURL", V.Editor.Screen.checkHotspotImageURLPreview);
-			$(document).on("input", "#hotspotSizeWidth", V.Editor.Screen.onInputHotspotSizeWidth);
-			$(document).on("input", "#hotspotSizeHeight", V.Editor.Screen.onInputHotspotSizeHeight);
-			$(document).on("click", "#hotspotNewAction", V.Editor.Screen.onHotspotNewAction);
-			$(document).on("click", "div.delete_action", V.Editor.Screen.onHotspotDeleteAction);
-			$(document).on("change", "select.hotspotActionType", V.Editor.Screen.onHotspotActionChange);
-			$(document).on("change", "div.hotspotActionParamsPuzzle select", V.Editor.Screen.onHotspotPuzzleChange);
-			$(document).on("click", "#hotspotSettingsDone", V.Editor.Screen.onHotspotSettingsDone);
-		
-			//Element settings
-			$(document).on("click", "#objectSettingsDone", V.Editor.Object.onObjectSettingsDone);
-			
 			//onbeforeunload event
 			window.onbeforeunload = _exitConfirmation;
 			_confirmOnExit = true;

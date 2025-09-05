@@ -29,9 +29,6 @@ VISH.Editor.Preview = (function(V,$,undefined){
 				V.Editor.Utils.Loader.loadObjectsInEditorSlide(V.Slides.getCurrentScreen());
 			},
 			'onComplete': function() {
-				$("#fancybox-wrap").css('top','45px');
-				$("#fancybox-wrap").css('left','135px');
-				$("#fancybox-frame").addClass("vishEditorIframe");
 			}
 		});
 	}

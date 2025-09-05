@@ -150,6 +150,7 @@ VISH.Locales = {
 		"i.Video"					: "Video",
 		"i.Videos"					: "videos",
 		"i.View"					: "View",
+		"i.Views"					: "Views",
 		"i.ViewOption"				: "View #{number}",
 		"i.ViewsType"				: "Choose view type",
 		"i.ViewsTypeImage"			: "Image",

@@ -402,11 +402,6 @@ VISH.Editor.Slides = (function(V,$,undefined){
 		V.Slides.updateSlides();
 		V.Slides.triggerEnterEvent(V.Slides.getCurrentScreenNumber());
 
-		if(V.Screen.isScreen(slideType)){
-			// Create/Load dummy slideset
-			V.Editor.Screen.draw(null,slide);
-		}
-
 		V.Editor.Thumbnails.redrawThumbnails(function(){
 			V.Editor.Thumbnails.selectThumbnail(V.Slides.getCurrentScreenNumber());
 			V.Editor.Thumbnails.moveThumbnailsToSlide(V.Slides.getCurrentScreenNumber());

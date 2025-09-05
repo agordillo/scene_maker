@@ -74,11 +74,24 @@ VISH.Editor.Screen = (function(V,$,undefined){
 				$(slideJSON.hotspots).each(function(index,hotspot){
 					V.Utils.registerId(hotspot.id);
 
-					//Transform dimensions from percentage to absolute numbers for a container with dimensions 800x600.
-					var hotspotX = hotspot.x*800/100;
-					var hotspotY = hotspot.y*600/100;
-					var hotspotWidth = hotspot.width*800/100;
-					var hotspotHeight = hotspot.height*600/100;
+					//Transform dimensions from percentage to absolute numbers for the current container.
+					//If aspect ratio is 4:3, the dimensions of the container are 800x600
+					//If aspect ratio is 16:9, the dimensions of the container are 1024x576
+					var slideContainerWidth;
+					var slideContainerHeight;
+
+					if($("body").attr("aspectRatio")==="16:9"){
+						slideContainerWidth = 1024;
+						slideContainerHeight = 576;
+					} else {
+						slideContainerWidth = 800;
+						slideContainerHeight = 600;
+					}
+
+					var hotspotX = hotspot.x*slideContainerWidth/100;
+					var hotspotY = hotspot.y*slideContainerHeight/100;
+					var hotspotWidth = hotspot.width*slideContainerWidth/100;
+					var hotspotHeight = hotspot.height*slideContainerHeight/100;
 
 					_drawHotspot(slideJSON.id,hotspot.id,hotspotX,hotspotY,hotspot.image,hotspot.lockAspectRatio,hotspotWidth,hotspotHeight,hotspot.rotationAngle);
 					if (Array.isArray(hotspot.actions)&&hotspot.actions.length>0) {
@@ -834,11 +847,22 @@ VISH.Editor.Screen = (function(V,$,undefined){
 					var hotspotSettings = slideData[screen.id].hotspots[hotspotId];
 
 					//Transform dimensions to percentage instead of absolute numbers.
-					//Dimensions are calculated for a container with dimensions 800x600
-					var hotspotAdaptiveX = (hotspotX*100/800).toFixed(4);
-					var hotspotAdaptiveY = (hotspotY*100/600).toFixed(4);
-					var hotspotAdaptiveWidth = (hotspotDOM.width()*100/800).toFixed(4);
-					var hotspotAdaptiveHeight = (hotspotDOM.height()*100/600).toFixed(4);
+					//If aspect ratio is 4:3, dimensions are calculated for a container with dimensions 800x600
+					//If aspect ratio is 16:9, dimensions are calculated for a container with dimensions 1024x576
+					var slideContainerWidth;
+					var slideContainerHeight;
+					if($("body").attr("aspectRatio")==="16:9"){
+						slideContainerWidth = 1024;
+						slideContainerHeight = 576;
+					} else {
+						slideContainerWidth = 800;
+						slideContainerHeight = 600;
+					}
+
+					var hotspotAdaptiveX = (hotspotX*100/slideContainerWidth).toFixed(4);
+					var hotspotAdaptiveY = (hotspotY*100/slideContainerHeight).toFixed(4);
+					var hotspotAdaptiveWidth = (hotspotDOM.width()*100/slideContainerWidth).toFixed(4);
+					var hotspotAdaptiveHeight = (hotspotDOM.height()*100/slideContainerHeight).toFixed(4);
 
 					var hotspotJSON = {
 						"id": hotspotId,

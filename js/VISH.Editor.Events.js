@@ -56,33 +56,6 @@ VISH.Editor.Events = (function(V,$,undefined){
 				V.Status.setWindowFocus(false);
 			});
 
-			//Load onresize event
-			//Prevent multiple consecutively calls
-			var multipleOnResize = undefined;
-			window.onresize = function(){
-				if(typeof multipleOnResize == "undefined"){
-					multipleOnResize = false;
-					setTimeout(function(){
-						if(!multipleOnResize){
-							multipleOnResize = undefined;
-
-							//After Resize actions
-							V.Status.refreshDeviceAfterResize();
-
-							var currentDevice = V.Status.getDevice();
-							V.EventsNotifier.notifyEvent(V.Constant.Event.onViewportResize,{screen: currentDevice.screen, viewport: currentDevice.viewport});
-							
-							V.Editor.ViewerAdapter.updateInterface();
-						} else {
-							multipleOnResize = undefined;
-							window.onresize();
-						}
-					},600);
-				} else {
-					multipleOnResize = true;
-				}
-			};
-
 			//Fancyboxes
 
 			// fancybox to create a new slide

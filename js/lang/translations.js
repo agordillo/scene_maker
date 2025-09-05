@@ -36,6 +36,7 @@ VISH.Locales = {
 		"i.areYouSureDeleteScreen"	: "Are you sure you want to delete this screen?",
 		"i.areYouSureDeleteView"	: "Are you sure you want to delete this view?",
 		"i.areYouSureDeleteHotspot"	: "Are you sure you want to delete this hotspot?",
+		"i.AspectRatio"				: "Aspect ratio",
 		"i.Background"				: "Background",
 		"i.browserrequirements" 	: "Your browser does not meet the minimum requirements to init Scene Maker.",
 		"i.by"						: "by",

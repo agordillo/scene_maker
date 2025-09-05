@@ -36,7 +36,6 @@ section.slides {
 }
 
 section.slides > article, section.slides > article > article {
-	/*Next six parameters will be changed by javascript depending on the window size*/
 	left: 50%;
 	top: 50%;
 	margin-left: -400px;
@@ -50,6 +49,7 @@ section.slides > article, section.slides > article > article {
 	padding-right: 40px;
 	position: absolute;  
 	display: block;
+	
 	box-sizing: border-box;
 	-o-box-sizing: border-box;
 	-moz-box-sizing: border-box;

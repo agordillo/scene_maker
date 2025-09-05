@@ -36,9 +36,17 @@ VISH.Editor.Settings = (function(V,$,undefined){
 
 		//Title
 		if(presentation.title){
-			$("#presentation_details_preview_addtitle_textarea").val(presentation.title); //preview title textarea
-			$("#presentation_details_input_title").val(presentation.title); //data input
+			$("#presentation_details_input_title").val(presentation.title);
 		}
+
+		//Aspect ratio
+		var aspectRatio = presentation.aspectRatio;
+		if((typeof aspectRatio !== "string")||(["4:3","16:9"].indexOf(aspectRatio)===-1)){
+			aspectRatio = "4:3";
+		}
+		$('#presentation_details_select_aspectRatio').val(aspectRatio);
+
+		V.Editor.ViewerAdapter.applyAspectRatio(aspectRatio);
 	};
 	
 	var _checkIfEnableContinueButton = function(){
@@ -62,9 +70,6 @@ VISH.Editor.Settings = (function(V,$,undefined){
 		return true;
 	};
 
-	/**
-	 * function called when the user clicks on the save button in the initial details fancybox   
-	 */
 	var onSavePresentationDetailsButtonClicked = function(event){
 		event.preventDefault();
 
@@ -74,6 +79,9 @@ VISH.Editor.Settings = (function(V,$,undefined){
 		}
 
 		$.fancybox.close();
+
+		var settings = saveSettings();
+		V.Editor.ViewerAdapter.applyAspectRatio(settings.aspectRatio);
 	};
 
 	var saveSettings = function(){
@@ -83,6 +91,13 @@ VISH.Editor.Settings = (function(V,$,undefined){
 		var title = $('#presentation_details_input_title').val();
 		if((typeof title == "string")&&(title.trim()!="")){
 			settings.title = title;
+		}
+
+		var aspectRatio = $('#presentation_details_select_aspectRatio').val();
+		if((typeof aspectRatio === "string")&&(["4:3","16:9"].indexOf(aspectRatio)!==-1)){
+			settings.aspectRatio = aspectRatio;
+		} else {
+			settings.aspectRatio = "4:3";
 		}
 
 		return settings;

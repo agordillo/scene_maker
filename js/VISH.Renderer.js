@@ -50,6 +50,7 @@ VISH.Renderer = (function(V,$,undefined){
 		var elL = view.elements.length;
 		for(var i=0; i<elL; i++){
 			var element = view.elements[i];
+
 			if(!V.Renderer.Filter.allowElement(element)){
 				content += V.Renderer.Filter.renderContentFiltered(element);
 			} else if(element.type === V.Constant.TEXT){
@@ -62,7 +63,7 @@ VISH.Renderer = (function(V,$,undefined){
 				content += _renderHTML5Audio(element);
 			} else if(element.type === V.Constant.OBJECT){
 				content += _renderObject(element);
-				classes += "object ";
+				classes += " object";
 			} else {
 				content += _renderEmpty(element);
 			}
@@ -130,6 +131,7 @@ VISH.Renderer = (function(V,$,undefined){
 		var loadingObjectClass = (objectSettings.unloadObject===false) ? "unloadableObject" : "";
 		
 		var objectInfo = V.Object.getObjectInfo(element.body);
+
 		switch(objectInfo.type){
 			case V.Constant.MEDIA.YOUTUBE_VIDEO:
 				return V.Video.Youtube.renderVideoFromJSON(element,{extraClasses: "objectelement youtubeelement " + loadingObjectClass + " " + template + "_" + element['areaid']});

@@ -111,9 +111,6 @@ VISH.Viewer = (function(V,$,undefined){
 				if($(slide).hasClass(V.Constant.OBJECT)){
 					V.ObjectPlayer.loadObject($(slide));
 				}
-				if($(slide).hasClass(V.Constant.SNAPSHOT)){
-					V.SnapshotPlayer.loadSnapshot($(slide));
-				}
 			}
 		},timeToLoadObjects);
 

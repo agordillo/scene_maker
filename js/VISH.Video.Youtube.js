@@ -81,6 +81,7 @@ VISH.Video.Youtube = (function(V,$,undefined){
 		};
 
 		var video = "<div id='"+ videoId + "' ytContainerId='" + ytContainerId + "' class='" + videoClasses + "' " + objectStyle + zoomInStyle + " source='" + source + "'>" + "</div>";
+		
 		return video;
 	};
 

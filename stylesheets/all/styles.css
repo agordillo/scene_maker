@@ -144,6 +144,21 @@ section.slides > article > article.show_in_screen {
 	cursor: pointer;
 }
 
+
+/* Elements in content views */
+
+article[type="view_content"] {
+	padding: 0px !important;
+}
+
+.objectelement {
+	width: 100%;
+	height: 100%;
+	border: none;
+	padding: none;
+}
+
+
 /* Full screen */
 
 #page-fullscreen {

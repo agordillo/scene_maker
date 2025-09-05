@@ -37,7 +37,7 @@ VISH.ObjectPlayer = (function(V,$,undefined){
 	};
 	
 	
-	var aftersetupSize = function(){
+	var aftersetupSize = function(increase){
 		if($(".current").hasClass("object")){
 			loadObject($(".current"));
 		}

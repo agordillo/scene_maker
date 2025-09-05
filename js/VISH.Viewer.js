@@ -59,7 +59,7 @@ VISH.Viewer = (function(V,$,undefined){
 		V.Video.init();
 		V.Audio.init();
 		V.FullScreen.init();
-		V.Presentation.init(presentation.screens, function(){
+		V.Presentation.init(presentation, function(){
 			_initAferRenderPresentation(options,presentation);
 		});
 	};
@@ -67,10 +67,8 @@ VISH.Viewer = (function(V,$,undefined){
 	var _initAferRenderPresentation = function(options,presentation){
 		V.Video.HTML5.setMultimediaEvents();
 		V.Slides.updateCurrentSlideFromHash();
-		//we have to update slides AFTER load theme and before anything
-		//This way we prevent undesired behaviours 
 		V.Slides.updateSlides();
-		V.ViewerAdapter.init(options); //Also init texts
+		V.ViewerAdapter.init(options);
 
 		if(V.Slides.getCurrentScreenNumber()>0){
 			V.Slides.triggerEnterEventById($(V.Slides.getCurrentScreen()).attr("id"));

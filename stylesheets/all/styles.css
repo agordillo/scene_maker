@@ -49,7 +49,7 @@ section.slides > article, section.slides > article > article {
 	padding-right: 40px;
 	position: absolute;  
 	display: block;
-	
+
 	box-sizing: border-box;
 	-o-box-sizing: border-box;
 	-moz-box-sizing: border-box;
@@ -78,7 +78,7 @@ section.slides > article, section.slides > article > article {
 	z-index: 1075;
 }
 
-/* Subslides */
+/* Views */
 section.slides > article > article {
 	margin-top: -300px;
 	display: none;

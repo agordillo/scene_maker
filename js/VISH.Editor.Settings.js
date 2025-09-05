@@ -15,8 +15,13 @@ VISH.Editor.Settings = (function(V,$,undefined){
 			'hideOnOverlayClick': false,
 			'hideOnContentClick': false,
 			'showCloseButton': true,
+			'onStart'			: function(){
+				var aspectRatio = V.ViewerAdapter.getAspectRatio();
+				if(typeof aspectRatio !== "undefined"){
+					$('#presentation_details_select_aspectRatio').val(aspectRatio);
+				}
+			},
 			"onComplete"  : function(data){
-				//$("#fancybox-wrap").css("margin-top", "20px");
 				_onDisplaySettings();
 			}
 		});
@@ -46,7 +51,7 @@ VISH.Editor.Settings = (function(V,$,undefined){
 		}
 		$('#presentation_details_select_aspectRatio').val(aspectRatio);
 
-		V.Editor.ViewerAdapter.applyAspectRatio(aspectRatio);
+		V.ViewerAdapter.applyAspectRatio(aspectRatio);
 	};
 	
 	var _checkIfEnableContinueButton = function(){
@@ -81,7 +86,7 @@ VISH.Editor.Settings = (function(V,$,undefined){
 		$.fancybox.close();
 
 		var settings = saveSettings();
-		V.Editor.ViewerAdapter.applyAspectRatio(settings.aspectRatio);
+		V.ViewerAdapter.applyAspectRatio(settings.aspectRatio);
 	};
 
 	var saveSettings = function(){

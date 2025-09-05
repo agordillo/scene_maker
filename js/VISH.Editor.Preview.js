@@ -3,16 +3,23 @@ VISH.Editor.Preview = (function(V,$,undefined){
 	var presentationPreview = null;
 
 	var init = function(){
-		//Wait for loading...
-		setTimeout(function(){
-			_realInit();
-		},2000);
-	}
+	};
 
-	var _realInit = function(){
+	var preview = function(){
+		var slideNumberToPreview = 1;
+		if(typeof V.PreviewPath !== "undefined"){
+			$("#preview_action").attr("href", V.PreviewPath + "#" + slideNumberToPreview);
+		}
+		presentationPreview = V.Editor.savePresentation();
+
+		_initFancybox();
+		$("#preview_action").trigger('click');
+	};
+
+	var _initFancybox = function(){
 		$("#preview_action").fancybox({
-			'width'				: 910,
-			'height'			: 680,
+			'width'				: _getFancyboxDimensions().width,
+			'height'			: _getFancyboxDimensions().height,
 			'padding'			: 0,
 			'autoScale'     	: false,
 			'transitionIn'		: 'none',
@@ -31,19 +38,18 @@ VISH.Editor.Preview = (function(V,$,undefined){
 			'onComplete': function() {
 			}
 		});
-	}
+	};
 
-	var preview = function(){
-		_prepare();
-		$("#preview_action").trigger('click');
-	}
-
-	var _prepare = function(){
-		var slideNumberToPreview = 1;
-		if(typeof V.PreviewPath != "undefined"){
-			$("#preview_action").attr("href", V.PreviewPath + "#" + slideNumberToPreview);
+	var _getFancyboxDimensions = function(){
+		var dimensions = {};
+		if($("body").attr("aspectRatio")==="16:9"){
+			dimensions.width = 1000;
+			dimensions.height = 670;
+		} else {
+			dimensions.width = 910;
+			dimensions.height = 680;
 		}
-		presentationPreview = V.Editor.savePresentation();
+		return dimensions;
 	};
 
 	var getPreview = function(){

@@ -1,23 +1,14 @@
 VISH.ViewerAdapter = (function(V,$,undefined){
-
-	//Viewbar
-	var _showViewbar;
-
-	//Full Screen
-	var _fsButton;
-
-	//Close button
-	var _closeButton;
-
-	//Internals
 	var _initialized = false;
-	//Prevent updateInterface with same params (Make ViSH Viewer more efficient)
+	var _fullscreenButton;
 	var _lastWidth;
 	var _lastHeight;
-	//Store last increases
-	var _lastIncrease;
-	var _lastIncreaseW;
-
+	var _lastSlideWidth;
+	var _lastSlideHeight;
+	var _sceneAspectRatioString;
+	var _sceneAspectRatio;
+	var _referenceSlideWith;
+	var _referenceSlideHeight;
 
 	var init = function(options){
 		if(_initialized){
@@ -25,26 +16,9 @@ VISH.ViewerAdapter = (function(V,$,undefined){
 		} 
 		_initialized = true;
 
-		//Init vars
-		_lastWidth = -1;
-		_lastHeight = -1;
-
-		_showViewbar = true;
-		_fsButton = V.FullScreen.canFullScreen();
-
-		//Close button false by default
-		_closeButton = false;
-
-		//////////////
-		//Restrictions
-		/////////////
-
+		_fullscreenButton = V.FullScreen.canFullScreen();
 		//No fs for preview
-		_fsButton = _fsButton && (!V.Status.isPreview());
-
-		////////////////
-		//Init interface
-		///////////////
+		_fullscreenButton = _fullscreenButton && (!V.Status.isPreview());
 
 		$("#viewbar").show();
 		
@@ -52,27 +26,8 @@ VISH.ViewerAdapter = (function(V,$,undefined){
 			$("div#viewerpreview").show();
 		}
 
-		if(V.Status.isPreviewInsertMode()){
-			$("#selectSlidesBar").show();
-			$("#viewbar").css("bottom",$("#selectSlidesBar").height()+"px");
-			$("#viewbar").css("border-bottom","none");
-			V.SlidesSelector.init();
-		}
-
-		//Watermark
-		if((options)&&(typeof options.watermarkURL == "string")){
-			if((V.Status.isExternalSite())&&(!V.Status.isPreviewInsertMode())){
-				$("#embedWatermark").parent().attr("href",options.watermarkURL);
-				$("#embedWatermark").show();
-			}
-		}
-
-		if(_closeButton){
-			$("button#closeButton").show();
-		}
-
 		//Init fullscreen
-		if(_fsButton){
+		if(_fullscreenButton){
 			V.FullScreen.enableFullScreen();
 			$("#page-fullscreen").show();
 		} else {
@@ -84,20 +39,35 @@ VISH.ViewerAdapter = (function(V,$,undefined){
 		V.Text.init();
 	};
 
+	var applyAspectRatio = function(newAspectRatio){
+		if((typeof newAspectRatio !== "string")||(["4:3","16:9"].indexOf(newAspectRatio)===-1)){
+			return;
+		}
+		if(_sceneAspectRatioString === newAspectRatio){
+			return;
+		}
+		_sceneAspectRatioString = newAspectRatio;
+		$("body").attr("aspectRatio", newAspectRatio);
 
-	///////////
-	// ViewBar
-	///////////
-
-	var _defaultViewbar = function(){
-		return true;
+		if(newAspectRatio === "16:9"){
+			_sceneAspectRatio = 16/9;
+			_referenceSlideWidth = 1024;
+			_referenceSlideHeight = 576;
+		} else {
+			_sceneAspectRatio = 4/3;
+			_referenceSlideWidth = 800;
+			_referenceSlideHeight = 600;
+		}
 	};
 
-	///////////
-	// Setup
-	///////////
+	var getAspectRatio = function(){
+		return _sceneAspectRatioString;
+	};
 
 	var updateInterface = function(){
+		if(typeof _sceneAspectRatio === "undefined"){
+			return;
+		}
 		var cWidth = $(window).width();
 		var cHeight = $(window).height();
 		if((cWidth===_lastWidth)&&(cHeight===_lastHeight)){
@@ -108,85 +78,82 @@ VISH.ViewerAdapter = (function(V,$,undefined){
 		_setupSize();
 	};
 
-
-	/**
-	 * Function to adapt the slides to the screen size
-	 */
 	var _setupSize = function(){
-		var viewbarHeight = _getDesiredVieweBarHeight(_lastHeight);
+		var finalSlideWidth;
+		var finalSlideHeight;
+
+		//Constants
 		var min_margin_height = 25;
-		var min_margin_width = 60;
+		var min_margin_width = 10;
+
+		//Calculations
+		var viewbarHeight = _getDesiredVieweBarHeight(_lastHeight);
 		var height = _lastHeight - viewbarHeight;
 		var width = _lastWidth;
-		var finalW = 800;
-		var finalH = 600;
-
-		var finalWidthMargin;
 
 		var aspectRatio = (width-min_margin_width)/(height-min_margin_height);
-		var slidesRatio = 4/3;
-		if(aspectRatio > slidesRatio){
-			finalH = height - min_margin_height;
-			finalW = finalH*slidesRatio;
-			var widthMargin = (width - finalW);
+		if(aspectRatio > _sceneAspectRatio){
+			finalSlideHeight = height - min_margin_height;
+			finalSlideWidth = finalSlideHeight*_sceneAspectRatio;
+			var widthMargin = (width - finalSlideWidth);
 			if(widthMargin < min_margin_width){
-				finalWidthMargin = min_margin_width;
 				var marginWidthToAdd = min_margin_width - widthMargin;
-				finalW = finalW - marginWidthToAdd;
-			} else {
-				finalWidthMargin = widthMargin;
+				finalSlideWidth = finalSlideWidth - marginWidthToAdd;
 			}
-		}	else {
-			finalW = width - min_margin_width;
-			finalH = finalW/slidesRatio;
-			finalWidthMargin = min_margin_width;
-			var heightMargin = (height - finalH);
+		} else {
+			finalSlideWidth = width - min_margin_width;
+			finalSlideHeight = finalSlideWidth/_sceneAspectRatio;
+			var heightMargin = (height - finalSlideHeight);
 			if(heightMargin < min_margin_height){
 				var marginHeightToAdd = min_margin_height - heightMargin;
-				finalH = finalH - marginHeightToAdd;
+				finalSlideHeight = finalSlideHeight - marginHeightToAdd;
 			}
 		}
 
-		//finalWidthMargin: margin with added 
-		$(".vish_arrow").width(finalWidthMargin/2*0.9);
+		if(typeof _lastSlideHeight !== "number"){
+			_lastSlideHeight = _referenceSlideHeight;
+		}
+		if(typeof _lastSlideWidth !== "number"){
+			_lastSlideWidth = _referenceSlideWidth;
+		}
+		var increase = finalSlideHeight/_lastSlideHeight;
+		//var increaseW = finalSlideWidth/_lastSlideWidth; //increaseW is the same as increase
+		_lastSlideHeight = finalSlideHeight;
+		_lastSlideWidth = finalSlideWidth;
+
+		//Update UI
 
 		//Viewbar
 		$("#viewbar").height(viewbarHeight);
 		
-		//resize slides
-		var topSlides = $(".slides > article");
-		var subSlides = $(".slides > article > article");
+		//Resize slides
+		var screens = $(".slides > article");
+		var views = $(".slides > article > article");
 		var allSlides = $(".slides article");
-		$(allSlides).css("height", finalH);
-		$(allSlides).css("width", finalW);
+		$(allSlides).css("height", finalSlideHeight);
+		$(allSlides).css("width", finalSlideWidth);
 
 		//margin-top and margin-left half of the height and width
-		var marginTop = finalH/2 + viewbarHeight/2;
-		var marginLeft = finalW/2;
-		$(topSlides).css("margin-top", "-" + marginTop + "px");
-		$(subSlides).css("margin-top", "-" + finalH/2 + "px");
+		var marginTop = finalSlideHeight/2 + viewbarHeight/2;
+		var marginLeft = finalSlideWidth/2;
+		$(screens).css("margin-top", "-" + marginTop + "px");
+		$(views).css("margin-top", "-" + finalSlideHeight/2 + "px");
 		$(allSlides).css("margin-left", "-" + marginLeft + "px");
 		
-		var increase = finalH/600;
-		var increaseW = finalW/800;
-
-		_lastIncrease = increase;
-		_lastIncreaseW = increaseW;
-
 		//Paddings
-		var paddingTopAndBottom = 3/100*finalW;	//3%
-		var paddingLeftAndRight = 5/100*finalW;	//5%
+		var paddingTopAndBottom = 3/100*finalSlideWidth;	//3%
+		var paddingLeftAndRight = 5/100*finalSlideWidth;	//5%
 		$(allSlides).css("padding-left",paddingLeftAndRight);
 		$(allSlides).css("padding-right",paddingLeftAndRight); 
 		$(allSlides).css("padding-top",	paddingTopAndBottom);
 		$(allSlides).css("padding-bottom",paddingTopAndBottom);
 
-		//Close button for subslides
+		//Close button for views
 		var _closeButtonDimension = 23;
 		if(increase <= 1){
-			_closeButtonDimension = _closeButtonDimension*getPonderatedIncrease(increase,0.7);
+			_closeButtonDimension = _closeButtonDimension*_getPonderatedIncrease(increase,0.7);
 		} else {
-			_closeButtonDimension = _closeButtonDimension*getPonderatedIncrease(increase,0.2);
+			_closeButtonDimension = _closeButtonDimension*_getPonderatedIncrease(increase,0.2);
 		}
 		$("div.close_view").css("width",_closeButtonDimension+"px");
 		$("div.close_view").css("height",_closeButtonDimension+"px");
@@ -194,36 +161,25 @@ VISH.ViewerAdapter = (function(V,$,undefined){
 		//Fs button
 		$("#page-fullscreen").width($("#page-fullscreen").height());
 
-		updateFancyboxAfterSetupSize(increase,increaseW);
-
-		//Texts callbacks
-		V.Text.aftersetupSize(increase,increaseW);
-
-		//Object callbacks
-		V.ObjectPlayer.aftersetupSize(increase,increaseW);
-
-		//Slidesets
-		V.Screen.afterSetupSize(increase,increaseW);
+		_updateFancyboxAfterSetupSize(increase);
+		V.Text.aftersetupSize(increase);
+		V.ObjectPlayer.aftersetupSize(increase);
+		V.Screen.afterSetupSize(increase);
 	};
 
 	var _getDesiredVieweBarHeight = function(windowHeight){
 		var minimumViewBarHeight = 26;
 		var maxViewBarHeight = 40;
-		var estimatedIncrease = windowHeight/600;
-		var viewBarHeight = 40 * getPonderatedIncrease(estimatedIncrease,0.7);
+		var estimatedIncrease = windowHeight/_referenceSlideHeight;
+		var viewBarHeight = 40 * _getPonderatedIncrease(estimatedIncrease,0.7);
 		return Math.min(Math.max(viewBarHeight,minimumViewBarHeight),maxViewBarHeight);
 	};
 
-	/**
-	 * Fancybox resizing. If a fancybox is opened, resize it
-	 */
-	var updateFancyboxAfterSetupSize = function(increase,increaseW){
+	var _updateFancyboxAfterSetupSize = function(increase){
 		var fOverlay = $("#fancybox-overlay");
 		if(($(fOverlay).length<1)||(!$(fOverlay).is(":visible"))){
 			return;
 		}
-
-		increase = (typeof increase == "number") ? increase : V.ViewerAdapter.getLastIncrease()[0];
 
 		var fwrap = $("#fancybox-wrap");
 		var fcontent = $("#fancybox-content");
@@ -237,9 +193,9 @@ VISH.ViewerAdapter = (function(V,$,undefined){
 		
 		var _closeButtonDimension = 23;
 		if(increase <= 1){
-			_closeButtonDimension = _closeButtonDimension*getPonderatedIncrease(increase,0.7);
+			_closeButtonDimension = _closeButtonDimension*_getPonderatedIncrease(increase,0.7);
 		} else {
-			_closeButtonDimension = _closeButtonDimension*getPonderatedIncrease(increase,0.2);
+			_closeButtonDimension = _closeButtonDimension*_getPonderatedIncrease(increase,0.2);
 		}
 		var fcClose = $("#fancybox-close");
 		$(fcClose).width(_closeButtonDimension + "px");
@@ -260,36 +216,16 @@ VISH.ViewerAdapter = (function(V,$,undefined){
 		$(fccontentDivs).height("100%");
 	};
 
-	var getDimensionsForResizedButton = function(increase,originalWidth,aspectRatio){
-		var originalWidth = originalWidth || 23;
-		var aspectRatio = aspectRatio || 1;
-
-		var _buttonWidth = originalWidth;
-		if(increase <= 1){
-			_buttonWidth = _buttonWidth*getPonderatedIncrease(increase,0.7);
-		} else {
-			_buttonWidth = _buttonWidth*getPonderatedIncrease(increase,0.2);
-		}
-
-		return {width: _buttonWidth, height: _buttonWidth/aspectRatio};
-	}
-
-	var getLastIncrease = function(){
-		return [_lastIncrease,_lastIncreaseW];
-	};
-
-	var getPonderatedIncrease = function(increase,pFactor){
+	var _getPonderatedIncrease = function(increase,pFactor){
 		var diff = (increase-1)*pFactor;
 		return 1+diff;
 	};
 	
 	return {
 		init 							: init,
-		updateInterface 				: updateInterface,
-		updateFancyboxAfterSetupSize	: updateFancyboxAfterSetupSize,
-		getDimensionsForResizedButton	: getDimensionsForResizedButton,
-		getPonderatedIncrease 			: getPonderatedIncrease,
-		getLastIncrease					: getLastIncrease
+		getAspectRatio					: getAspectRatio,
+		applyAspectRatio				: applyAspectRatio,
+		updateInterface 				: updateInterface
 	};
 
 }) (VISH, jQuery);

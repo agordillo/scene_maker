@@ -144,10 +144,9 @@ VISH.Text = (function(V,$,undefined){
 		} else if(_isInRange(factor,0.95,1.5)){
 			return 1;
 		} else if (factor > 1.5){
-			return 1; //Test in fullscreen mode with large-screens
+			return 1;
 		}
-
-		return 1; //Default
+		return 1;
 	};
 
 	var _isInRange = function(number, min, max){

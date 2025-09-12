@@ -158,6 +158,12 @@ article[type="view_content"] {
 	padding: none;
 }
 
+div.view_content_text {
+    padding: 2% 4%;
+    width: 93% !important;
+    height: 96% !important;
+}
+
 
 /* Full screen */
 

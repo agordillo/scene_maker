@@ -84,6 +84,10 @@ SceneMaker.Actions = (function(SM,$,undefined){
 		};
 	};
 
+	var refreshHotzoneAction = function(hotzoneDOM, action){
+		return addActionToHotzone(hotzoneDOM, action);
+	};
+
 	var _addTooltip = function(elementDOM,text,delay){
 		let delayValue = 0;
 		if(typeof delay === "string"){
@@ -249,6 +253,7 @@ SceneMaker.Actions = (function(SM,$,undefined){
 		init 							: init,
 		addActionToHotspot				: addActionToHotspot,
 		addActionToHotzone				: addActionToHotzone,
+		refreshHotzoneAction			: refreshHotzoneAction,
 		performActions					: performActions,
 		checkActionsForSlideEnterEvent	: checkActionsForSlideEnterEvent
 	};

@@ -142,12 +142,12 @@ SceneMaker.Marker = (function(SM,$,undefined){
 		var annotation = createAnnotationFromPointsArray(hotzoneId,hotzoneJSON.points);
 		annotator.addAnnotation(annotation);
 		
+		//This method is necessary because the createAnnotation event does not work properly with addAnnotation
 		_waitForAnnotationRendering(annotation.id, function(hotzoneDOM){
-			if(hotzoneJSON.cursorVisibility === "pointer"){
-				$(hotzoneDOM).attr("hotzone_cursor_visibility",hotzoneJSON.cursorVisibility);
-			}
-			for(i in hotzoneJSON.actions){
-				SM.Actions.addActionToHotzone(hotzoneDOM,hotzoneJSON.actions[i]);
+			if(redraw===true){
+				_restoreAnnotationsAfterAnnotatorChange(slideId);
+			} else {
+				_restoreAnnotationAfterAnnotatorChange(annotation.id,$(hotzoneDOM));
 			}
 		});
 	};
@@ -209,6 +209,10 @@ SceneMaker.Marker = (function(SM,$,undefined){
 				}
 			}
 		});
+		annotator.on('deleteAnnotation', function(annotation){
+			if((typeof hotzoneData[annotation.id] === "undefined")||(typeof hotzoneData[annotation.id].slideId === "undefined")) return;
+			_restoreAnnotationsAfterAnnotatorChange(hotzoneData[annotation.id].slideId);
+		});
 		
 		slideData[slideId].annotator = annotator;
 		return annotator;
@@ -243,7 +247,7 @@ SceneMaker.Marker = (function(SM,$,undefined){
 	};
 
 	var getHotzoneDOM = function(hotzoneId){
-		return $("g[data-id='" + hotzoneId + "']");
+		return $("svg.a9s-annotationlayer g[data-id='" + hotzoneId + "']");
 	};
 
 	var _onClickHotspot = function(hotspotId){
@@ -298,10 +302,37 @@ SceneMaker.Marker = (function(SM,$,undefined){
 		}
 
 		//Disable hotzone
+		hotzoneData[hotzoneId].enabled = false;
 		if(typeof slideData[slideId].annotator !== "undefined"){
 			slideData[slideId].annotator.removeAnnotation(hotzoneId);
+			//Custom attributes will be restored by 'deleteAnnotation' callback
 		}
-		hotzoneData[hotzoneId].enabled = false;
+	};
+
+	var _restoreAnnotationsAfterAnnotatorChange = function(slideId){
+		//Restore custom attributes in the annotation DOM elements on the slide.
+		var $slide = $("#"+slideId);
+		$slide.find("svg.a9s-annotationlayer g[data-id]").each(function(index, annotationDOM){
+			var $annotationDOM = $(annotationDOM);
+			var annotationId = $annotationDOM.attr("data-id");
+			_restoreAnnotationAfterAnnotatorChange(annotationId,$annotationDOM);
+		});
+	};
+
+	var _restoreAnnotationAfterAnnotatorChange = function(annotationId,$annotationDOM){
+		if(typeof hotzoneData[annotationId] !== "undefined"){
+			if(hotzoneData[annotationId].cursorVisibility === "pointer"){
+				$annotationDOM.attr("hotzone_cursor_visibility",hotzoneData[annotationId].cursorVisibility);
+			}
+			for(i in hotzoneData[annotationId].actions){
+				SM.Actions.refreshHotzoneAction($annotationDOM,hotzoneData[annotationId].actions[i]);
+			}
+		}
+	}
+
+	var updateHotzoneData = function(hotzoneId, key, value){
+		if((typeof hotzoneData[hotzoneId] === "undefined")||(typeof key === "undefined")) return;
+		hotzoneData[hotzoneId][key] = value;
 	};
 
 	return {
@@ -311,7 +342,8 @@ SceneMaker.Marker = (function(SM,$,undefined){
 		drawSlideWithMarkers			: drawSlideWithMarkers,
 		createAnnotationFromPointsArray : createAnnotationFromPointsArray,
 		enableHotzone					: enableHotzone,
-		disableHotzone					: disableHotzone
+		disableHotzone					: disableHotzone,
+		updateHotzoneData				: updateHotzoneData
 	};
 
 }) (SceneMaker, jQuery);

@@ -2,12 +2,14 @@ SceneMaker.Marker = (function(SM,$,undefined){
 	var slideData;
 	var hotspotData;
 	var hotzoneData;
+	var renderedAnnotations;
 	var defaultHotspotImg;
 
 	var init = function(){
 		slideData = {};
 		hotspotData = {};
 		hotzoneData = {};
+		renderedAnnotations = new Set();
 		defaultHotspotImg = SM.ImagesPath + "hotspotgallery/hotspot.png";
 	};
 
@@ -142,38 +144,46 @@ SceneMaker.Marker = (function(SM,$,undefined){
 		var annotation = createAnnotationFromPointsArray(hotzoneId,hotzoneJSON.points);
 		annotator.addAnnotation(annotation);
 		
-		//This method is necessary because the createAnnotation event does not work properly with addAnnotation
-		_waitForAnnotationRendering(annotation.id, function(hotzoneDOM){
+		_waitForAnnotationRenderingAfterDrawing(annotation.id, function(hotzoneDOM){
 			if(redraw===true){
 				_restoreAnnotationsAfterAnnotatorChange(slideId);
 			} else {
 				_restoreAnnotationAfterAnnotatorChange(annotation.id,$(hotzoneDOM));
 			}
+			renderedAnnotations.add(annotation.id);
 		});
 	};
 
-	var _waitForAnnotationRendering = function(annotationId, callback) {
-		var timer;
+	var _waitForAnnotationRenderingAfterDrawing = function(annotationId, callback) {
 		var initTime = Date.now();
-		
+		var timer = null;
+		var resolved = false;
+
+		function finish($hotzoneDOM) {
+			if (resolved) return;
+			resolved = true;
+			if (timer) {
+				clearInterval(timer);
+			}
+			callback($hotzoneDOM);
+		}
+
 		function check() {
 			var $hotzoneDOM = getHotzoneDOM(annotationId);
 			if ($hotzoneDOM.length > 0) {
-				clearInterval(timer);
-				callback($hotzoneDOM);
+				finish($hotzoneDOM);
 				return true;
-			} else if (Date.now() - initTime >= 1000) {
-				clearInterval(timer);
-				return false;
+			}
+			if (Date.now() - initTime >= 1500) {
+				if (timer) {
+					clearInterval(timer);
+				}
 			}
 			return false;
 		}
-
-		setTimeout(function() {
-			if (!check()) {
-				timer = setInterval(check, 200);
-			}
-		}, 0);
+		if (!check()) {
+			timer = setInterval(check, 200);
+		}
 	};
 
 	var _createAnnotatorForSlide = function(slideId){
@@ -211,6 +221,7 @@ SceneMaker.Marker = (function(SM,$,undefined){
 		});
 		annotator.on('deleteAnnotation', function(annotation){
 			if((typeof hotzoneData[annotation.id] === "undefined")||(typeof hotzoneData[annotation.id].slideId === "undefined")) return;
+			renderedAnnotations.delete(annotation.id);
 			_restoreAnnotationsAfterAnnotatorChange(hotzoneData[annotation.id].slideId);
 		});
 		
@@ -279,7 +290,6 @@ SceneMaker.Marker = (function(SM,$,undefined){
 		if($slide.length !== 1){
 			return;
 		}
-
 		hotzoneData[hotzoneId].enabled = true;
 		_drawHotzone($slide, hotzoneData[hotzoneId], true);
 	};
@@ -304,8 +314,41 @@ SceneMaker.Marker = (function(SM,$,undefined){
 		//Disable hotzone
 		hotzoneData[hotzoneId].enabled = false;
 		if(typeof slideData[slideId].annotator !== "undefined"){
-			slideData[slideId].annotator.removeAnnotation(hotzoneId);
-			//Custom attributes will be restored by 'deleteAnnotation' callback
+			_waitForAnnotationRenderingBeforeDisabling(hotzoneId,function(){
+				// Ensure the annotation is rendered before disabling in order to prevent an internal Annotorious crash.
+				slideData[slideId].annotator.removeAnnotation(hotzoneId);
+			});
+		}
+	};
+
+	var _waitForAnnotationRenderingBeforeDisabling = function(annotationId, callback) {
+		var initTime = Date.now();
+		var timer = null;
+		var resolved = false;
+
+		function finish() {
+			if (resolved) return;
+			resolved = true;
+			if (timer) {
+				clearInterval(timer);
+			}
+			callback();
+		}
+
+		function check() {
+			if(renderedAnnotations.has(annotationId)){
+				finish();
+				return true;
+			}
+			if (Date.now() - initTime >= 1500) {
+				if (timer) {
+					clearInterval(timer);
+				}
+			}
+			return false;
+		}
+		if (!check()) {
+			timer = setInterval(check, 200);
 		}
 	};
 
@@ -320,6 +363,9 @@ SceneMaker.Marker = (function(SM,$,undefined){
 	};
 
 	var _restoreAnnotationAfterAnnotatorChange = function(annotationId,$annotationDOM){
+		if(typeof $annotationDOM.attr("hotzone_cursor_visibility") !== "undefined"){
+			return;
+		}
 		if(typeof hotzoneData[annotationId] !== "undefined"){
 			if(hotzoneData[annotationId].cursorVisibility === "pointer"){
 				$annotationDOM.attr("hotzone_cursor_visibility",hotzoneData[annotationId].cursorVisibility);

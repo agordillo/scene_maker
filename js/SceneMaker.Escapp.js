@@ -160,20 +160,28 @@ SceneMaker.Escapp = (function(SM,$,undefined){
 			var newPuzzles = erState.puzzlesSolved.filter(
 				puzzleId => !_puzzlesSolved.includes(puzzleId) && _relatedPuzzleIds.includes(puzzleId)
 			).sort((a, b) => a - b);
+			if(newPuzzles.length === 0){
+				return;
+			}
+			var maxSolvedPuzzle = Math.max(...newPuzzles);
 			var actions = [];
 			newPuzzles.forEach(function(puzzleId) {
 				_puzzlesSolved.push(puzzleId);
-				var actionsForPuzzle = _actionsForRelatedPuzzles[puzzleId];
+				var actionsForPuzzle = JSON.parse(JSON.stringify(_actionsForRelatedPuzzles[puzzleId]));
 				if(Array.isArray(actionsForPuzzle)){
 					actions = actions.concat(actionsForPuzzle);
 				}
 			});
 			_puzzlesSolved = _puzzlesSolved.sort((a, b) => a - b);
-			_updateSceneWithActions(actions, afterSubmitPuzzle);
+			_updateSceneWithActions(actions, maxSolvedPuzzle, afterSubmitPuzzle);
 		}
 	};
 
-	var _updateSceneWithActions = function(actions, afterSubmitPuzzle){
+	var _updateSceneWithActions = function(actions, maxSolvedPuzzle, afterSubmitPuzzle){
+		if(actions.length === 0){
+			return;
+		}
+
 		//If there are several actions with type "goToScreen" or "openView", apply only the last one.
 		var lastIndexSlideMovement = actions.map(a => a.actionType).reduce((last, type, i) => 
 			(type === "goToScreen" || type === "openView") ? i : last, -1
@@ -182,25 +190,97 @@ SceneMaker.Escapp = (function(SM,$,undefined){
 			!(a.actionType === "goToScreen" || a.actionType === "openView") || i === lastIndexSlideMovement
 		);
 
-		//If there are several actions with type "playSound", apply only the last one.
-		var lastIndexPlaySound = actions.map(a => a.actionType).reduce((last, type, i) => 
-			(type === "playSound") ? i : last, -1
-		);
-		actions = actions.filter((a, i) =>
-			!(a.actionType === "playSound") || i === lastIndexPlaySound
-		);
+		//If there are several actions with type "playSound", apply only the ones from the last solved puzzle
+		actions = actions.filter(action => {
+			if (action.actionType !== "playSound") return true;
+			return action.event?.eventParams?.puzzleId == maxSolvedPuzzle;
+		});
 
-		//Ignore delays.
-		if(afterSubmitPuzzle === false){
-			actions = actions.map(action => ({
-			  ...action,
-			  actionParams: action.actionParams
-			    ? (({ delay, ...rest }) => rest)(action.actionParams)
-			    : action.actionParams
-			}));
-		}
+		//If there are multiple showHotspot or hideHotspot actions over a same hotspot, keep the latest.
+		actions = optimizeHotspotStateActions(actions, afterSubmitPuzzle);
+
+		//If there are multiple enableZone or disableZone actions over a same hotzone, keep the latest. Ensure minimum delay.
+		actions = optimizeHotzoneStateActions(actions, afterSubmitPuzzle);
 
 		SM.Actions.performActions(actions);
+	};
+
+	function optimizeHotspotStateActions(actions, afterSubmitPuzzle) {
+		const seenHotspots = new Set();
+		const result = [];
+
+		for (let i = actions.length - 1; i >= 0; i--) {
+			const action = actions[i];
+			const isHotspotAction =
+				action.actionType === "showHotspot" ||
+				action.actionType === "hideHotspot";
+			if (!isHotspotAction) {
+				result.push(action);
+				continue;
+			}
+			if(typeof action.actionParams === "undefined"){
+				continue;
+			}
+			const hotspotId = action.actionParams.hotspotId;
+			if(typeof hotspotId !== "string"){
+				continue;
+			}
+
+			if (!seenHotspots.has(hotspotId)) {
+				seenHotspots.add(hotspotId);
+				result.push(action);
+			}
+		}
+		return result.reverse();
+	};
+
+	function optimizeHotzoneStateActions(actions, afterSubmitPuzzle) {
+		const seenHotzones = new Set();
+		const result = [];
+
+		for (let i = actions.length - 1; i >= 0; i--) {
+			const action = actions[i];
+			const isHotzoneAction =
+				action.actionType === "enableHotzone" ||
+				action.actionType === "disableHotzone";
+			if (!isHotzoneAction) {
+				result.push(action);
+				continue;
+			}
+			if(typeof action.actionParams === "undefined"){
+				continue;
+			}
+			const hotzoneId = action.actionParams.hotzoneId;
+			if(typeof hotzoneId !== "string"){
+				continue;
+			}
+
+			let updatedActionParams = {
+				...action.actionParams
+			};
+
+			if (afterSubmitPuzzle === false) {
+				// Minimum delay for enabling/disabling hotzones
+				let delayValue = 0;
+				if(typeof action.actionParams.delay === "string"){
+					delayValue = parseInt(action.actionParams.delay, 10);
+					if (Number.isNaN(delayValue)) {
+						delayValue = 0;
+					}
+				}
+				updatedActionParams.delay = "" + Math.max(1.0, delayValue);
+			}
+
+			if (!seenHotzones.has(hotzoneId)) {
+				seenHotzones.add(hotzoneId);
+
+				result.push({
+					...action,
+					actionParams: updatedActionParams
+				});
+			}
+		}
+		return result.reverse();
 	};
 
 	var submitPuzzleSolution = function(puzzleId, puzzleSolution){

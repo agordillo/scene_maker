@@ -89,6 +89,9 @@ SceneMaker.Actions = (function(SM,$,undefined){
 	};
 
 	var _addTooltip = function(elementDOM,text,delay){
+		if(typeof $(elementDOM).attr("markertooltipid") !== "undefined"){
+			return;
+		}
 		let delayValue = 0;
 		if(typeof delay === "string"){
 			let delayValueParam = parseInt(delay, 10);

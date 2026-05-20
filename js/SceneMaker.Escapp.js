@@ -167,10 +167,11 @@ SceneMaker.Escapp = (function(SM,$,undefined){
 			var actions = [];
 			newPuzzles.forEach(function(puzzleId) {
 				_puzzlesSolved.push(puzzleId);
-				var actionsForPuzzle = JSON.parse(JSON.stringify(_actionsForRelatedPuzzles[puzzleId]));
-				if(Array.isArray(actionsForPuzzle)){
-					actions = actions.concat(actionsForPuzzle);
+				var actionsForPuzzle = _actionsForRelatedPuzzles[puzzleId];
+				if (!Array.isArray(actionsForPuzzle)) {
+					return;
 				}
+				actions = actions.concat(JSON.parse(JSON.stringify(actionsForPuzzle)));
 			});
 			_puzzlesSolved = _puzzlesSolved.sort((a, b) => a - b);
 			_updateSceneWithActions(actions, maxSolvedPuzzle, afterSubmitPuzzle);

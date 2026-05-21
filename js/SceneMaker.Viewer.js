@@ -1,30 +1,26 @@
 SceneMaker.Viewer = (function(SM,$,undefined){
-
-	//Initial options
 	var initOptions;
-	//Pointer to the current scene
-	var current_scene;
+	var currentScene;
 
-	/**
-	 * Function to initialize the Viewer
-	 */
 	var init = function(){
-		_init(SM.getOptions())
+		_init(SM.getOptions());
 	};
 
 	var _init = function(options){
 		SM.Editing = false;
 		$("body").addClass("SceneMakerViewerBody");
+		$("body").addClass("SceneMakerViewerBodyLoading");
 		
 		initOptions = (typeof options == "object") ? options : {};
 
+		SM.Status.init();
 		SM.Debugging.init(options);
 		
 		if((initOptions["configuration"])&&(SM.Configuration)){
 			SM.Configuration.init(initOptions["configuration"]);
 		}
 
-		var scene = options.scene;
+		var scene = initOptions.scene;
 		SM.Utils.init();
 		SM.I18n.init(initOptions,scene);
 
@@ -36,9 +32,14 @@ SceneMaker.Viewer = (function(SM,$,undefined){
 			SM.Utils.showPNotValidDialog();
 			return;
 		}
-		current_scene = scene;
-		
-		SM.Status.init();
+
+		SM.Escapp.init(initOptions,scene,function(updatedScene){
+			currentScene = updatedScene;
+			_initAferRetrieveERState(options,updatedScene,);
+		});
+	};
+
+	var _initAferRetrieveERState = function(options,scene){
 		SM.ViewerAdapter.applyLanguageCSS();
 		SM.EventsNotifier.init();
 		SM.Object.init();
@@ -57,14 +58,17 @@ SceneMaker.Viewer = (function(SM,$,undefined){
 		SM.Scene.init(scene, function(){
 			_initAferRenderScene(options,scene);
 		});
-	};
+	}
 
 	var _initAferRenderScene = function(options,scene){
 		SM.Video.HTML5.setMultimediaEvents();
-		SM.Screen.updateCurrentScreenFromHash();
+		SM.Screen.setInitialCurrentScreen();
 		SM.Screen.updateScreens();
 		SM.ViewerAdapter.init(options);
 		SM.Utils.Loader.preloadResources(scene);
+		SM.Escapp.updateSceneStateAfterRendering();
+
+		$("body").removeClass("SceneMakerViewerBodyLoading");
 
 		if(SM.Screen.getCurrentScreenNumber()>0){
 			SM.Slides.triggerSlideEnterEvent($(SM.Screen.getCurrentScreen()).attr("id"));
@@ -74,9 +78,6 @@ SceneMaker.Viewer = (function(SM,$,undefined){
 			//Try to win focus
 			window.focus();
 		}
-
-		//Init Escapp client
-		SM.Escapp.init(options,scene);
 	};
 
 	var getOptions = function(){	
@@ -138,7 +139,7 @@ SceneMaker.Viewer = (function(SM,$,undefined){
 	};
 	
 	var getCurrentScene = function(){
-		return current_scene;
+		return currentScene;
 	};
 
 	return {

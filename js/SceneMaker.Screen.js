@@ -50,13 +50,18 @@ SceneMaker.Screen = (function(SM,$,undefined){
 		}
 	};
 
-	var updateCurrentScreenFromHash = function() {
-		var screenNo = SM.Utils.getScreenNumberFromHash();
-		if (screenNo) {
-			setCurrentScreenNumber(screenNo);
+	var setInitialCurrentScreen = function(currentScreen) {
+		if(typeof _currentScreenIndex !== "undefined") return;
+		if(typeof screenNumber === "number"){
+			setCurrentScreenNumber(currentScreen);
 		} else {
-			//Start in 1 (first screen)
-			setCurrentScreenNumber(1);
+			var screenNo = SM.Utils.getScreenNumberFromHash();
+			if (screenNo) {
+				setCurrentScreenNumber(screenNo);
+			} else {
+				//Start in 1 (first screen)
+				setCurrentScreenNumber(1);
+			}
 		}
 	};
 
@@ -149,7 +154,7 @@ SceneMaker.Screen = (function(SM,$,undefined){
 		getCurrentScreenNumber       : getCurrentScreenNumber,
 		setCurrentScreenNumber       : setCurrentScreenNumber,
 		getScreenWithNumber          : getScreenWithNumber,
-		updateCurrentScreenFromHash  : updateCurrentScreenFromHash,
+		setInitialCurrentScreen  	 : setInitialCurrentScreen,
 		getScreensQuantity           : getScreensQuantity,
 		onEnterScreen                : onEnterScreen,
 		onLeaveScreen                : onLeaveScreen,

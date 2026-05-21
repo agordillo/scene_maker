@@ -4,8 +4,10 @@ SceneMaker.Escapp = (function(SM,$,undefined){
 	var _linkedPuzzleIds;
 	var _relatedPuzzleIds;
 	var _actionsForRelatedPuzzles;
+	var _escappInitialized;
+	var _actionsRendering;
 
-	var init = function(options, scene){
+	var init = function(options, scene, callback){
 		_puzzlesSolved = [];
 		_actionsForRelatedPuzzles = {};
 		_linkedPuzzleIds = _getLinkedPuzzleIdsForScene(scene);
@@ -13,10 +15,10 @@ SceneMaker.Escapp = (function(SM,$,undefined){
 
 		if((_linkedPuzzleIds.length === 0)&&(_relatedPuzzleIds.length === 0)){
 			//No need to use Escapp.
-			return;
+			return callback(scene,undefined);
 		}
 		if(SM.Status.isPreview() === true){
-			return;
+			return callback(scene,undefined);
 		}
 
 		var defaultEscappSettings = _getDefaultEscappSettings(options, scene);
@@ -26,25 +28,37 @@ SceneMaker.Escapp = (function(SM,$,undefined){
 		escappSettings.onNewErStateCallback = function(erState){
 			_updateSceneState(erState);
 		};
-		escappSettings.onErRestartCallback = function(erState){
-			_puzzlesSolved = [];
-			_updateSceneState(erState);
-		};
+		// escappSettings.onErRestartCallback = function(erState){
+		// 	// SM.Debugging.log("onErRestartCallback", erState);
+		// };
 
 		_escapp = new ESCAPP(escappSettings);
 		SM.Debugging.log("Escapp client initiated with settings:", _escapp.getSettings());
 
 		//Authenticate user in Escapp
-		_escapp.validate((success, erState) => {
-			try {
-				SM.Debugging.log("Escapp validation", success, erState);
-				if(success){
-					_updateSceneState(erState);
-				}
-			} catch (e){
-				SM.Debugging.log("Error in escapp validate callback", e);
-			}
-		});
+		try {
+			_escappInitialized = false;
+			_escapp.validate((success, erState) => {
+				try {
+					if(_escappInitialized===true) return;
+					_escappInitialized = true;
+
+					SM.Debugging.log("Escapp validation", success, erState);
+					if((success)&&(typeof erState !== "undefined")&&(Array.isArray(erState.puzzlesSolved))&&(erState.puzzlesSolved.length > 0)){
+						var updatedScene = _updateSceneJSONBasedOnInitialErState(scene,erState);
+						return callback(updatedScene,erState);
+					} else {
+						return callback(scene,undefined);
+					}
+				}catch(e){
+					SM.Debugging.log("Error in escapp validate callback", e);
+					callback(scene, undefined);
+				};
+			});
+		} catch (e){
+			SM.Debugging.log("Error in escapp validate", e);
+			callback(scene, undefined);
+		}
 	};
 
 	var _getDefaultEscappSettings = function(options, scene){
@@ -54,7 +68,7 @@ SceneMaker.Escapp = (function(SM,$,undefined){
 			relatedPuzzleIds: _relatedPuzzleIds,
 			preview: SM.Status.isPreview(),
 			silent: (SM.Debugging.isDevelopping()!==true),
-			forceValidation: true,
+			forceValidation: (SM.Debugging.isDevelopping()!==true),
 			notifications: "FALSE",
 			rtc: true,
 			restoreState: "AUTO",
@@ -69,10 +83,10 @@ SceneMaker.Escapp = (function(SM,$,undefined){
 	};
 
 	var _getLinkedPuzzleIdsForScene = function(scene){
-		var linkedPuzzleIds = [];
+		if(!Array.isArray(scene.screens)) return [];
 
-		for (var screenIndex in scene.screens) {
-			var screen = scene.screens[screenIndex];
+		var linkedPuzzleIds = [];
+		for (var screen of scene.screens) {
 			linkedPuzzleIds = linkedPuzzleIds.concat(_getLinkedPuzzleIdsForScreen(screen));
 		}
 
@@ -87,25 +101,30 @@ SceneMaker.Escapp = (function(SM,$,undefined){
 
 	var _getLinkedPuzzleIdsForScreen = function(screen){
 		var linkedPuzzleIds = _getLinkedPuzzleIdsFromMarkers(screen);
-
-		for (var viewIndex in screen.views) {
-			var view = screen.views[viewIndex];
-			linkedPuzzleIds = linkedPuzzleIds.concat(_getLinkedPuzzleIdsFromMarkers(view));
+		if(Array.isArray(screen.views)){
+			for (var viewIndex in screen.views) {
+				var view = screen.views[viewIndex];
+				linkedPuzzleIds = linkedPuzzleIds.concat(_getLinkedPuzzleIdsFromMarkers(view));
+			}
 		}
-
 		return linkedPuzzleIds;
 	};
 
 	var _getLinkedPuzzleIdsFromMarkers = function(slide){
 		var linkedPuzzleIds = [];
 
-		for (var hotspotIndex in slide.hotspots) {
-			var hotspot = slide.hotspots[hotspotIndex];
-			linkedPuzzleIds = linkedPuzzleIds.concat(_getLinkedPuzzleIdsFromActions(hotspot.actions));
+		if(Array.isArray(slide.hotspots)){
+			for (var hotspotIndex in slide.hotspots) {
+				var hotspot = slide.hotspots[hotspotIndex];
+				linkedPuzzleIds = linkedPuzzleIds.concat(_getLinkedPuzzleIdsFromActions(hotspot.actions));
+			}
 		}
-		for (var hotzoneIndex in slide.hotzones) {
-			var hotzone = slide.hotzones[hotzoneIndex];
-			linkedPuzzleIds = linkedPuzzleIds.concat(_getLinkedPuzzleIdsFromActions(hotzone.actions));
+
+		if(Array.isArray(slide.hotzones)){
+			for (var hotzoneIndex in slide.hotzones) {
+				var hotzone = slide.hotzones[hotzoneIndex];
+				linkedPuzzleIds = linkedPuzzleIds.concat(_getLinkedPuzzleIdsFromActions(hotzone.actions));
+			}
 		}
 		
 		return linkedPuzzleIds;
@@ -143,11 +162,14 @@ SceneMaker.Escapp = (function(SM,$,undefined){
 				if(typeof action.event !== "undefined"){
 					var event = action.event;
 					if((event.eventType === "puzzleSolved")&&(typeof event.eventParams !== "undefined")&&(typeof event.eventParams.puzzleId === "string")){
-						relatedPuzzleIds.push(event.eventParams.puzzleId);
-						if(typeof _actionsForRelatedPuzzles[event.eventParams.puzzleId] === "undefined"){
-							_actionsForRelatedPuzzles[event.eventParams.puzzleId] = [];
+						var puzzleId = Number(event.eventParams.puzzleId);
+						if (!Number.isNaN(puzzleId)) {
+							relatedPuzzleIds.push(puzzleId);
+							if(typeof _actionsForRelatedPuzzles[puzzleId] === "undefined"){
+								_actionsForRelatedPuzzles[puzzleId] = [];
+							}
+							_actionsForRelatedPuzzles[puzzleId].push(action);
 						}
-						_actionsForRelatedPuzzles[event.eventParams.puzzleId].push(action);
 					}
 				}
 			};
@@ -155,34 +177,115 @@ SceneMaker.Escapp = (function(SM,$,undefined){
 		return relatedPuzzleIds;
 	};
 
-	var _updateSceneState = function(erState, afterSubmitPuzzle=false){
-		if((typeof erState !== "undefined")&&(Array.isArray(erState.puzzlesSolved))){
-			var newPuzzles = erState.puzzlesSolved.filter(
-				puzzleId => !_puzzlesSolved.includes(puzzleId) && _relatedPuzzleIds.includes(puzzleId)
-			).sort((a, b) => a - b);
-			if(newPuzzles.length === 0){
-				return;
-			}
-			var maxSolvedPuzzle = Math.max(...newPuzzles);
-			var actions = [];
-			newPuzzles.forEach(function(puzzleId) {
-				_puzzlesSolved.push(puzzleId);
-				var actionsForPuzzle = _actionsForRelatedPuzzles[puzzleId];
-				if (!Array.isArray(actionsForPuzzle)) {
-					return;
-				}
-				actions = actions.concat(JSON.parse(JSON.stringify(actionsForPuzzle)));
-			});
-			_puzzlesSolved = _puzzlesSolved.sort((a, b) => a - b);
-			_updateSceneWithActions(actions, maxSolvedPuzzle, afterSubmitPuzzle);
-		}
+	var _updateSceneJSONBasedOnInitialErState = function(scene, erState){
+		_actionsRendering = _getActionsFromNewSolvedPuzzles(erState);
+		if(!Array.isArray(_actionsRendering)) return scene;
+
+		let hotspotsToShow = new Set();
+		let hotspotsToHide = new Set();
+		let hotzonesToEnable = new Set();
+		let hotzonesToDisable = new Set();
+
+		_actionsRendering.forEach(action => {
+		    switch (action.actionType) {
+				case "showHotspot":
+		            if((action.actionParams && typeof action.actionParams.hotspotId === "string")){
+						hotspotsToShow.add(action.actionParams.hotspotId);
+					}
+		            break;
+		        case "hideHotspot":
+		           	if((action.actionParams && typeof action.actionParams.hotspotId === "string")){
+						hotspotsToHide.add(action.actionParams.hotspotId);
+					}
+		            break;
+				case "enableHotzone":
+					if((action.actionParams && typeof action.actionParams.hotzoneId === "string")){
+						hotzonesToEnable.add(action.actionParams.hotzoneId);
+					}
+					break;
+				case "disableHotzone":
+					if((action.actionParams && typeof action.actionParams.hotzoneId === "string")){
+						hotzonesToDisable.add(action.actionParams.hotzoneId);
+					}
+					break;
+		        default:
+		            break;
+		    }
+		});
+
+		scene.screens.forEach(screen => {
+		    if (Array.isArray(screen.hotspots)) {
+		        screen.hotspots.forEach(hotspot => {
+		            if(hotspot.visibility==="visible"){
+		            	if(hotspotsToHide.has(hotspot.id)){
+		            		hotspot.visibility = "hidden";
+		            	}
+		            } else {
+		            	if(hotspotsToShow.has(hotspot.id)){
+		            		hotspot.visibility = "visible";
+		            	}
+		            }
+		        });
+		    }
+		    if (Array.isArray(screen.hotzones)) {
+		        screen.hotzones.forEach(hotzone => {
+		            if(hotzone.enabled===true){
+		            	if(hotzonesToDisable.has(hotzone.id)){
+		            		hotzone.enabled = false;
+		            	}
+		            } else {
+		            	if(hotzonesToEnable.has(hotzone.id)){
+		            		hotzone.enabled = true;
+		            	}
+		            }
+		        });
+		    }
+		});
+		return scene;
 	};
 
-	var _updateSceneWithActions = function(actions, maxSolvedPuzzle, afterSubmitPuzzle){
+	var updateSceneStateAfterRendering = function(){
+		if(!Array.isArray(_actionsRendering)) return;
+		//Remove actions previously applied through _updateSceneJSONBasedOnInitialErState
+		//"playSound" and "stopSound" actions are also removed because autoplay is not usually allowed
+		const actionsToRemove = new Set(["showHotspot","hideHotspot","enableHotzone","disableHotzone","playSound","stopSound"]);
+		var _actions = _actionsRendering.filter(action => !actionsToRemove.has(action.actionType));
+		SM.Actions.performActions(_actions);
+	};
+
+	var _updateSceneState = function(erState, afterSubmitPuzzle=false){
+		var _actions = _getActionsFromNewSolvedPuzzles(erState);
+		if(!Array.isArray(_actions)) return;
+		SM.Actions.performActions(_actions);
+	};
+
+	var _getActionsFromNewSolvedPuzzles = function(erState){
+		if((typeof erState === "undefined")||(!Array.isArray(erState.puzzlesSolved))) return;
+		var newPuzzles = erState.puzzlesSolved.filter(
+			puzzleId => !_puzzlesSolved.includes(puzzleId) && _relatedPuzzleIds.includes(puzzleId)
+		).sort((a, b) => a - b);
+		if(newPuzzles.length === 0){
+			return;
+		}
+		var actions = [];
+		newPuzzles.forEach(function(puzzleId) {
+			_puzzlesSolved.push(puzzleId);
+			var actionsForPuzzle = _actionsForRelatedPuzzles[puzzleId];
+			if (!Array.isArray(actionsForPuzzle)) {
+				return;
+			}
+			actions = actions.concat(JSON.parse(JSON.stringify(actionsForPuzzle)));
+		});
+		_puzzlesSolved = _puzzlesSolved.sort((a, b) => a - b);
 		if(actions.length === 0){
 			return;
 		}
+		var maxSolvedPuzzle = Math.max(...newPuzzles);
+		actions = _optimizeActions(actions,maxSolvedPuzzle);
+		return actions;
+	};
 
+	var _optimizeActions = function(actions,maxSolvedPuzzle){
 		//If there are several actions with type "goToScreen" or "openView", apply only the last one.
 		var lastIndexSlideMovement = actions.map(a => a.actionType).reduce((last, type, i) => 
 			(type === "goToScreen" || type === "openView") ? i : last, -1
@@ -198,15 +301,15 @@ SceneMaker.Escapp = (function(SM,$,undefined){
 		});
 
 		//If there are multiple showHotspot or hideHotspot actions over a same hotspot, keep the latest.
-		actions = optimizeHotspotStateActions(actions, afterSubmitPuzzle);
+		actions = _optimizeHotspotStateActions(actions);
 
-		//If there are multiple enableZone or disableZone actions over a same hotzone, keep the latest. Ensure minimum delay.
-		actions = optimizeHotzoneStateActions(actions, afterSubmitPuzzle);
+		//If there are multiple enableZone or disableZone actions over a same hotzone, keep the latest.
+		actions = _optimizeHotzoneStateActions(actions);
 
-		SM.Actions.performActions(actions);
+		return actions;
 	};
 
-	function optimizeHotspotStateActions(actions, afterSubmitPuzzle) {
+	function _optimizeHotspotStateActions(actions) {
 		const seenHotspots = new Set();
 		const result = [];
 
@@ -235,7 +338,7 @@ SceneMaker.Escapp = (function(SM,$,undefined){
 		return result.reverse();
 	};
 
-	function optimizeHotzoneStateActions(actions, afterSubmitPuzzle) {
+	function _optimizeHotzoneStateActions(actions) {
 		const seenHotzones = new Set();
 		const result = [];
 
@@ -255,43 +358,22 @@ SceneMaker.Escapp = (function(SM,$,undefined){
 			if(typeof hotzoneId !== "string"){
 				continue;
 			}
-
-			let updatedActionParams = {
-				...action.actionParams
-			};
-
-			if (afterSubmitPuzzle === false) {
-				// Minimum delay for enabling/disabling hotzones
-				let delayValue = 0;
-				if(typeof action.actionParams.delay === "string"){
-					delayValue = parseInt(action.actionParams.delay, 10);
-					if (Number.isNaN(delayValue)) {
-						delayValue = 0;
-					}
-				}
-				updatedActionParams.delay = "" + Math.max(1.0, delayValue);
-			}
-
 			if (!seenHotzones.has(hotzoneId)) {
 				seenHotzones.add(hotzoneId);
-
-				result.push({
-					...action,
-					actionParams: updatedActionParams
-				});
+				result.push(action);
 			}
 		}
 		return result.reverse();
 	};
 
-	var submitPuzzleSolution = function(puzzleId, puzzleSolution){
-		var puzzleId = Number(puzzleId);
+	var submitPuzzleSolution = function(_puzzleId, puzzleSolution){
+		var puzzleId = Number(_puzzleId);
 		if((!isNaN(puzzleId))&&(_linkedPuzzleIds.includes(puzzleId))&&(!_puzzlesSolved.includes(puzzleId))){
 			if(SM.Status.isPreview() !== true){
 				if(typeof _escapp !== "undefined"){
 					_escapp.submitPuzzle(puzzleId, puzzleSolution, {}, (success, res) => {
 						//SM.Debugging.log("Solution submitted to Escapp", puzzleId, puzzleSolution, success, res);
-						if(success){
+						if (success && res && res.erState) {
 							_updateSceneState(res.erState, true);
 						}
 					});
@@ -310,9 +392,10 @@ SceneMaker.Escapp = (function(SM,$,undefined){
 	};
 
 	return {
-		init 					: init,
-		getEscapp 				: getEscapp,
-		submitPuzzleSolution	: submitPuzzleSolution
+		init 							: init,
+		updateSceneStateAfterRendering	: updateSceneStateAfterRendering,
+		getEscapp 						: getEscapp,
+		submitPuzzleSolution			: submitPuzzleSolution
 	};
 
 }) (SceneMaker, jQuery);

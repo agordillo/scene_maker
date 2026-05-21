@@ -165,11 +165,29 @@ SceneMaker.Actions = (function(SM,$,undefined){
 				if((action.actionParams)&&(typeof action.actionParams.view === "string")){
 					var viewId = action.actionParams.view;
 					var $view = $("#" + viewId);
-					if ($view.length > 0) {
-						SM.View.openView(viewId);
+					if ($view.length === 1) {
+						var $screen = $view.closest('article[type="screen"]');
+						if($screen.length === 1){
+							var screenId = $screen.attr("id");
+							var newScreenId = _getSlideIdAlias(screenId);
+							if(newScreenId !== screenId){
+								var $newScreen = $('#' + newScreenId);
+								if($newScreen.length !== 1) return;
+								var viewIndex = $screen.children('article[type="view_content"], article[type="view_image"]').index($view);
+								var $newView = $newScreen.children('article[type="view_content"], article[type="view_image"]').eq(viewIndex);
+								if ($newView.length !== 1) return;
+								screenId = newScreenId;
+								$screen = $newScreen;
+								viewId = $newView.attr("id");
+							}
+							if($(SM.Screen.getCurrentScreen()).attr("id") !== screenId){
+								SM.Screen.goToScreenWithNumber($screen.attr("slideNumber"));
+							}
+							SM.View.openView(viewId);
+						}
 					}
 				}
-				break;	
+				break;
 			case "openLink":
 				if((action.actionParams)&&(typeof action.actionParams.url === "string")){
 					window.open(action.actionParams.url, '_blank', 'noopener,noreferrer');

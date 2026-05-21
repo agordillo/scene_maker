@@ -18,6 +18,10 @@ body {
 	text-rendering: optimizeLegibility;
 }
 
+body.SceneMakerViewerBodyLoading section.slides, body.SceneMakerViewerBodyLoading #viewbar {
+	opacity: 0;
+}
+
 /* General */
 *:focus { outline: none; }  
 :focus  { outline:none;  }

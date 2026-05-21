@@ -174,34 +174,26 @@ SceneMaker.Utils = (function(SM,undefined){
 	* Specify a separator for nested ids.
 	* justCheck: only check if the id is really unic, if not generate a new id.
 	*/
-	var getId = function(full_id_prefix,justCheck,separator){
-		if(!justCheck){
-			if(typeof full_id_prefix !== "string"){
-				//Default prefix
-				full_id_prefix = "unicID";
-			}
-
-			if(typeof separator !== "string"){
-				separator = "";
-			}
-
-			if(typeof domIds[full_id_prefix] === "undefined"){
-				domIds[full_id_prefix] = 0;
-			}
-			domIds[full_id_prefix] = domIds[full_id_prefix] + 1;
-			var full_id = full_id_prefix + separator + domIds[full_id_prefix];
-		} else {
-			var full_id = full_id_prefix;
-			full_id_prefix = full_id_prefix.replace(full_id_prefix[full_id_prefix.length-1],"");
+	var getId = function(full_id_prefix){
+		if (typeof full_id_prefix !== "string") {
+			full_id_prefix = "unicID";
 		}
-
-		//Ensure that the id is unic.
-		if(($("#"+full_id).length===0)&&(ids.indexOf(full_id)===-1)){
-			ids.push(full_id);
-			return full_id;
-		} else {
-			return getId(full_id_prefix,false,separator);
+		let full_id;
+		if (typeof domIds[full_id_prefix] === "undefined") {
+			domIds[full_id_prefix] = 0;
 		}
+		do {
+			domIds[full_id_prefix]++;
+			full_id = full_id_prefix + domIds[full_id_prefix];
+		} while (
+			$("#" + full_id).length !== 0 || ids.includes(full_id)
+		);
+		ids.push(full_id);
+		return full_id;
+	};
+
+	var isAvailableId = function(id){
+		return ((typeof id === "string")&&(id.trim() !== "")&&(ids.indexOf(id)===-1)&&($("#" + id).length === 0));
 	};
 
 	var registerId = function(id){
@@ -265,7 +257,56 @@ SceneMaker.Utils = (function(SM,undefined){
 		if (typeof scene.SMVersion !== "string") {
 			return null;
 		}
+		//_checkSceneIds(scene);
+
 		return scene;
+	};
+
+	var _checkSceneIds = function(scene){
+		var repeatedIds = _findRepeatedIds(scene);
+		if(repeatedIds.length > 0){
+			console.warn("Repeated ids:",repeatedIds);
+		}
+	};
+
+	function _findRepeatedIds(obj) {
+		const seen = {};
+		const repeated = [];
+
+		function checkValue(valueToCheck, type, path) {
+			if (typeof valueToCheck !== "string" ||	valueToCheck.trim() === "") {
+				return;
+			}
+			if (seen[valueToCheck]) {
+				repeated.push({
+					type,
+					value: valueToCheck,
+					first: seen[valueToCheck],
+					repeated: path
+				});
+			} else {
+				seen[valueToCheck] = path;
+			}
+		}
+
+		function walk(value, path) {
+			if (!value || typeof value !== "object") {
+				return;
+			}
+			checkValue(value.id, "id", path);
+			checkValue(value.idAlias, "idAlias", path);
+			if (Array.isArray(value)) {
+				value.forEach((item, index) => {
+					walk(item, `${path}[${index}]`);
+				});
+			} else {
+				Object.keys(value).forEach(key => {
+					walk(value[key], `${path}.${key}`);
+				});
+			}
+		}
+		walk(obj, "scene");
+		return repeated;
 	};
 
 	var getOuterHTML = function(tag){
@@ -817,6 +858,7 @@ SceneMaker.Utils = (function(SM,undefined){
 		init 							: init,
 		getOptions 						: getOptions,
 		getId							: getId,
+		isAvailableId					: isAvailableId,
 		registerId						: registerId,
 		resetIds						: resetIds,
 		deepMerge						: deepMerge,

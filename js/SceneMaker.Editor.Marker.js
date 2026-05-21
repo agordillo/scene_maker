@@ -120,6 +120,8 @@ SceneMaker.Editor.Marker = (function(SM,$,undefined){
 			} else {
 				hotzoneId = SM.Utils.getId("annotation-");
 			}
+			SM.Utils.registerId(hotzoneId);
+
 			var hotzoneIdAlias;
 			if(typeof hotzoneJSON.idAlias === "string"){
 				hotzoneIdAlias = hotzoneJSON.idAlias;

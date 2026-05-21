@@ -38,13 +38,7 @@ SceneMaker.Viewer = (function(SM,$,undefined){
 		}
 		current_scene = scene;
 		
-		SM.Status.init(function(){
-			//Status loading finishes
-			_initAferStatusLoaded(options,scene);
-		});
-	};
-
-	var _initAferStatusLoaded = function(options,scene){
+		SM.Status.init();
 		SM.ViewerAdapter.applyLanguageCSS();
 		SM.EventsNotifier.init();
 		SM.Object.init();

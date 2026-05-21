@@ -2,7 +2,6 @@ SceneMaker.Object = (function(SM,$,undefined){
 			
 	var init = function(){
 		SM.Object.PDF.init();
-		SM.Object.GoogleDOC.init();
 	};
 
 	/*

@@ -20,7 +20,7 @@ SceneMaker.Editor.Clipboard = (function(SM,$,undefined){
 		params.textAreas = SM.Editor.Slides.copyTextAreasOfSlide(element);
 		stack[1] = params;
 		
-		if(SM.Status.getDevice().features.localStorage){
+		if(SM.Status.getFeatures().localStorage){
 			localStorage.setItem(_localStorageKey,JSON.stringify(stack));
 		}
 	};
@@ -36,7 +36,7 @@ SceneMaker.Editor.Clipboard = (function(SM,$,undefined){
 		_lastTimestamp = new Date().getTime();
 
 		//Select the stack
-		if(SM.Status.getDevice().features.localStorage){
+		if(SM.Status.getFeatures().localStorage){
 			var storedStack = localStorage.getItem(_localStorageKey);
 			if(storedStack!==null){
 				var myStack = JSON.parse(storedStack);

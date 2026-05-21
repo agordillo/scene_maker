@@ -36,17 +36,12 @@ SceneMaker.Editor = (function(SM,$,undefined){
 			initOptions = {};
 		}
 
-		existingSceneLoaded = ((typeof scene === "object")&&(options.importedScene !== true));
+		existingSceneLoaded = ((typeof scene === "object")&&(initOptions.importedScene !== true));
 
 		SM.Utils.init();
 		SM.I18n.init(initOptions,scene);
-		SM.Status.init(function(){
-			//Status loading finishes
-			_initAferStatusLoaded(options,scene);
-		});
-	};
 
-	var _initAferStatusLoaded = function(options,scene){
+		SM.Status.init();
 		SM.ViewerAdapter.applyLanguageCSS();
 		SM.I18n.translateUI();
 		SM.Object.init();
@@ -62,7 +57,7 @@ SceneMaker.Editor = (function(SM,$,undefined){
 		SM.Editor.Caption.init();
 		SM.Renderer.init();
 		SM.Slides.init();
-		SM.User.init(options);
+		SM.User.init(initOptions);
 		SM.Video.init();
 		SM.Audio.init();
 		SM.Editor.Settings.init();
@@ -79,10 +74,10 @@ SceneMaker.Editor = (function(SM,$,undefined){
 			SM.Editor.Renderer.init(scene);
 			//Remove focus from any zone
 			_removeSelectableProperties();
-			_initAferSceneLoaded(options,scene);
+			_initAferSceneLoaded(initOptions,scene);
 		} else {
 			SM.Editor.Settings.loadSceneSettings();
-			_initAferSceneLoaded(options,scene);
+			_initAferSceneLoaded(initOptions,scene);
 		}
 	};
 	
@@ -573,7 +568,7 @@ SceneMaker.Editor = (function(SM,$,undefined){
 					//Update SM.UploadScenePath because the scene exists now
 					//Future savings will update the existing scene
 					SM.UploadScenePath = SM.Utils.checkUrlProtocol(data.uploadPath);
-					if(SM.Status.getDevice().features.historypushState){
+					if(SM.Status.getFeatures().historypushState){
 						window.top.history.replaceState("","",SM.UploadScenePath);
 					}
 				}

@@ -1,5 +1,5 @@
 SceneMaker.Status = (function(SM,$,undefined){
-	var _device;
+	var _features;
 	var _isEmbed;
 	var _container;
 	var _containerType;
@@ -7,21 +7,67 @@ SceneMaker.Status = (function(SM,$,undefined){
 	var _isPreview;
 	var _protocol;
 	
-	var init = function(callback){
+	var init = function(){
+		_fillFeatures();
 		_checkEmbed();
 		_checkDomain();
 		_checkContainer();
 		_checkProtocol();
 		_checkPreview();
+	};
 
-		SM.Status.Device.init(function(returnedDevice){
-			//Device and its viewport loaded
-			_device = returnedDevice;
+	var _fillFeatures = function(){
+		_features = {};
 
-			if(typeof callback === "function"){
-				callback();
+		//Fullscreen support
+		_features.fullscreen = SM.FullScreen.isFullScreenSupported();
+		
+		//Touchscreen detection
+		_features.touchScreen = !!('ontouchstart' in window);
+
+		//LocalStorage detection
+		_features.localStorage = _checkLocalStorageSupport();
+
+		//Session management
+		_features.history = ((typeof history === "object")&&(typeof history.back === "function")&&(typeof history.go === "function"));
+
+		if((_features.history)&&(typeof history.pushState == "function")){
+			_features.historypushState = true;
+		} else {
+			_features.historypushState = false;
+		}
+
+		//FileReader API
+		if (window.File && window.FileReader && window.FileList && window.Blob) {
+			_features.reader = true;
+		} else {
+			_features.reader = false;
+		}
+
+		//PDF native reader
+		_features.pdfReader = false;
+		if((typeof navigator.mimeTypes == "object")&&("application/pdf" in navigator.mimeTypes)){
+			_features.pdfReader = true;
+		}
+
+		return _features;
+	};
+
+	var _checkLocalStorageSupport = function(){
+		var LSSupported = (typeof(Storage)!=="undefined");
+		if(LSSupported){
+			//Check if there is no security restrictions
+			try {
+				localStorage.setItem("myKey","myKeyValue");
+				localStorage.getItem("myKey");
+				localStorage.removeItem("myKey");
+				return true;
+			} catch(e){
+				return false;
 			}
-		});
+		} else {
+			return false;
+		}
 	};
 
 	var _checkEmbed = function(){
@@ -31,7 +77,6 @@ SceneMaker.Status = (function(SM,$,undefined){
 
 	var _checkDomain = function(){
 		_isExternalDomain = false;
-
 		if(_checkEmbed()){
 			try {
 				var parent = window.parent;
@@ -50,14 +95,12 @@ SceneMaker.Status = (function(SM,$,undefined){
 				_isExternalDomain = true;
 			}
 		}
-
 		return _isExternalDomain;
 	};
 
 	var _checkContainer = function(){
 		_container = undefined;
 		_containerType = "undefined";
-
 		if((_isEmbed)&&(!_isExternalDomain)){
 			try{
 				switch(window.frameElement.tagName){
@@ -107,8 +150,8 @@ SceneMaker.Status = (function(SM,$,undefined){
 	// Getters and Setters
 	//////////////////////////
 
-	var getDevice = function(){
-		return _device;
+	var getFeatures = function(){
+		return _features;
 	};
 
 	var isEmbed = function(){
@@ -140,7 +183,7 @@ SceneMaker.Status = (function(SM,$,undefined){
 
 	return {
 		init						: init,
-		getDevice					: getDevice,
+		getFeatures					: getFeatures,
 		isExternalDomain 			: isExternalDomain,
 		isEmbed						: isEmbed,
 		getContainer				: getContainer,

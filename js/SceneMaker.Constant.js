@@ -17,13 +17,6 @@ SceneMaker.Constant.AUDIO = "audio";
 SceneMaker.Constant.VIDEO = "video";
 SceneMaker.Constant.OBJECT = "object";
 
-//Web browsers
-SceneMaker.Constant.IE = 'Internet Explorer';
-SceneMaker.Constant.FIREFOX = 'Mozilla Firefox';
-SceneMaker.Constant.CHROME = 'Google Chrome';
-SceneMaker.Constant.SAFARI = 'Safari';
-SceneMaker.Constant.ANDROID_BROWSER = 'Android Browser';
-
 //Media types
 SceneMaker.Constant.MEDIA = {};
 SceneMaker.Constant.MEDIA.IMAGE = "image";

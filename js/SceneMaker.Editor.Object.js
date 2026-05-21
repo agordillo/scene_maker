@@ -11,7 +11,6 @@ SceneMaker.Editor.Object = (function(SM,$,undefined){
 		initialized = true;
 		
 		SM.Editor.Object.Web.init();
-		SM.Editor.Object.GoogleDOC.init();
 		SM.Editor.Object.PDF.init();
 
 		//Load from URL (embed)
@@ -137,9 +136,6 @@ SceneMaker.Editor.Object = (function(SM,$,undefined){
 						return "<img class='imagePreview' src='" + object + "'></img>";
 					case SM.Constant.MEDIA.PDF:
 						return SM.Editor.Object.PDF.generatePreviewWrapper(object);
-					case SM.Constant.MEDIA.DOC:
-					case SM.Constant.MEDIA.PPT:
-						return SM.Editor.Object.GoogleDOC.generatePreviewWrapper(object);
 					case SM.Constant.MEDIA.YOUTUBE_VIDEO:
 						return SM.Editor.Video.Youtube.generatePreviewWrapperForYoutubeVideoUrl(object);
 					case SM.Constant.MEDIA.HTML5_VIDEO:
@@ -235,9 +231,6 @@ SceneMaker.Editor.Object = (function(SM,$,undefined){
 					case SM.Constant.MEDIA.PDF:
 						options.wrapperGenerated = true;
 						return drawObject(SM.Editor.Object.PDF.generateWrapper(objectInfo.source),options);
-					case SM.Constant.MEDIA.DOC:
-					case SM.Constant.MEDIA.PPT:
-						return drawObject(SM.Editor.Object.GoogleDOC.generateWrapper(object),options);
 					case SM.Constant.MEDIA.YOUTUBE_VIDEO:
 						return drawObject(SM.Editor.Video.Youtube.generateWrapperForYoutubeVideoUrl(object),options);
 					case SM.Constant.MEDIA.HTML5_VIDEO:

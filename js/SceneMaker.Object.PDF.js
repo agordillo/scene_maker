@@ -1,17 +1,15 @@
 SceneMaker.Object.PDF = (function(SM,$,undefined){
-	var _pdfSupport = false;
+	// var _pdfSupport = false;
 
 	var init = function(){
-		_pdfSupport = SM.Status.getDevice().features.pdfReader;
+		// _pdfSupport = SM.Status.getFeatures().pdfReader;
 	};
 
 	var generateWrapper = function(url){
 		url = SM.Utils.checkUrlProtocol(url);
-		if(_pdfSupport){
-			return "<iframe src='" + url + "'></iframe>";
-		} else {
-			return SM.Object.GoogleDOC.generateWrapper(url);
-		}
+		// if(_pdfSupport){
+		return "<iframe src='" + url + "'></iframe>";
+		// }
 	};
 
 	var renderPDFFromJSON = function(pdfJSON,options){

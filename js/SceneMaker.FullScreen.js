@@ -63,7 +63,7 @@ SceneMaker.FullScreen = (function(SM,$,undefined){
 	};
 
 	var _canUseNativeFs = function(){
-		return (SM.Status.getDevice().features.fullscreen)&&(_getFsEnabled(_getFSDocumentTarget()));
+		return (SM.Status.getFeatures().fullscreen)&&(_getFsEnabled(_getFSDocumentTarget()));
 	};
 
 	var _getFsEnabled = function(myDoc){

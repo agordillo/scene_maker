@@ -256,7 +256,7 @@ SceneMaker.Editor.Actions = (function(SM,$,undefined){
 							_onPuzzleChange(action.actionParams.puzzleId,$actionWrapper);
 						}
 						if(typeof action.actionParams.delay === "string"){
-							const delayValue = parseInt(action.actionParams.delay, 10);
+							const delayValue = parseFloat(action.actionParams.delay);
 							if (!Number.isNaN(delayValue) && delayValue > 0) {
 								var $actionParamsDelayInput = $actionWrapper.find("div.actionParamsDelay input");
 								$actionParamsDelayInput.val(delayValue);
@@ -493,7 +493,7 @@ SceneMaker.Editor.Actions = (function(SM,$,undefined){
 				}
 				var $actionParamsDelayInput = $actionWrapper.find("div.actionParamsDelay input");
 				if($actionParamsDelayInput.is(":visible")){
-					const delayValue = parseInt($actionParamsDelayInput.val(), 10);
+					const delayValue = parseFloat($actionParamsDelayInput.val());
 					if (!Number.isNaN(delayValue) && delayValue > 0) {
 						action.actionParams.delay = (delayValue + "");
 					}

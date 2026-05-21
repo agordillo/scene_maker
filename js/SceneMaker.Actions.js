@@ -94,7 +94,7 @@ SceneMaker.Actions = (function(SM,$,undefined){
 		}
 		let delayValue = 0;
 		if(typeof delay === "string"){
-			let delayValueParam = parseInt(delay, 10);
+			let delayValueParam = parseFloat(delay);
 			if (!Number.isNaN(delayValueParam) && delayValueParam > 0) {
 				delayValue = delayValueParam*1000;
 			}
@@ -138,7 +138,7 @@ SceneMaker.Actions = (function(SM,$,undefined){
 
 	var _performAction = function(action,eventTargetId){
 		if((action)&&(action.actionParams)&&(typeof action.actionParams.delay === "string")){
-			const delayValue = parseInt(action.actionParams.delay, 10);
+			const delayValue = parseFloat(action.actionParams.delay);
 			if (!Number.isNaN(delayValue) && delayValue > 0) {
 				setTimeout(function(){
 					_performActionWithoutDelay(action,eventTargetId);

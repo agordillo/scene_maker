@@ -69,17 +69,16 @@ SceneMaker.Screen = (function(SM,$,undefined){
 		return $('section.slides > article').length;
 	};
 
-	var onEnterScreen = function(screen){
+	var onEnterScreen = function($screen){
 		//Look for opened views
-		var openedViews = $(screen).children("article.show_in_screen");
-		if(openedViews.length===1){
-			var openView = openedViews[0];
-			var viewId = $(openView).attr("id");
+		var $openedView = $screen.children("article.show_in_screen");
+		if($openedView.length===1){
+			var viewId = $openedView.attr("id");
 			SM.Slides.triggerSlideEnterEvent(viewId);
 		}
 	};
 
-	var onLeaveScreen = function(screen){
+	var onLeaveScreen = function($screen){
 		//Close current view, if any
 		SM.View.closeCurrentView();
 	};

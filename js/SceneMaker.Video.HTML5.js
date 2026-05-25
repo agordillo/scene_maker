@@ -35,8 +35,8 @@ SceneMaker.Video.HTML5 = (function(SM,$,undefined){
 	/**
 	 * Function to play all videos and audios of a slide
 	 */
-	var playMultimedia = function(slide){
-		var multimediaEls = $(slide).find("video, audio");
+	var playMultimedia = function($slide){
+		var multimediaEls = $slide.find("video, audio");
 		$.each(multimediaEls, function(index,mEl){
 			$mEL = $(mEl);
 			if(($mEL.attr("resumeonslideenter")==="true")&&(typeof $mEL.attr("wasplayingonslideleave") !== "undefined")){
@@ -62,8 +62,8 @@ SceneMaker.Video.HTML5 = (function(SM,$,undefined){
 	/**
 	 * Function to stop all videos and audios of a slide
 	 */
-	var stopMultimedia = function(slide){
-		var multimediaEls = $(slide).find("video, audio");
+	var stopMultimedia = function($slide){
+		var multimediaEls = $slide.find("video, audio");
 		$.each(multimediaEls, function(index,mEl){
 			var playing = !mEl.paused;
 			$(mEl).attr("wasplayingonslideleave",playing);

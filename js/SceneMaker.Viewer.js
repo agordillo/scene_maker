@@ -85,29 +85,19 @@ SceneMaker.Viewer = (function(SM,$,undefined){
 	};
 
 	var onSlideEnterViewer = function(e){
-		var slide = e.target;
-		var isView = SM.Slides.isView(slide);
-
 		//Prevent parent to trigger onSlideEnterViewer
-		//Use to prevent screens to be called when enter in one of their views
+		//Prevent screens to be called when enter in one of their views
 		e.stopPropagation();
+		_hideTooltips();
 
-		//Load objects
+		var slide = e.target;
+		var $slide = $(slide);
+		var isView = SM.Slides.isView(slide);
 		if(isView){
-			var $slide = $(slide);
-			if($slide.hasClass(SM.Constant.OBJECT)){
-				setTimeout(function(){
-					//Prevent objects to load when the view isn't focused
-					var cView = SM.View.getCurrentView();
-					if((cView !== null)&&($(cView).attr("id") === $slide.attr("id"))){
-						SM.ObjectPlayer.loadObject($slide);
-					}
-				}, 0);
-			}
-			SM.Video.HTML5.playMultimedia(slide);
+			SM.View.onEnterView($slide);
 		} else {
 			//isScreen
-			SM.Screen.onEnterScreen(slide);
+			SM.Screen.onEnterScreen($slide);
 		}
 
 		//Check actions
@@ -115,27 +105,29 @@ SceneMaker.Viewer = (function(SM,$,undefined){
 	};
 
 	var onSlideLeaveViewer = function(e){
+		e.stopPropagation();
+		_hideTooltips();
+
 		var slide = e.target;
+		var $slide = $(slide);
 		var isView = SM.Slides.isView(slide);
 
-		e.stopPropagation();
-
 		if(isView){
-			var $slide = $(slide);
-			if($slide.hasClass(SM.Constant.OBJECT)){
-				setTimeout(function(){
-					// Prevent object to be unload if the view is focused
-					var cView = SM.View.getCurrentView();
-					if((cView === null)||($(cView).attr("id") !== $slide.attr("id"))){
-						SM.ObjectPlayer.unloadObject($slide);
-					}
-				}, 800);
-			}
-			SM.Video.HTML5.stopMultimedia(slide);
+			SM.View.onLeaveView($slide);
 		} else {
 			//isScreen
-			SM.Screen.onLeaveScreen(slide);
+			SM.Screen.onLeaveScreen($slide);
 		}
+	};
+
+	var _hideTooltips = function(){
+		$("div[data-tippy-root]:visible").each(function (index, tooltip) {
+			const tooltipId = tooltip.id;
+			if (!tooltipId) return;
+			$(`[markertooltipid="${CSS.escape(tooltipId)}"]`).each(function (index, marker) {
+				marker._tippy?.hide();
+			});
+		});
 	};
 	
 	var getCurrentScene = function(){

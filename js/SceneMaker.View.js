@@ -78,6 +78,32 @@ SceneMaker.View = (function(SM,$,undefined){
 		}
 	};
 
+	var onEnterView = function($view){
+		if($view.hasClass(SM.Constant.OBJECT)){
+			setTimeout(function(){
+				//Prevent objects to load when the view isn't focused
+				var cView = SM.View.getCurrentView();
+				if((cView !== null)&&($(cView).attr("id") === $view.attr("id"))){
+					SM.ObjectPlayer.loadObject($view);
+				}
+			}, 0);
+		}
+		SM.Video.HTML5.playMultimedia($view);
+	};
+
+	var onLeaveView = function($view){
+		if($view.hasClass(SM.Constant.OBJECT)){
+			setTimeout(function(){
+				// Prevent object to be unload if the view is focused
+				var cView = SM.View.getCurrentView();
+				if((cView === null)||($(cView).attr("id") !== $view.attr("id"))){
+					SM.ObjectPlayer.unloadObject($view);
+				}
+			}, 800);
+		}
+		SM.Video.HTML5.stopMultimedia($view);
+	};
+
 	return {
 		init					: init,
 		getCurrentView 			: getCurrentView,
@@ -86,7 +112,9 @@ SceneMaker.View = (function(SM,$,undefined){
 		onCloseViewClicked		: onCloseViewClicked,
 		openView				: openView,
 		closeView				: closeView,
-		closeCurrentView		: closeCurrentView
+		closeCurrentView		: closeCurrentView,
+		onEnterView				: onEnterView,
+		onLeaveView				: onLeaveView
 	};
 
 }) (SceneMaker, jQuery);

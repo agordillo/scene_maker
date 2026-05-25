@@ -224,17 +224,14 @@ SceneMaker.ViewerAdapter = (function(SM,$,undefined){
 	};
 
 	var _updateTooltipsAfterSetupSize = function(increase){
-		var $visibleToolTips = $("div[data-tippy-root]:visible");
-		if ($visibleToolTips.length > 0) {
-			$visibleToolTips.each(function(index, tooltip){
-				$("[markertooltipid=" + $(tooltip).attr("id") + "]").each(function(index, hotspot){
-					if(typeof hotspot._tippy !== "undefined"){
-						hotspot._tippy.hide();
-						hotspot._tippy.show();
-					}
-				});
+		$("div[data-tippy-root]:visible").each(function (index, tooltip) {
+			const tooltipId = tooltip.id;
+			if (!tooltipId) return;
+			$(`[markertooltipid="${CSS.escape(tooltipId)}"]`).each(function (index, marker) {
+				marker._tippy?.hide();
+				marker._tippy?.show();
 			});
-		}
+		});
 	};
 
 	var _getPonderatedIncrease = function(increase,pFactor){

@@ -124,6 +124,15 @@ SceneMaker.Actions = (function(SM,$,undefined){
 			onCreate(instance) {
 				var toolTipId = instance.popper.id;
 				$(elementDOM).attr("markertooltipid",toolTipId);
+			},
+			onShow(instance) {
+				var $slide = $(elementDOM).closest('article[type="screen"], article[type="view_content"]');
+				var cSlide = SM.Slides.getCurrentSlide();
+				if(($slide.length !== 1)||(cSlide == null)||($(cSlide).attr("id")!==$slide.attr("id"))){
+					//Prevent tooltips to be shown when its slide is not visible
+					return false;
+				}
+				return true;
 			}
 		});
 	};
